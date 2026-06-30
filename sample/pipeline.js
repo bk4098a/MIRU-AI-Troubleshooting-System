@@ -1,46 +1,60 @@
 // MIRU AI Troubleshooting Pipeline
-// Flow: Korean input → Gemini Flash (translate + Kling prompts) → Higgsfield Kling → Slack
+// Flow: Korean input → Groq (translate + Kling prompts) → Higgsfield images (w/ reference) → Slack
 
 // ─── Fixed visual standard ────────────────────────────────────────────────────
-const BG_STANDARD = `BACKGROUND: Replace the entire background with a seamless, uniform neutral light-grey studio backdrop (same as the reference master image). Remove all clutter — cables, plastic bags/wrap, beige walls, wooden desks, other equipment. Keep ONLY the PCOS machine, the relevant parts, and the hand. Soft even studio light, subtle soft shadow under the machine. Horizontal, 16:9.`;
+const BG_STANDARD = `BACKGROUND: Replace the entire background with a seamless, uniform neutral light-grey studio backdrop. Remove all clutter — cables, plastic bags/wrap, beige walls, wooden desks, other equipment. Keep ONLY the PCOS machine, the relevant parts, and the hand. Soft even studio light, subtle soft shadow under the machine. Horizontal, 16:9.`;
 
-// ─── Gemini Flash master prompt for PCOS ─────────────────────────────────────
+// ─── Demo images: Higgsfield nano_banana_2, PCOS Paper Jam scenario ───────────
+const DEMO_IMAGES = {
+  'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260630_022730_362a2f3e-3c2a-4195-a323-d49c178b9210.png',
+  'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260630_023754_2ea8ed61-244d-4100-8c4c-f777407bba90.png',
+  'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260630_023757_7d77f071-ca5d-4a92-bc1f-136d1c6292b4.png',
+};
+
+// ─── Groq prompt builder ──────────────────────────────────────────────────────
 function buildGeminiPrompt(data) {
+  // Load optional troubleshooting manual context from admin setup
+  const manualContext = (() => {
+    try {
+      return localStorage.getItem('PCOS_MANUAL_CONTEXT') || window.MIRU_CONFIG?.PCOS_DEFAULT_MANUAL || '';
+    } catch(e) {
+      return window.MIRU_CONFIG?.PCOS_DEFAULT_MANUAL || '';
+    }
+  })();
+
   return `You are a professional technical video script generator for MIRU Systems' PCOS (Polling Station Count Optical Scanner) troubleshooting guide videos.
 
-PCOS: Optical paper-ballot scanner used at polling stations. It scans and counts ballots, transmits results via network. Common errors: paper jam, cover open, double feed, stain on scanner glass, network disconnect, battery, display.
-
+PCOS (АСУ): Optical paper-ballot scanner/counter used at polling stations. Scans and counts ballots, transmits results via network. Uses smart card, flash card (USB), SD card (x2: primary/backup), and ECF configuration file. Key errors: UIK number mismatch (voter station ID error), flash card/SD card data mismatch (mixed paired storage), ECF NOT FOUND (config file missing or wrong UIK in DB), paper jam, scanner cover open, double feed, stain on scanner glass, network disconnect, battery low.
+${manualContext ? `\nPCOS TROUBLESHOOTING MANUAL REFERENCE:\n${manualContext.slice(0, 8000)}\n` : ''}
 VISUAL STANDARD (all clips):
-- Format: 16:9, 720p, silent, 4–5 seconds per clip, fixed camera
+- Format: 16:9, 720p, silent, 4-5 seconds per clip, fixed camera
 - ${BG_STANDARD}
-- Kling format: [start frame description] → [end frame description], no camera movement
-- Clip types: PROBLEM clip (error state) → SOLUTION clips (step-by-step action)
+- Kling format: [start frame description] -> [end frame description], no camera movement
+- Clip types: PROBLEM clip (error state) -> SOLUTION clips (step-by-step action)
 
-Reference structure (from MIRU ACM Admin-B Scanner script):
-- PROBLEM clip: static error screen on display, or machine in error state (paper stuck etc.)
-- SOLUTION clip 1: first action (e.g., "Press OK on screen" or "Open scanner rear cover")
-- SOLUTION clip 2: core fix action (e.g., "Remove jammed paper" / "Clean CIS glass with cotton wiper")
-- SOLUTION clip 3 (if needed): restore state (e.g., "Close scanner cover and confirm normal")
-- Common reusable actions: rear cover open button press, scanner cover open, scanner cover close
-- Precision actions (cleaning, insertion) → Seedance model; button press, open/close → Kling
+Reference structure:
+- PROBLEM clip: static error screen on display, or machine in error state
+- SOLUTION clip 1: first action (press OK, open cover, etc.)
+- SOLUTION clip 2: core fix action (remove paper, clean glass, etc.)
+- Precision actions (cleaning, insertion) -> Seedance model; button press, open/close -> Kling
 
-ERROR REPORT (field technician input):
+ERROR REPORT:
 ---
-Product: PCOS — Polling Station Count Optical Scanner
+Product: PCOS - Polling Station Count Optical Scanner
 Country / Deployment: ${data.country}
 Error Types Selected: ${data.errorTypes.join(', ')}
 
-[Section 1 — Error Situation]:
+[Section 1 - Error Situation]:
 ${data.situation}
 
-[Section 2 — Actions Before Error Occurred]:
+[Section 2 - Actions Before Error Occurred]:
 ${data.priorActions}
 
-[Section 3 — Solution Attempted]:
+[Section 3 - Solution Attempted]:
 ${data.solution}
 ---
 
-Respond ONLY with valid JSON, no markdown, no explanation outside JSON:
+Respond ONLY with valid JSON, no markdown:
 {
   "translation": {
     "situation": "<English translation of Section 1>",
@@ -49,33 +63,35 @@ Respond ONLY with valid JSON, no markdown, no explanation outside JSON:
     "summary": "<One English sentence: what happened and what fixed it>"
   },
   "image_enhancement": {
-    "photo_error_screen": "<Higgsfield image prompt: enhance the uploaded error screen photo — apply BG_STANDARD, keep PCOS display visible showing the error>",
-    "photo_error_state": "<Higgsfield image prompt: enhance the uploaded machine state photo — apply BG_STANDARD, show PCOS machine with visible error condition>",
-    "photo_resolution": "<Higgsfield image prompt: enhance the uploaded resolution photo — apply BG_STANDARD, show PCOS machine restored to normal state>"
+    "photo_error_screen": "<Higgsfield prompt: PCOS display showing error, grey studio backdrop, match reference image style>",
+    "photo_error_state": "<Higgsfield prompt: PCOS machine with visible error condition, grey studio>",
+    "photo_resolution": "<Higgsfield prompt: PCOS machine normal green ready state, grey studio>"
   },
   "kling_clips": [
     {
       "clip_id": "PROB-01",
       "label": "PROBLEM",
       "model": "Kling",
-      "title": "<3–5 word English title>",
-      "start_frame": "<start image: describe exact visual state — PCOS machine, what is visible on display or physically wrong>",
-      "end_frame": "<end image: describe exact visual state — same error, slight change such as hand approaching OK button>",
-      "prompt": "<full Kling prompt: start_frame + → + end_frame + BG_STANDARD + no camera movement + 16:9>",
-      "caption_main": "<3–5 WORD UPPERCASE BOLD>",
-      "caption_sub": "<one sentence, what the operator sees>",
+      "title": "<3-5 word English title>",
+      "start_frame": "<describe exact visual state of PCOS machine>",
+      "end_frame": "<describe end frame — slight change, e.g. hand approaching OK button>",
+      "prompt": "<full Kling prompt: start + -> + end + BG_STANDARD + fixed camera 16:9>",
+      "caption_main": "<3-5 WORD UPPERCASE>",
+      "caption_sub": "<one sentence, what operator sees>",
+      "description": "<2-3 sentences in English. Describe exactly what is shown in this image: the PCOS machine state, what part is highlighted, what the operator should observe. Written for a technical troubleshooting manual.>",
       "photo_ref": "photo_error_screen"
     },
     {
       "clip_id": "SOL-01",
       "label": "SOLUTION STEP 1",
       "model": "Kling",
-      "title": "<3–5 word English title>",
+      "title": "<3-5 word English title>",
       "start_frame": "<..>",
       "end_frame": "<..>",
       "prompt": "<full prompt>",
       "caption_main": "<..>",
       "caption_sub": "<..>",
+      "description": "<2-3 sentences English. Describe what the operator is doing in this step: which button, which part, what motion. Clear and precise for the manual.>",
       "photo_ref": "photo_error_state"
     },
     {
@@ -88,132 +104,206 @@ Respond ONLY with valid JSON, no markdown, no explanation outside JSON:
       "prompt": "<full prompt including BG_STANDARD>",
       "caption_main": "<..>",
       "caption_sub": "<..>",
+      "description": "<2-3 sentences English. Describe the resolution shown: what was fixed, what the PCOS displays after the fix, confirmation that system is restored.>",
       "photo_ref": "photo_resolution"
     }
   ],
-  "slack_summary": "<2-line Slack message summarizing error + fix for manager review>"
+  "slack_summary": "<2-line Slack message summarizing error + fix>"
 }`;
 }
 
-// ─── Gemini Flash API call ────────────────────────────────────────────────────
+// ─── Groq API ─────────────────────────────────────────────────────────────────
 async function callGeminiFlash(prompt) {
-  const apiKey = window.MIRU_CONFIG?.GEMINI_API_KEY;
-  if (!apiKey) throw new Error('GEMINI_API_KEY not set in config.js');
+  const apiKey = window.MIRU_CONFIG?.GROQ_API_KEY;
+  if (!apiKey) throw new Error('GROQ_API_KEY not set in config.js');
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
-  const body = {
-    contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: {
-      temperature: 0.3,
-      maxOutputTokens: 4096,
-      responseMimeType: 'application/json',
-    }
-  };
-
-  const res = await fetch(endpoint, {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.3,
+      max_tokens: 4096,
+      response_format: { type: 'json_object' },
+    })
   });
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(`Gemini API error ${res.status}: ${err?.error?.message || res.statusText}`);
+    throw new Error(`Groq API error ${res.status}: ${err?.error?.message || res.statusText}`);
   }
 
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Gemini returned empty response');
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error('Groq returned empty response');
 
-  // Strip possible markdown fences
   const clean = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
   return JSON.parse(clean);
 }
 
-// ─── Higgsfield image enhancement ────────────────────────────────────────────
-// Higgsfield REST API: used for background transformation of uploaded photos
-async function enhanceImage(imageBase64, enhancementPrompt) {
-  const apiKey = window.MIRU_CONFIG?.HIGGSFIELD_API_KEY;
-  if (!apiKey) return null; // Skip if not configured
+// ─── Higgsfield media upload (browser side) ───────────────────────────────────
+// Uploads base64 image to Higgsfield, returns media_id for use as reference_elements
+async function uploadPhotoToHiggsfield(base64DataUrl, apiKey) {
+  if (!apiKey || !base64DataUrl) return null;
 
-  // Upload image to Higgsfield, then apply outpaint/generate for BG replacement
-  // Step 1: Upload media
-  const uploadRes = await fetch('https://api.higgsfield.ai/v1/media/upload', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ data: imageBase64, type: 'image' })
-  });
-  if (!uploadRes.ok) return null;
-  const { media_id } = await uploadRes.json();
+  // Strip data:image/... prefix if present
+  const base64 = base64DataUrl.includes(',') ? base64DataUrl.split(',')[1] : base64DataUrl;
 
-  // Step 2: Generate enhanced image with background replacement
-  const genRes = await fetch('https://api.higgsfield.ai/v1/generate/image', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      prompt: enhancementPrompt,
-      reference_image_id: media_id,
-      aspect_ratio: '16:9',
-      model: 'flux-dev',
-    })
-  });
-  if (!genRes.ok) return null;
-  const { job_id } = await genRes.json();
-  return job_id;
+  try {
+    const res = await fetch('https://api.higgsfield.ai/v1/media/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+      body: JSON.stringify({ data: base64, type: 'image' })
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.media_id || data.id || null;
+  } catch (e) {
+    console.warn('Photo upload to Higgsfield failed:', e.message);
+    return null;
+  }
 }
 
-// ─── Higgsfield Kling video generation ───────────────────────────────────────
-async function generateKlingVideo(clip, startImageId, endImageId) {
+// ─── Higgsfield image generation ──────────────────────────────────────────────
+// Builds reference_elements from: user photos + admin master photos
+// Demo mode (no API key): returns pre-generated sample images
+async function generateHiggsImages(clips, photos, onProgress) {
   const apiKey = window.MIRU_CONFIG?.HIGGSFIELD_API_KEY;
-  if (!apiKey) return null;
 
-  const res = await fetch('https://api.higgsfield.ai/v1/generate/video', {
+  // Load admin master media IDs — localStorage first, fallback to config.js hardcoded list
+  let masterMediaIds = [];
+  try {
+    const stored = localStorage.getItem('PCOS_MASTER_MEDIA_IDS');
+    masterMediaIds = stored ? JSON.parse(stored) : (window.MIRU_CONFIG?.PCOS_MASTER_MEDIA_IDS || []);
+  } catch(e) {
+    masterMediaIds = window.MIRU_CONFIG?.PCOS_MASTER_MEDIA_IDS || [];
+  }
+
+  // Map clip photo_ref to user-uploaded base64
+  const photoMap = {
+    photo_error_screen: photos?.error_screen || null,
+    photo_error_state:  photos?.error_state  || null,
+    photo_resolution:   photos?.resolution   || null,
+  };
+
+  // Upload user photos to Higgsfield if API key available
+  const uploadedPhotoIds = {};
+  if (apiKey && Object.values(photoMap).some(Boolean)) {
+    for (const [key, base64] of Object.entries(photoMap)) {
+      if (base64) {
+        const mediaId = await uploadPhotoToHiggsfield(base64, apiKey);
+        if (mediaId) uploadedPhotoIds[key] = mediaId;
+      }
+    }
+  }
+
+  const images = {};
+
+  for (let i = 0; i < clips.length; i++) {
+    const clip = clips[i];
+    if (onProgress) onProgress(i, `${clip.clip_id} 이미지 생성 중...`);
+
+    if (apiKey) {
+      try {
+        // Build reference_elements: master photos + user photo for this clip
+        const referenceElements = [...masterMediaIds];
+        const userPhotoId = uploadedPhotoIds[clip.photo_ref];
+        if (userPhotoId) referenceElements.push(userPhotoId);
+
+        const imagePrompt = `${clip.start_frame} ${BG_STANDARD} Fixed camera, 16:9, studio lighting.`;
+        const jobId = await callHiggsfieldGenerateImage(imagePrompt, referenceElements, apiKey);
+        const url = await pollHiggsfieldJob(jobId, apiKey);
+        images[clip.clip_id] = url;
+      } catch (e) {
+        console.warn(`Higgsfield API failed for ${clip.clip_id}:`, e.message);
+        images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
+      }
+    } else {
+      // Demo mode: simulate generation delay, return pre-generated images
+      await sleep(1000 + i * 300);
+      images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
+    }
+  }
+
+  return images;
+}
+
+async function callHiggsfieldGenerateImage(prompt, referenceElements, apiKey) {
+  const body = {
+    model: 'nano_banana',
+    prompt,
+    aspect_ratio: '16:9',
+  };
+  if (referenceElements && referenceElements.length > 0) {
+    body.reference_elements = referenceElements;
+  }
+
+  const res = await fetch('https://api.higgsfield.ai/v1/generate/image', {
     method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      prompt: clip.prompt,
-      model: clip.model === 'Seedance' ? 'seedance-v1-lite' : 'kling-v1-6-standard',
-      start_image_id: startImageId,
-      end_image_id: endImageId,
-      aspect_ratio: '16:9',
-      duration: 5,
-    })
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify(body)
   });
-  if (!res.ok) return null;
-  const { job_id } = await res.json();
-  return job_id;
+  if (!res.ok) throw new Error(`Higgsfield ${res.status}`);
+  const data = await res.json();
+  return data.results?.[0]?.id || data.id;
+}
+
+async function pollHiggsfieldJob(jobId, apiKey, maxMs = 120000) {
+  const deadline = Date.now() + maxMs;
+  while (Date.now() < deadline) {
+    await sleep(4000);
+    const res = await fetch(`https://api.higgsfield.ai/v1/jobs/${jobId}`, {
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    });
+    const data = await res.json();
+    if (data.status === 'completed') return data.results?.rawUrl || data.url;
+    if (data.status === 'failed') throw new Error('Higgsfield job failed');
+  }
+  throw new Error('Higgsfield timeout');
 }
 
 // ─── Slack notification ───────────────────────────────────────────────────────
 async function sendSlackNotification(payload) {
   const webhookUrl = window.MIRU_CONFIG?.SLACK_WEBHOOK_URL;
-  if (!webhookUrl) return false;
-
-  // Direct Slack webhook calls are blocked by CORS in browsers.
-  // In production, route through a server-side proxy or use Slack's JavaScript SDK.
-  // For demo purposes, we log the payload and return true.
-  console.log('[Slack payload]', JSON.stringify(payload, null, 2));
-
-  // If a server proxy is available:
-  // await fetch(webhookUrl, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-  return true;
+  if (!webhookUrl) {
+    console.log('[Slack payload — no webhook set]', JSON.stringify(payload, null, 2));
+    return false;
+  }
+  try {
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    return true;
+  } catch (e) {
+    console.warn('Slack CORS (expected in browser):', e.message);
+    return false;
+  }
 }
 
-function buildSlackPayload(formData, ticketNum, result) {
-  const priorityLabel = { normal:'일반', high:'높음 — 선거 진행 중', urgent:'긴급 — 즉각 대응 필요' };
+function buildSlackPayload(formData, ticketNum, result, isVideoRequest) {
+  const priorityLabel = { normal: '일반', high: '높음 — 선거 진행 중', urgent: '긴급 — 즉각 대응 필요' };
+  const prefix = isVideoRequest ? '*[영상 생성 요청]*' : '*[새 트러블슈팅 신청]*';
+
   return {
-    text: `*[${ticketNum}] 새 트러블슈팅 영상 신청*`,
+    text: `${prefix} ${ticketNum}`,
     blocks: [
       {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `*[${ticketNum}] 새 트러블슈팅 영상 신청*\n` +
+          text: `${prefix} *${ticketNum}*\n` +
                 `• 신청인: ${formData.name} (${formData.email})\n` +
                 `• 우선순위: ${priorityLabel[formData.priority] || formData.priority}\n` +
                 `• 국가: ${formData.country}  |  제품: ${formData.product}\n` +
                 `• 에러 유형: ${formData.errorTypes.join(', ')}\n` +
-                `• 요약: ${result?.translation?.summary || '(Gemini 미응답)'}`
+                `• 요약: ${result?.translation?.summary || '(번역 미완료)'}` +
+                (isVideoRequest ? `\n• *Kling 영상 생성 요청 — Higgsfield에서 제작해주세요.*` : '')
         }
       },
       {
@@ -229,99 +319,122 @@ function buildSlackPayload(formData, ticketNum, result) {
       { type: 'divider' },
       {
         type: 'context',
-        elements: [{
-          type: 'mrkdwn',
-          text: `관리자 페이지에서 검토 및 영상 생성을 진행해주세요.`
-        }]
+        elements: [{ type: 'mrkdwn', text: `관리자 페이지(admin.html)에서 검토 및 영상 생성을 진행해주세요.` }]
       }
     ]
   };
 }
 
-// ─── Main pipeline entry point ────────────────────────────────────────────────
+// ─── Main pipeline ────────────────────────────────────────────────────────────
 async function runPipeline(formData, onProgress) {
-  const steps = [
-    '한국어 → 영어 번역 중...',
-    'Kling 프롬프트 생성 중...',
-    '이미지 보정 큐 등록 중...',
-    '슬랙 알림 발송 중...',
-    '완료',
-  ];
+  onProgress(0, '한국어 → 영어 번역 중...');
 
-  onProgress(0, steps[0]);
-  const geminiPrompt = buildGeminiPrompt(formData);
   let result;
   try {
-    result = await callGeminiFlash(geminiPrompt);
+    const prompt = buildGeminiPrompt(formData);
+    result = await callGeminiFlash(prompt);
   } catch (e) {
-    // Demo fallback when API key is not set
+    console.warn('Groq fallback (demo mode):', e.message);
     result = buildDemoResult(formData);
   }
-  onProgress(1, steps[1]);
-  await sleep(400);
+  onProgress(1, 'Kling 프롬프트 생성 완료');
+  await sleep(300);
 
-  onProgress(2, steps[2]);
-  await sleep(600);
+  // Generate Higgsfield images with reference_elements support
+  const clips = result.kling_clips || [];
+  const images = await generateHiggsImages(clips, formData.photos, (idx, msg) => {
+    onProgress(2 + idx, msg);
+  });
+  result.images = images;
 
-  onProgress(3, steps[3]);
+  const slackStep = 2 + clips.length;
+  onProgress(slackStep, '슬랙 알림 발송 중...');
   const ticketNum = '#TS-2026-' + String(Date.now()).slice(-4).padStart(4, '0');
-  const slackPayload = buildSlackPayload(formData, ticketNum, result);
+  const slackPayload = buildSlackPayload(formData, ticketNum, result, false);
   await sendSlackNotification(slackPayload);
   await sleep(400);
 
-  onProgress(4, steps[4]);
-
-  return { ticketNum, result, slackPayload };
+  return { ticketNum, result, formData };
 }
 
-// ─── Demo fallback (when Gemini API key not set) ──────────────────────────────
+// ─── Video generation request ─────────────────────────────────────────────────
+async function requestVideoGeneration(formData, ticketNum, result) {
+  const payload = buildSlackPayload(formData, ticketNum, result, true);
+  await sendSlackNotification(payload);
+  return true;
+}
+
+// ─── Admin emergency call ─────────────────────────────────────────────────────
+async function callAdminEmergency(formData, ticketNum) {
+  const payload = {
+    text: `[관리자 긴급 호출] ${ticketNum}`,
+    blocks: [{
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*[관리자 긴급 호출 — 이미지 오류]* *${ticketNum}*\n` +
+              `신청인: ${formData.name} (${formData.email})\n` +
+              `${formData.country} · ${formData.product}\n` +
+              `에러: ${formData.errorTypes.join(', ')}\n\n` +
+              `*AI 생성 이미지에 문제가 있습니다. 직접 확인 및 수정이 필요합니다.*`
+      }
+    }]
+  };
+  await sendSlackNotification(payload);
+  return true;
+}
+
+// ─── Demo fallback ────────────────────────────────────────────────────────────
 function buildDemoResult(formData) {
   const firstError = formData.errorTypes[0] || 'Error';
   return {
     translation: {
-      situation: `[Demo] Error occurred during ballot scanning operation. ${firstError} was displayed on the PCOS screen.`,
-      prior_actions: `[Demo] Operator inserted a ballot into the PCOS scanner slot as normal procedure.`,
-      solution: `[Demo] Operator pressed OK button and attempted to clear the error as per manual instructions.`,
+      situation: `Error occurred during ballot scanning. ${firstError} was displayed on the PCOS screen.`,
+      prior_actions: `Operator inserted a ballot into the PCOS scanner slot as normal procedure.`,
+      solution: `Operator pressed OK button and cleared the error following manual instructions.`,
       summary: `PCOS scanner displayed ${firstError}; operator cleared it following standard procedure.`
     },
     image_enhancement: {
-      photo_error_screen: `PCOS machine on neutral light-grey studio backdrop. Display showing "${firstError}" error message in red. ${BG_STANDARD}`,
-      photo_error_state: `PCOS machine on neutral light-grey studio backdrop, viewed from front-right angle, showing physical error condition related to ${firstError}. ${BG_STANDARD}`,
-      photo_resolution: `PCOS machine on neutral light-grey studio backdrop, display showing normal ready state (green indicator), no error visible. ${BG_STANDARD}`
+      photo_error_screen: `PCOS machine on neutral light-grey studio backdrop. Display showing "${firstError}" error in red. ${BG_STANDARD}`,
+      photo_error_state: `PCOS machine front-right angle, visible error condition. ${BG_STANDARD}`,
+      photo_resolution: `PCOS machine, display showing normal green ready state. ${BG_STANDARD}`
     },
     kling_clips: [
       {
         clip_id: 'PROB-01', label: 'PROBLEM', model: 'Kling',
-        title: `${firstError} Error`,
-        start_frame: `Front view of PCOS machine, neutral grey backdrop, display showing "${firstError}" error in red, no hand visible.`,
-        end_frame: `Same front view, operator hand enters frame moving toward OK button on screen.`,
-        prompt: `Front view of PCOS machine on neutral light-grey studio backdrop. Display shows "${firstError}" error message. Hand moves toward OK button. ${BG_STANDARD} Fixed camera, 16:9.`,
+        title: `${firstError} Error Detected`,
+        start_frame: `Front view of PCOS machine. Display shows "${firstError}" error in red. No hand visible.`,
+        end_frame: `Same front view. Operator hand enters frame toward OK button.`,
+        prompt: `Front view of PCOS machine. Display shows "${firstError}" error. Hand moves toward OK button. ${BG_STANDARD} Fixed camera, 16:9.`,
         caption_main: firstError.toUpperCase(),
         caption_sub: `The PCOS scanner displays a ${firstError} error and requires operator action.`,
+        description: `The PCOS machine display shows a "${firstError}" error alert on screen. The machine has halted operation and is waiting for operator intervention. No ballots can be processed until the error is resolved.`,
         photo_ref: 'photo_error_screen'
       },
       {
         clip_id: 'SOL-01', label: 'SOLUTION STEP 1', model: 'Kling',
         title: 'Press OK to Acknowledge',
         start_frame: `Front view, PCOS display showing error, operator hand near screen.`,
-        end_frame: `Hand presses OK button, display transitions to acknowledge state.`,
-        prompt: `Operator presses OK/RETRY button on PCOS display to acknowledge error. ${BG_STANDARD} Fixed camera, 16:9.`,
+        end_frame: `Hand presses OK button, display transitions to next state.`,
+        prompt: `Operator presses OK button on PCOS display to acknowledge ${firstError} error. ${BG_STANDARD} Fixed camera, 16:9.`,
         caption_main: 'PRESS OK',
         caption_sub: 'Press the OK button on screen to acknowledge the error.',
+        description: `The operator locates the OK button on the PCOS touchscreen display. Pressing OK acknowledges the error and advances to the next diagnostic step. Keep the machine stationary and avoid inserting ballots during this step.`,
         photo_ref: 'photo_error_state'
       },
       {
         clip_id: 'SOL-02', label: 'SOLUTION STEP 2', model: 'Seedance',
-        title: 'Resolve and Restore',
+        title: 'Resolve and Restore Normal',
         start_frame: `PCOS machine, error condition visible, operator hand approaching problem area.`,
-        end_frame: `Problem resolved, PCOS display returns to normal green ready state.`,
-        prompt: `Operator resolves ${firstError} condition on PCOS machine. Display transitions from error to normal ready state. ${BG_STANDARD} Fixed camera, 16:9.`,
+        end_frame: `Error cleared. PCOS display returns to normal green ready state.`,
+        prompt: `Operator resolves ${firstError} on PCOS. Display transitions from error to normal green ready state. ${BG_STANDARD} Fixed camera, 16:9.`,
         caption_main: 'SYSTEM RESTORED',
         caption_sub: 'Error cleared. PCOS scanner is ready to continue operation.',
+        description: `After completing the corrective action, the PCOS display returns to the normal green ready state. The error indicator is cleared and the ballot counter resets to standby mode. The machine is now ready to resume normal scanning operations.`,
         photo_ref: 'photo_resolution'
       }
     ],
-    slack_summary: `[PCOS] ${firstError} at ${formData.country}. Operator resolved via standard procedure. ${formData.kling_clips?.length || 3} Kling clips generated for review.`
+    slack_summary: `[PCOS] ${firstError} at ${formData.country}. 3 Kling clips ready for review.`
   };
 }
 

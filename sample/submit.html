@@ -215,6 +215,42 @@ textarea { resize:vertical; min-height:80px; }
 .btn-outline { padding:0.55rem 1.3rem; border-radius:8px; border:1.5px solid var(--navy); color:var(--navy); font-size:0.82rem; font-weight:700; cursor:pointer; background:var(--white); transition:all 0.2s; font-family:'GmarketSans','Malgun Gothic',sans-serif; }
 .btn-outline:hover { background:var(--navy); color:var(--white); }
 .empty-state { padding:1.4rem; text-align:center; color:var(--steel); font-size:0.83rem; font-weight:300; }
+
+/* IMAGE PANEL */
+.img-panel-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.9rem; margin-bottom:1rem; }
+@media(max-width:700px){ .img-panel-grid { grid-template-columns:1fr; } }
+.img-card { border:1.5px solid var(--line); border-radius:12px; overflow:hidden; background:var(--charcoal); }
+.img-card img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+.img-card-skeleton { width:100%; aspect-ratio:16/9; background:linear-gradient(90deg,#1a1d21 25%,#2d333b 50%,#1a1d21 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.img-card-body { background:var(--white); padding:0.75rem 0.9rem; }
+.img-card-head { display:flex; align-items:center; gap:0.45rem; margin-bottom:0.4rem; }
+.img-clip-id { font-size:0.58rem; font-weight:700; background:var(--navy); color:var(--white); border-radius:4px; padding:2px 7px; }
+.img-clip-label { font-size:0.65rem; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:0.04em; }
+.img-clip-model { margin-left:auto; font-size:0.6rem; color:var(--steel); background:var(--fog); border-radius:4px; padding:2px 6px; font-weight:700; }
+.img-caption-main { font-size:0.82rem; font-weight:700; color:var(--charcoal); letter-spacing:0.06em; margin-bottom:0.2rem; }
+.img-caption-sub { font-size:0.7rem; color:var(--steel); font-weight:300; line-height:1.4; }
+.img-description { font-size:0.68rem; color:var(--charcoal); font-weight:300; line-height:1.55; margin-top:0.45rem; padding:0.45rem 0.6rem; border-left:2px solid var(--line); background:var(--fog); border-radius:0 5px 5px 0; }
+.img-prompt-toggle { font-size:0.66rem; color:var(--blue); cursor:pointer; margin-top:0.4rem; font-weight:700; }
+.img-prompt-box { display:none; margin-top:0.4rem; background:var(--fog); border-radius:6px; padding:0.5rem 0.65rem; font-size:0.7rem; color:var(--slate); line-height:1.6; font-weight:300; }
+
+/* ADMIN CALL */
+.btn-admin-call { display:inline-flex; align-items:center; gap:0.5rem; padding:0.52rem 1.1rem; border-radius:8px; border:1.5px solid rgba(235,4,20,0.25); color:var(--red); font-size:0.76rem; background:rgba(235,4,20,0.04); cursor:pointer; font-family:'GmarketSans','Malgun Gothic',sans-serif; font-weight:700; transition:all 0.2s; }
+.btn-admin-call:hover { background:rgba(235,4,20,0.1); }
+.btn-admin-call.sent { border-color:var(--green); color:var(--green); background:rgba(36,161,72,0.06); pointer-events:none; }
+
+/* VIDEO REQUEST */
+.video-req-box { background:var(--fog); border-radius:12px; padding:1.4rem; text-align:center; }
+.video-req-title { font-size:1.05rem; font-weight:700; color:var(--navy); margin-bottom:0.4rem; }
+.video-req-desc { font-size:0.8rem; color:var(--slate); font-weight:300; margin-bottom:1.1rem; line-height:1.65; }
+.video-req-btns { display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; }
+.btn-video-yes { padding:0.7rem 1.8rem; border-radius:8px; background:linear-gradient(135deg,var(--navy),var(--blue)); color:var(--white); font-size:0.86rem; font-weight:700; border:none; cursor:pointer; font-family:'GmarketSans','Malgun Gothic',sans-serif; transition:all 0.2s; }
+.btn-video-yes:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(5,25,94,0.28); }
+.btn-video-no { padding:0.7rem 1.8rem; border-radius:8px; border:1.5px solid var(--line); color:var(--slate); font-size:0.86rem; font-weight:700; background:var(--white); cursor:pointer; font-family:'GmarketSans','Malgun Gothic',sans-serif; transition:all 0.2s; }
+.btn-video-no:hover { border-color:var(--navy); color:var(--navy); }
+.video-decision-box { border-radius:10px; padding:1rem 1.2rem; margin-top:0.8rem; font-size:0.83rem; font-weight:500; line-height:1.6; }
+.video-decision-box.yes { background:rgba(5,25,94,0.05); border:1.5px solid rgba(5,25,94,0.15); color:var(--navy); }
+.video-decision-box.no { background:rgba(36,161,72,0.06); border:1.5px solid rgba(36,161,72,0.18); color:var(--green); }
 </style>
 </head>
 <body>
@@ -247,7 +283,7 @@ textarea { resize:vertical; min-height:80px; }
   <div class="sb-line"></div>
   <div class="sb-item" id="sb5"><div class="sb-num">5</div><div class="sb-label">사진 첨부</div></div>
   <div class="sb-line"></div>
-  <div class="sb-item" id="sb6"><div class="sb-num">6</div><div class="sb-label">완료</div></div>
+  <div class="sb-item" id="sb6"><div class="sb-num">6</div><div class="sb-label">이미지 검토</div></div>
 </div>
 
 <div class="form-wrap">
@@ -277,7 +313,7 @@ textarea { resize:vertical; min-height:80px; }
       </div>
       <div class="field">
         <label>에러 코드 / 화면 메시지 <span class="opt">(있는 경우)</span></label>
-        <input type="text" id="iErrCode" placeholder="예: Paper Jam, Error Code 0x04">
+        <input type="text" id="iErrCode" placeholder="예: UIK Number Mismatch, ECF NOT FOUND, Paper Jam">
       </div>
     </div>
   </div>
@@ -429,36 +465,65 @@ textarea { resize:vertical; min-height:80px; }
 <div id="stateProcessing">
   <div class="card" style="text-align:center;padding:3rem 2rem;">
     <div class="spinner"></div>
-    <h2 style="font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem;">AI가 분석 및 프롬프트를 생성하고 있습니다</h2>
-    <p style="color:var(--slate);font-size:0.85rem;font-weight:300;">한국어를 영문으로 번역하고 Kling 클립 스크립트를 생성합니다.</p>
+    <h2 style="font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem;">AI가 분석 및 이미지를 생성하고 있습니다</h2>
+    <p style="color:var(--slate);font-size:0.85rem;font-weight:300;">한국어 번역 → Kling 스크립트 생성 → Higgsfield 이미지 생성</p>
     <ul class="proc-steps">
       <li><div class="p-num act" id="pi1">1</div><span id="pt1">한국어 → 영어 번역 중...</span></li>
-      <li><div class="p-num" id="pi2">2</div><span id="pt2">Kling 클립 프롬프트 생성 중...</span></li>
-      <li><div class="p-num" id="pi3">3</div><span id="pt3">이미지 보정 큐 등록 중...</span></li>
-      <li><div class="p-num" id="pi4">4</div><span id="pt4">슬랙 알림 발송 중...</span></li>
-      <li><div class="p-num" id="pi5">5</div><span id="pt5">담당자 검토 대기...</span></li>
+      <li><div class="p-num" id="pi2">2</div><span id="pt2">Kling 프롬프트 생성 중...</span></li>
+      <li><div class="p-num" id="pi3">3</div><span id="pt3">PROB-01 이미지 생성 중...</span></li>
+      <li><div class="p-num" id="pi4">4</div><span id="pt4">SOL-01 이미지 생성 중...</span></li>
+      <li><div class="p-num" id="pi5">5</div><span id="pt5">SOL-02 이미지 생성 중...</span></li>
+      <li><div class="p-num" id="pi6">6</div><span id="pt6">슬랙 알림 발송 중...</span></li>
+      <li><div class="p-num" id="pi7">7</div><span id="pt7">완료</span></li>
     </ul>
   </div>
 </div>
 
 <!-- Success -->
 <div id="stateSuccess">
-  <div class="card" style="text-align:center;padding:2.5rem 2rem 2rem;">
+
+  <!-- Header -->
+  <div class="card" style="text-align:center;padding:2rem 2rem 1.5rem;">
     <div class="success-check">
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <h2 style="font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:0.4rem;">신청이 완료되었습니다</h2>
-    <p style="color:var(--slate);font-size:0.86rem;font-weight:300;">Gemini Flash가 Kling 클립 스크립트를 생성했습니다. 담당자가 검토 후 Higgsfield에서 영상을 생성합니다.</p>
+    <h2 style="font-size:1.3rem;font-weight:700;color:var(--navy);margin-bottom:0.4rem;">AI 이미지 생성 완료</h2>
+    <p style="color:var(--slate);font-size:0.86rem;font-weight:300;max-width:420px;margin:0 auto 0.9rem;">트러블슈팅 가이드 이미지 3장이 생성되었습니다.<br>영상이 필요하시면 아래에서 요청해주세요.</p>
     <div class="ticket-box">접수번호 <span id="ticketNum"></span></div>
+  </div>
 
-    <!-- Kling Clips -->
-    <div class="clips-section" id="clipsSection"></div>
+  <!-- AI Image Panel -->
+  <div class="card">
+    <div class="card-title">AI 생성 이미지 — Higgsfield · nano_banana_2</div>
+    <div class="img-panel-grid" id="imgPanelGrid"></div>
+    <div style="text-align:center;margin-top:0.3rem;">
+      <button class="btn-admin-call" id="btnAdminCall" onclick="handleAdminCall()">관리자 호출 — 이미지가 잘못 생성되었나요?</button>
+    </div>
+  </div>
 
-    <!-- Translation -->
-    <div style="text-align:left;margin-top:1.2rem;" id="translationSection"></div>
+  <!-- Video Request -->
+  <div class="card" id="videoReqCard">
+    <div class="video-req-box">
+      <div class="video-req-title">영상도 필요하신가요?</div>
+      <p class="video-req-desc">생성된 이미지를 기반으로 Kling · Seedance 트러블슈팅 영상(4~5초)을 자동 제작합니다.<br>담당자가 검토 후 완성 영상을 이메일로 발송합니다.</p>
+      <div class="video-req-btns">
+        <button class="btn-video-yes" onclick="handleVideoYes()">예, 영상도 요청합니다</button>
+        <button class="btn-video-no" onclick="handleVideoNo()">아니오, 이미지로 충분합니다</button>
+      </div>
+    </div>
+    <div id="videoDecisionBox" style="display:none;"></div>
+  </div>
 
-    <!-- Slack preview -->
-    <div class="slack-card" style="margin-top:1.2rem;">
+  <!-- Translation -->
+  <div class="card" id="translationCard" style="display:none;">
+    <div class="card-title">영문 번역 결과</div>
+    <div id="translationSection" style="font-size:0.82rem;color:var(--slate);font-weight:300;line-height:1.75;"></div>
+  </div>
+
+  <!-- Slack preview -->
+  <div class="card">
+    <div class="card-title">슬랙 알림 미리보기</div>
+    <div class="slack-card">
       <div class="slack-header">
         <div class="slack-icon-box">M</div>
         <div class="slack-ch">#miru-troubleshooting</div>
@@ -466,12 +531,13 @@ textarea { resize:vertical; min-height:80px; }
       </div>
       <div class="slack-msg" id="slackMsg"></div>
     </div>
-
-    <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.2rem;">
-      <button class="btn-outline" onclick="resetForm()">새 신청하기</button>
-      <button class="btn-outline" onclick="window.open('admin.html')">관리자 페이지</button>
-    </div>
   </div>
+
+  <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;padding-bottom:2rem;">
+    <button class="btn-outline" onclick="resetForm()">새 신청하기</button>
+    <button class="btn-outline" onclick="window.open('admin.html')">관리자 페이지</button>
+  </div>
+
 </div>
 
 </div><!-- /form-wrap -->
@@ -499,7 +565,7 @@ const COUNTRIES = [
 ];
 
 const ERROR_TYPES = {
-  pcos:['Paper Jam','Scanner Cover Open','Double Feed','Stain In Scanner','Network Connection Error','Battery Low','Display Error','USB Error','Results Not Transmitted'],
+  pcos:['UIK Number Mismatch','Flash Card / SD Card Mismatch','ECF NOT FOUND','Paper Jam','Scanner Cover Open','Double Feed','Stain In Scanner','Network Connection Error','Results Not Transmitted','Battery Low','Display Error','USB / Card Reader Error'],
   ccos:['Paper Jam','Scanner Error','Count Mismatch','Network Connection Error','Print Error'],
   vvd:['Fingerprint Not Recognized','Face Scan Error','Network Error','Battery Low','Display Error','Card Reader Error'],
   bvrd:['Fingerprint Scanner Error','Face Camera Error','Printer Error','Network Error','Card Reader Error','Battery Low','Data Sync Error'],
@@ -720,6 +786,11 @@ function setSB(num, cls) {
 }
 
 // ─── Submit ───────────────────────────────────────────────
+// Store pipeline result for video request handlers
+let _pipelineResult = null;
+let _pipelineFormData = null;
+let _pipelineTicket = null;
+
 async function submitForm() {
   const name  = document.getElementById('iName').value.trim();
   const email = document.getElementById('iEmail').value.trim();
@@ -727,7 +798,7 @@ async function submitForm() {
   if (!selCountry)           { alert('현장 국가를 선택해주세요.'); return; }
   if (!selProduct)           { alert('제품을 선택해주세요.'); return; }
   if (selChips.size === 0)   { alert('에러 유형을 하나 이상 선택해주세요.'); return; }
-  const situation   = document.getElementById('descTextA').value.trim();
+  const situation    = document.getElementById('descTextA').value.trim();
   const priorActions = document.getElementById('descTextB').value.trim();
   const solution     = document.getElementById('descTextC').value.trim();
   if (!situation || !priorActions || !solution) { alert('에러 설명 3개 항목을 모두 작성해주세요.'); return; }
@@ -735,6 +806,13 @@ async function submitForm() {
   const country  = COUNTRIES.find(c => c.id === selCountry);
   const product  = [...country.hw, ...country.sw].find(p => p.id === selProduct);
   const priority = document.getElementById('iPriority');
+
+  // Collect uploaded photo base64 for reference_elements
+  const photos = {
+    error_screen: getPhotoBase64('ua1'),
+    error_state:  getPhotoBase64('ua2'),
+    resolution:   getPhotoBase64('ua3'),
+  };
 
   document.getElementById('stateForm').style.display = 'none';
   document.getElementById('stateProcessing').style.display = 'block';
@@ -746,22 +824,29 @@ async function submitForm() {
     product: product?.name || selProduct,
     errorTypes: [...selChips],
     situation, priorActions, solution,
+    photos,
   };
 
-  let ticketNum = '#TS-2026-' + String(Date.now()).slice(-4).padStart(4,'0');
-  let result = null;
+  let pipelineOut = null;
+  const TOTAL_STEPS = 7;
+
+  function updateProgress(step, msg) {
+    for (let i = 1; i <= TOTAL_STEPS; i++) {
+      const pn = document.getElementById('pi' + i);
+      const pt = document.getElementById('pt' + i);
+      if (!pn) continue;
+      if (i <= step) {
+        pn.className = 'p-num done'; pn.textContent = 'v';
+        if (pt) pt.style.color = 'var(--green)';
+      } else if (i === step + 1) {
+        pn.className = 'p-num act'; pn.textContent = '...';
+        if (pt) pt.textContent = msg;
+      }
+    }
+  }
 
   try {
-    result = await runPipeline(formData, (step, msg) => {
-      for (let i = 1; i <= 5; i++) {
-        const pn = document.getElementById('pi' + i);
-        if (i < step + 1) { pn.className = 'p-num done'; pn.textContent = 'v'; document.getElementById('pt'+i).style.color='var(--green)'; }
-        else if (i === step + 1) { pn.className = 'p-num act'; pn.textContent = '...'; }
-      }
-      if (step + 1 <= 5) document.getElementById('pt' + (step + 1)).textContent = msg;
-      ticketNum = result?.ticketNum || ticketNum;
-    });
-    if (result?.ticketNum) ticketNum = result.ticketNum;
+    pipelineOut = await runPipeline(formData, updateProgress);
   } catch (e) {
     console.error('Pipeline error:', e);
   }
@@ -769,49 +854,29 @@ async function submitForm() {
   await new Promise(r => setTimeout(r, 600));
   document.getElementById('stateProcessing').style.display = 'none';
   document.getElementById('stateSuccess').style.display = 'block';
-  setSB(5,'done'); setSB(6,'done');
+  setSB(5,'done'); setSB(6,'active');
 
-  // Show ticket
+  const ticketNum = pipelineOut?.ticketNum || '#TS-2026-0000';
+  const result    = pipelineOut?.result;
+  _pipelineResult   = result;
+  _pipelineFormData = formData;
+  _pipelineTicket   = ticketNum;
+
   document.getElementById('ticketNum').textContent = ticketNum;
 
-  // Render Kling clips
-  const clips = result?.result?.kling_clips || [];
-  const clipsEl = document.getElementById('clipsSection');
-  if (clips.length) {
-    clipsEl.innerHTML = `<div class="clips-title">AI 생성 Kling 클립 스크립트 (${clips.length}개)</div>` +
-      clips.map(c => `
-        <div class="clip-card">
-          <div class="clip-card-head">
-            <span class="clip-id-badge">${c.clip_id}</span>
-            <span class="clip-label">${c.label}</span>
-            <span class="clip-model-badge">${c.model}</span>
-          </div>
-          <div class="clip-title">${c.title}</div>
-          <div class="clip-frames">
-            <strong>Start:</strong> ${c.start_frame}<br>
-            <strong>End:</strong> ${c.end_frame}
-          </div>
-          <div class="clip-prompt-toggle" onclick="togglePrompt(this)">프롬프트 전문 보기 ▼</div>
-          <div class="clip-prompt-box">${c.prompt}</div>
-          <div class="clip-caption">
-            <div class="clip-caption-main">${c.caption_main}</div>
-            <div class="clip-caption-sub">${c.caption_sub}</div>
-          </div>
-        </div>`).join('');
-  }
+  // Render image panel
+  const clips  = result?.kling_clips || [];
+  const images = result?.images || {};
+  renderImagePanel(clips, images);
 
-  // Translation preview
-  const trans = result?.result?.translation;
+  // Translation
+  const trans = result?.translation;
   if (trans) {
-    document.getElementById('translationSection').innerHTML = `
-      <div style="font-size:0.65rem;font-weight:700;letter-spacing:0.16em;color:var(--red);text-transform:uppercase;margin-bottom:0.7rem;display:flex;align-items:center;gap:0.4rem;">
-        <span style="display:inline-block;width:14px;height:2px;background:var(--red);"></span>영문 번역 결과
-      </div>
-      <div style="background:var(--fog);border-radius:8px;padding:0.9rem 1rem;font-size:0.78rem;color:var(--slate);font-weight:300;line-height:1.7;">
-        <div style="margin-bottom:0.5rem;"><strong style="font-weight:700;color:var(--navy);">Error Situation:</strong> ${trans.situation}</div>
-        <div style="margin-bottom:0.5rem;"><strong style="font-weight:700;color:var(--navy);">Prior Actions:</strong> ${trans.prior_actions}</div>
-        <div><strong style="font-weight:700;color:var(--navy);">Solution:</strong> ${trans.solution}</div>
-      </div>`;
+    document.getElementById('translationCard').style.display = 'block';
+    document.getElementById('translationSection').innerHTML =
+      `<div style="margin-bottom:0.5rem;"><strong style="color:var(--navy);">Error Situation:</strong> ${trans.situation}</div>` +
+      `<div style="margin-bottom:0.5rem;"><strong style="color:var(--navy);">Prior Actions:</strong> ${trans.prior_actions}</div>` +
+      `<div><strong style="color:var(--navy);">Solution:</strong> ${trans.solution}</div>`;
   }
 
   // Slack preview
@@ -821,9 +886,98 @@ async function submitForm() {
     `<span class="slack-tag">${pLabel}</span> <span class="slack-tag">${country.name}</span> <span class="slack-tag">${product?.name||''}</span><br>` +
     `&middot; 신청인: ${name} (${email})<br>` +
     `&middot; 에러: <strong>${[...selChips].join(', ')}</strong><br>` +
-    `&middot; Kling 클립 ${clips.length}개 생성 완료 — 관리자 페이지에서 확인해주세요.`;
+    `&middot; Higgsfield 이미지 ${clips.length}장 생성 완료 — 관리자 검토 대기.`;
 }
 
+function getPhotoBase64(areaId) {
+  const area = document.getElementById(areaId);
+  if (!area) return null;
+  const img = area.querySelector('img.preview-thumb');
+  return img ? img.src : null;
+}
+
+// ─── Image Panel ──────────────────────────────────────────
+function renderImagePanel(clips, images) {
+  const grid = document.getElementById('imgPanelGrid');
+  if (!clips.length) { grid.innerHTML = '<div class="empty-state">AI 결과가 없습니다. 다시 시도해주세요.</div>'; return; }
+
+  grid.innerHTML = clips.map(c => {
+    const imgUrl = images[c.clip_id];
+    const imgHtml = imgUrl
+      ? `<img src="${imgUrl}" alt="${c.clip_id}" onerror="this.parentElement.innerHTML='<div class=\\'img-card-skeleton\\'></div>'">`
+      : `<div class="img-card-skeleton"></div>`;
+    return `
+      <div class="img-card">
+        ${imgHtml}
+        <div class="img-card-body">
+          <div class="img-card-head">
+            <span class="img-clip-id">${c.clip_id}</span>
+            <span class="img-clip-label">${c.label}</span>
+            <span class="img-clip-model">${c.model}</span>
+          </div>
+          <div class="img-caption-main">${c.caption_main}</div>
+          <div class="img-caption-sub">${c.caption_sub}</div>
+          ${c.description ? `<div class="img-description">${c.description}</div>` : ''}
+          <div class="img-prompt-toggle" onclick="toggleImgPrompt(this)">프롬프트 보기 ▼</div>
+          <div class="img-prompt-box">${c.prompt}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleImgPrompt(el) {
+  const box = el.nextElementSibling;
+  const open = box.style.display === 'block';
+  box.style.display = open ? 'none' : 'block';
+  el.textContent = open ? '프롬프트 보기 ▼' : '접기 ▲';
+}
+
+// ─── Admin Call ───────────────────────────────────────────
+async function handleAdminCall() {
+  const btn = document.getElementById('btnAdminCall');
+  btn.textContent = '관리자에게 연락 중...';
+  btn.disabled = true;
+  try {
+    await callAdminEmergency(_pipelineFormData, _pipelineTicket);
+  } catch(e) { console.warn(e); }
+  btn.classList.add('sent');
+  btn.textContent = '담당자에게 연락했습니다 — 곧 수정본이 전달됩니다';
+}
+
+// ─── Video Request ────────────────────────────────────────
+async function handleVideoYes() {
+  const box = document.getElementById('videoReqCard');
+  const reqBox = box.querySelector('.video-req-box');
+  reqBox.style.display = 'none';
+  const decBox = document.getElementById('videoDecisionBox');
+  decBox.style.display = 'block';
+  decBox.className = 'video-decision-box yes';
+  decBox.innerHTML = `
+    <strong style="display:block;margin-bottom:0.4rem;">영상 생성 요청이 완료되었습니다</strong>
+    담당자(김별하)에게 Slack으로 영상 생성 요청이 발송되었습니다.<br>
+    Higgsfield Kling으로 제작 후 <strong>${_pipelineFormData?.email || ''}</strong>로 이메일 발송됩니다.<br>
+    <span style="font-size:0.74rem;color:var(--steel);margin-top:0.4rem;display:block;">평균 처리 시간 10~30분</span>`;
+  try {
+    await requestVideoGeneration(_pipelineFormData, _pipelineTicket, _pipelineResult);
+  } catch(e) { console.warn(e); }
+  // Update Slack preview
+  document.getElementById('slackMsg').innerHTML +=
+    `<br><strong style="color:#86efac;">+ 영상 생성 요청이 추가되었습니다</strong>`;
+}
+
+function handleVideoNo() {
+  const box = document.getElementById('videoReqCard');
+  const reqBox = box.querySelector('.video-req-box');
+  reqBox.style.display = 'none';
+  const decBox = document.getElementById('videoDecisionBox');
+  decBox.style.display = 'block';
+  decBox.className = 'video-decision-box no';
+  decBox.innerHTML = `
+    <strong style="display:block;margin-bottom:0.3rem;">이미지로 진행합니다</strong>
+    생성된 이미지 3장이 <strong>${_pipelineFormData?.email || ''}</strong>로 발송됩니다.`;
+}
+
+// ─── Legacy Kling clips toggle (kept for compatibility) ───
 function togglePrompt(el) {
   const box = el.nextElementSibling;
   const open = box.style.display === 'block';
@@ -842,6 +996,23 @@ function resetForm() {
   ['descA','descB','descC'].forEach(id => { const el=document.getElementById(id); if(el){el.classList.remove('done','entering');if(id!=='descA'){el.style.opacity='0.35';el.style.pointerEvents='none';}} });
   ['photo2Wrap','photo3Wrap'].forEach(id => { const el=document.getElementById(id); if(el) el.classList.remove('visible'); });
   document.getElementById('btnSubmit').disabled = true;
+  // Reset pipeline state
+  _pipelineResult = null; _pipelineFormData = null; _pipelineTicket = null;
+  // Reset video request UI
+  const vr = document.getElementById('videoReqCard');
+  if (vr) {
+    const reqBox = vr.querySelector('.video-req-box'); if (reqBox) reqBox.style.display = 'block';
+    const dec = document.getElementById('videoDecisionBox'); if (dec) { dec.style.display='none'; dec.innerHTML=''; }
+  }
+  const tc = document.getElementById('translationCard'); if (tc) tc.style.display='none';
+  const ac = document.getElementById('btnAdminCall'); if (ac) { ac.disabled=false; ac.classList.remove('sent'); ac.textContent='관리자 호출 — 이미지가 잘못 생성되었나요?'; }
+  // Reset upload boxes
+  ['ua1','ua2','ua3'].forEach(id => {
+    const area = document.getElementById(id);
+    if (!area) return;
+    area.classList.remove('has-file');
+    // Clear preview
+  });
   [1,2,3,4,5,6].forEach(n => setSB(n, n===1?'active':''));
   window.scrollTo({top:0,behavior:'smooth'});
 }
