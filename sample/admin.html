@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRU · 관리자 — 트러블슈팅 영상 검토</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #05195E; --navy2: #0A2A6E; --blue: #123A9E;
+  --ltblue: #AEB7D6; --red: #EB0414; --green: #24A148;
+  --fog: #E9ECF4; --white: #FFFFFF; --charcoal: #161616;
+  --slate: #525252; --steel: #8C8C8C; --line: #C7CEDC;
+}
+body { font-family: 'Malgun Gothic', -apple-system, sans-serif; background: #f0f2f8; color: var(--charcoal); font-size: 14px; min-height: 100vh; }
+
+/* Nav */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: rgba(5,25,94,0.97); backdrop-filter: blur(8px);
+  height: 56px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem; border-bottom: 2px solid var(--red);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo img { height: 24px; }
+.nav-logo-text { font-weight: 700; font-size: 0.85rem; color: var(--white); }
+.nav-logo-text span { color: var(--ltblue); }
+.nav-center { font-size: 0.8rem; color: var(--ltblue); letter-spacing: 0.06em; font-weight: 700; }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+.nav-user { font-size: 0.78rem; color: var(--ltblue); }
+.nav-user strong { color: var(--white); }
+.nav-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.nav-link { font-size: 0.78rem; color: var(--ltblue); text-decoration: none; padding: 0.28rem 0.7rem; border: 1px solid rgba(174,183,214,0.3); border-radius: 4px; }
+.nav-link:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+
+/* Layout */
+.layout { display: grid; grid-template-columns: 380px 1fr; gap: 0; min-height: 100vh; padding-top: 56px; }
+
+/* Left Panel */
+.left-panel { background: var(--white); border-right: 1px solid var(--line); display: flex; flex-direction: column; }
+.panel-header { padding: 1.2rem 1.2rem 0.8rem; border-bottom: 1px solid var(--line); }
+.panel-title { font-size: 0.95rem; font-weight: 900; color: var(--navy); margin-bottom: 0.8rem; }
+
+/* Stats row */
+.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; margin-bottom: 0.8rem; }
+.stat-box { background: var(--fog); border-radius: 8px; padding: 0.6rem 0.5rem; text-align: center; }
+.stat-val { font-size: 1.4rem; font-weight: 900; color: var(--navy); }
+.stat-val.red { color: var(--red); }
+.stat-val.orange { color: #ea580c; }
+.stat-val.green { color: var(--green); }
+.stat-lab { font-size: 0.68rem; color: var(--steel); }
+
+/* Filter tabs */
+.filter-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); padding: 0 1.2rem; }
+.filter-tab { padding: 0.5rem 0.8rem; font-size: 0.78rem; font-weight: 700; color: var(--steel); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; }
+.filter-tab.active { color: var(--navy); border-bottom-color: var(--red); }
+.filter-tab:hover { color: var(--navy); }
+
+/* Request List */
+.request-list { flex: 1; overflow-y: auto; }
+.request-item {
+  padding: 1rem 1.2rem; border-bottom: 1px solid var(--fog);
+  cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 0.3rem;
+}
+.request-item:hover { background: var(--fog); }
+.request-item.active { background: rgba(5,25,94,0.06); border-left: 3px solid var(--navy); }
+.req-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.req-id { font-size: 0.68rem; font-weight: 700; color: var(--steel); font-family: monospace; }
+.req-status { font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 10px; flex-shrink: 0; }
+.status-pending { background: rgba(234,88,12,0.12); color: #c2410c; }
+.status-processing { background: rgba(37,99,235,0.1); color: #1d4ed8; }
+.status-review { background: rgba(235,4,20,0.1); color: var(--red); }
+.status-done { background: rgba(36,161,72,0.1); color: var(--green); }
+.req-machine { font-size: 0.82rem; font-weight: 700; color: var(--navy); }
+.req-error { font-size: 0.78rem; color: var(--slate); }
+.req-meta { display: flex; align-items: center; gap: 0.8rem; }
+.req-location { font-size: 0.7rem; color: var(--steel); display: flex; align-items: center; gap: 0.3rem; }
+.req-time { font-size: 0.68rem; color: var(--steel); margin-left: auto; }
+.priority-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.priority-urgent { background: var(--red); }
+.priority-high { background: #f97316; }
+.priority-normal { background: var(--ltblue); }
+
+/* Right Panel */
+.right-panel { display: flex; flex-direction: column; }
+.detail-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--steel); }
+.detail-empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+.detail-empty p { font-size: 0.9rem; opacity: 0.7; }
+
+/* Detail View */
+.detail-view { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+.detail-header { background: var(--white); border-bottom: 1px solid var(--line); padding: 1.2rem 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.detail-title-wrap { flex: 1; }
+.detail-badge-row { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.detail-id { font-size: 0.7rem; font-family: monospace; color: var(--steel); }
+.priority-badge { font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 10px; }
+.detail-machine { font-size: 1.1rem; font-weight: 900; color: var(--navy); }
+.detail-error { font-size: 0.88rem; color: var(--slate); }
+.detail-actions { display: flex; gap: 0.6rem; flex-shrink: 0; flex-wrap: wrap; }
+.btn-sm { padding: 0.45rem 1rem; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.18s; }
+.btn-regenerate { background: var(--fog); color: var(--navy); border: 1.5px solid var(--line); }
+.btn-regenerate:hover { background: var(--line); }
+.btn-reject { background: rgba(235,4,20,0.08); color: var(--red); border: 1.5px solid rgba(235,4,20,0.2); }
+.btn-reject:hover { background: rgba(235,4,20,0.15); }
+.btn-approve { background: var(--navy); color: var(--white); }
+.btn-approve:hover { background: var(--blue); transform: translateY(-1px); }
+.btn-send { background: var(--green); color: var(--white); }
+.btn-send:hover { background: #1d8a3c; transform: translateY(-1px); }
+
+/* Detail body */
+.detail-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.detail-col { padding: 1.2rem 1.5rem; overflow-y: auto; }
+.detail-col.right { background: #fafbff; border-left: 1px solid var(--line); }
+.detail-section-title { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; color: var(--red); text-transform: uppercase; margin-bottom: 0.8rem; }
+.info-list { list-style: none; padding: 0; margin-bottom: 1.2rem; }
+.info-list li { padding: 0.4rem 0; border-bottom: 1px solid var(--fog); font-size: 0.82rem; display: flex; gap: 0.5rem; }
+.info-list li:last-child { border: none; }
+.info-key { color: var(--steel); min-width: 80px; flex-shrink: 0; }
+.info-val { color: var(--charcoal); font-weight: 500; }
+.desc-box { background: var(--fog); border-radius: 8px; padding: 0.8rem; font-size: 0.82rem; color: var(--slate); line-height: 1.6; margin-bottom: 1rem; }
+
+/* Photo grid */
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1rem; }
+.photo-item { border-radius: 8px; overflow: hidden; border: 1.5px solid var(--line); aspect-ratio: 16/10; position: relative; }
+.photo-item .photo-inner { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+.photo-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(5,25,94,0.75); color: var(--white); font-size: 0.65rem; font-weight: 700; padding: 0.25rem 0.5rem; }
+
+/* Generated Content */
+.generated-section { margin-bottom: 1.2rem; }
+.prompt-box { background: var(--charcoal); border-radius: 8px; padding: 0.8rem; font-size: 0.76rem; font-family: monospace; color: #a8e6cf; line-height: 1.6; margin-bottom: 0.8rem; }
+.prompt-box .pk { color: #81b4ff; }
+.prompt-box .pv { color: #a8e6cf; }
+.video-placeholder { border-radius: 12px; overflow: hidden; margin-bottom: 0.8rem; }
+.video-frame {
+  aspect-ratio: 16/9; background: var(--charcoal);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.video-frame::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%);
+}
+.video-inner { position: relative; z-index: 1; text-align: center; }
+.video-play { font-size: 2.5rem; margin-bottom: 0.5rem; opacity: 0.9; }
+.video-label { font-size: 0.78rem; color: rgba(255,255,255,0.7); }
+.video-meta { font-size: 0.65rem; color: rgba(255,255,255,0.4); margin-top: 0.3rem; }
+.video-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.1); }
+.video-bar-fill { height: 100%; width: 35%; background: var(--red); }
+.clip-row { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.3rem; margin-bottom: 0.8rem; }
+.clip-thumb { width: 80px; height: 50px; border-radius: 6px; background: var(--charcoal); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1rem; border: 2px solid transparent; cursor: pointer; transition: border-color 0.2s; }
+.clip-thumb.active { border-color: var(--red); }
+.clip-thumb:hover { border-color: var(--ltblue); }
+
+/* Timeline */
+.timeline { list-style: none; padding: 0; }
+.tl-item { display: flex; gap: 0.7rem; margin-bottom: 0.6rem; align-items: flex-start; }
+.tl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.tl-content { font-size: 0.78rem; color: var(--slate); line-height: 1.4; }
+.tl-content strong { color: var(--charcoal); display: block; margin-bottom: 1px; }
+.tl-time { font-size: 0.68rem; color: var(--steel); }
+
+/* Send modal overlay */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(5,25,94,0.5); z-index: 500; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--white); border-radius: 20px; padding: 2rem; max-width: 440px; width: 90%; box-shadow: 0 20px 60px rgba(5,25,94,0.3); }
+.modal h3 { font-size: 1.1rem; font-weight: 900; color: var(--navy); margin-bottom: 0.5rem; }
+.modal p { font-size: 0.88rem; color: var(--slate); margin-bottom: 1.2rem; }
+.modal-to { background: var(--fog); border-radius: 8px; padding: 0.7rem 1rem; font-size: 0.85rem; color: var(--charcoal); margin-bottom: 1rem; border: 1.5px solid var(--line); }
+.modal-actions { display: flex; gap: 0.8rem; }
+.modal-btn { flex: 1; padding: 0.7rem; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+.modal-cancel { background: var(--fog); color: var(--slate); }
+.modal-confirm { background: var(--green); color: var(--white); }
+
+/* Toast */
+.toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--charcoal); color: var(--white); padding: 0.8rem 1.5rem; border-radius: 10px; font-size: 0.88rem; z-index: 999; transform: translateY(80px); opacity: 0; transition: all 0.3s; box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.green { border-left: 3px solid var(--green); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../MIRU_AI_트러블슈팅_기획안_2026.html" class="nav-logo">
+    <img src="../miru_white_logo_enhanced_transparent.png" alt="MIRU">
+    <div class="nav-logo-text">MIRU <span>SYSTEMS</span></div>
+  </a>
+  <div class="nav-center">관리자 대시보드 — AI 트러블슈팅</div>
+  <div class="nav-right">
+    <div class="nav-badge-dot"></div>
+    <div class="nav-user">관리자: <strong>김별하</strong></div>
+    <a href="submit.html" class="nav-link">직원 신청 폼 →</a>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- Left Panel -->
+  <div class="left-panel">
+    <div class="panel-header">
+      <div class="panel-title">요청 현황</div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-val red" id="cntPending">2</div>
+          <div class="stat-lab">검토 대기</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val orange">1</div>
+          <div class="stat-lab">생성 중</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val green">12</div>
+          <div class="stat-lab">완료</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterReqs(this,'all')">전체</div>
+      <div class="filter-tab" onclick="filterReqs(this,'pending')">대기</div>
+      <div class="filter-tab" onclick="filterReqs(this,'done')">완료</div>
+    </div>
+
+    <div class="request-list" id="requestList"></div>
+  </div>
+
+  <!-- Right Panel -->
+  <div class="right-panel" id="rightPanel">
+    <div class="detail-empty">
+      <div class="detail-empty-icon">📋</div>
+      <p>왼쪽 목록에서 요청을 선택하세요</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Send Modal -->
+<div class="modal-overlay" id="sendModal">
+  <div class="modal">
+    <h3>영상을 신청자에게 전송합니까?</h3>
+    <p>아래 이메일로 최종 영상 링크가 발송됩니다.</p>
+    <div class="modal-to" id="modalTo"></div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-cancel" onclick="closeModal()">취소</button>
+      <button class="modal-btn modal-confirm" onclick="confirmSend()">이메일 전송</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const REQUESTS = [
+  {
+    id: 'TS-2026-0047', status: 'review', priority: 'high',
+    machine: 'ACM 스캐너', error: 'Ballot Paper Jam',
+    name: '김철수', email: 'cs.kim@mirusystems.com',
+    location: '키르기스스탄 비슈케크', time: '10:25',
+    desc: '투표지 투입 시 스캐너 내부에서 걸려 "A ballot paper jam has occurred" 메시지 표시됨. OK 버튼을 눌러도 반복 발생. 투표지는 절반 정도 들어간 상태.',
+    photos: ['🖥', '🔧'],
+    prompt: {
+      model: 'Higgsfield · Seedance',
+      start: 'ballot_paper_jam_error_screen — ACM scanner display showing jam alert, red text visible',
+      end: 'ballot_removed_scanner_open — operator removes jammed ballot paper from open scanner compartment',
+      duration: '4초 · 720p · 16:9 · 무음',
+    },
+    clips: ['📹','🎬','📽','🎥'],
+    timeline: [
+      { time: '10:25', label: '신청 접수', color: 'var(--ltblue)' },
+      { time: '10:25', label: 'Gemini API 프롬프트 생성 완료', color: '#60a5fa' },
+      { time: '10:26', label: 'Higgsfield 영상 생성 완료 (4.2초)', color: '#a78bfa' },
+      { time: '10:26', label: '슬랙 알림 발송 (#miru-troubleshooting)', color: '#34d399' },
+      { time: '10:26', label: '⏳ 관리자 검토 대기 중', color: 'var(--red)' },
+    ]
+  },
+  {
+    id: 'TS-2026-0046', status: 'review', priority: 'urgent',
+    machine: 'ACM 카메라', error: 'QR Not Recognized',
+    name: '이민준', email: 'mj.lee@mirusystems.com',
+    location: '키르기스스탄 오슈', time: '09:58',
+    desc: '카메라가 영수증의 QR 코드를 인식하지 못해 우측 정보 패널이 빈 상태로 표시됨. 영수증을 여러 번 다시 제시해도 동일 증상 반복.',
+    photos: ['📷', '📋'],
+    prompt: {
+      model: 'Higgsfield · Kling',
+      start: 'camera_qr_not_detected — ACM camera view showing empty info panel, no QR data populated',
+      end: 'qr_aligned_center — operator holds receipt paper straight with QR code centered in camera frame',
+      duration: '3초 · 720p · 16:9 · 무음',
+    },
+    clips: ['📹','🎬','📽'],
+    timeline: [
+      { time: '09:58', label: '신청 접수', color: 'var(--ltblue)' },
+      { time: '09:59', label: 'Gemini API 프롬프트 생성 완료', color: '#60a5fa' },
+      { time: '10:00', label: 'Higgsfield 영상 생성 완료 (3.1초)', color: '#a78bfa' },
+      { time: '10:00', label: '슬랙 알림 발송', color: '#34d399' },
+      { time: '10:00', label: '⏳ 관리자 검토 대기 중', color: 'var(--red)' },
+    ]
+  },
+  {
+    id: 'TS-2026-0045', status: 'processing', priority: 'normal',
+    machine: 'ACM 프린터', error: 'Paper Jam',
+    name: '박지수', email: 'js.park@mirusystems.com',
+    location: '필리핀 마닐라', time: '09:32',
+    desc: '영수증 프린터에서 용지가 걸려 인쇄가 되지 않음.',
+    photos: ['🖨', '📄'],
+    prompt: {
+      model: 'Higgsfield · Seedance',
+      start: 'printer_jam_error — printer display showing paper jam alert',
+      end: 'paper_removed — operator removes jammed paper from printer compartment',
+      duration: '생성 중...',
+    },
+    clips: [],
+    timeline: [
+      { time: '09:32', label: '신청 접수', color: 'var(--ltblue)' },
+      { time: '09:32', label: 'Gemini API 프롬프트 생성 완료', color: '#60a5fa' },
+      { time: '09:33', label: '⏳ Higgsfield 영상 생성 중... (47%)', color: '#f97316' },
+    ]
+  },
+  {
+    id: 'TS-2026-0044', status: 'done', priority: 'normal',
+    machine: 'ACM 스캐너', error: 'Stain In Scanner',
+    name: '최현우', email: 'hw.choi@mirusystems.com',
+    location: '키르기스스탄 비슈케크', time: '어제 16:12',
+    desc: '스캔 결과에 줄무늬 오염이 나타나는 Stain 에러.',
+    photos: ['🔬', '🧹'],
+    prompt: {
+      model: 'Higgsfield · Seedance',
+      start: 'stain_error_screen + stain_sample — scanner display + sample scan showing stain lines',
+      end: 'cis_glass_cleaned — operator wipes CIS glass with cotton wiper, scanner closed',
+      duration: '5초 · 720p · 16:9 · 무음',
+    },
+    clips: ['📹','🎬','📽','🎥','📺'],
+    timeline: [
+      { time: '16:12', label: '신청 접수', color: 'var(--ltblue)' },
+      { time: '16:12', label: '영상 생성 완료', color: '#a78bfa' },
+      { time: '16:13', label: '관리자 승인 (김별하)', color: var = '#34d399' },
+      { time: '16:14', label: '✅ 이메일 전송 완료 → hw.choi@mirusystems.com', color: 'var(--green)' },
+    ]
+  },
+];
+
+// Fix syntax error in timeline
+REQUESTS[3].timeline[2] = { time: '16:13', label: '관리자 승인 (김별하)', color: '#34d399' };
+
+let activeId = null;
+let activeFilter = 'all';
+
+function statusLabel(s) {
+  const map = {
+    review: ['검토 필요','status-review'],
+    processing: ['생성 중','status-processing'],
+    done: ['전송 완료','status-done'],
+    pending: ['대기 중','status-pending'],
+  };
+  return map[s] || [s, ''];
+}
+
+function priorityColor(p) {
+  return p === 'urgent' ? 'priority-urgent' : p === 'high' ? 'priority-high' : 'priority-normal';
+}
+
+function renderList() {
+  const list = document.getElementById('requestList');
+  const filtered = REQUESTS.filter(r => activeFilter === 'all' ? true : activeFilter === 'done' ? r.status === 'done' : r.status !== 'done');
+  list.innerHTML = filtered.map(r => {
+    const [lbl, cls] = statusLabel(r.status);
+    return `<div class="request-item${r.id === activeId ? ' active' : ''}" onclick="selectRequest('${r.id}')">
+      <div class="req-top">
+        <span class="req-id">${r.id}</span>
+        <span class="req-status ${cls}">${lbl}</span>
+      </div>
+      <div class="req-machine">${r.machine} <span style="color:var(--steel);font-weight:400">— ${r.error}</span></div>
+      <div class="req-meta">
+        <div class="priority-dot ${priorityColor(r.priority)}"></div>
+        <div class="req-location">📍 ${r.location}</div>
+        <div class="req-time">${r.time}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterReqs(el, filter) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = filter;
+  renderList();
+}
+
+function selectRequest(id) {
+  activeId = id;
+  renderList();
+  const r = REQUESTS.find(x => x.id === id);
+  if (!r) return;
+  renderDetail(r);
+}
+
+function renderDetail(r) {
+  const [statusLbl] = statusLabel(r.status);
+  const priorityText = r.priority === 'urgent' ? '긴급' : r.priority === 'high' ? '높음' : '일반';
+  const priorityColor = r.priority === 'urgent' ? 'background:rgba(235,4,20,0.12);color:var(--red)' : r.priority === 'high' ? 'background:rgba(249,115,22,0.12);color:#c2410c' : 'background:var(--fog);color:var(--steel)';
+
+  const actionBtns = r.status === 'done'
+    ? `<span style="font-size:0.8rem;color:var(--green);font-weight:700">✅ 전송 완료</span>`
+    : r.status === 'processing'
+    ? `<span style="font-size:0.8rem;color:#1d4ed8;font-weight:700">⏳ 생성 중...</span>`
+    : `
+      <button class="btn-sm btn-regenerate" onclick="regenerate('${r.id}')">🔄 재생성</button>
+      <button class="btn-sm btn-reject" onclick="showToast('반려 처리되었습니다.','')">반려</button>
+      <button class="btn-sm btn-send" onclick="openSendModal('${r.id}')">✉ 승인 & 전송</button>
+    `;
+
+  const clipsHtml = r.clips.length
+    ? `<div class="clip-row">${r.clips.map((c,i) => `<div class="clip-thumb${i===0?' active':''}" onclick="selectClip(this)">${c}<div style="font-size:0.55rem;color:rgba(255,255,255,0.5);text-align:center">컷${i+1}</div></div>`).join('')}</div>`
+    : `<div style="background:rgba(249,115,22,0.08);border-radius:8px;padding:0.7rem;font-size:0.8rem;color:#c2410c;margin-bottom:0.8rem;">⏳ 영상 생성 중... (약 30초 소요)</div>`;
+
+  const timelineHtml = r.timeline.map(t =>
+    `<li class="tl-item"><div class="tl-dot" style="background:${t.color}"></div><div class="tl-content"><strong>${t.label}</strong><span class="tl-time">${t.time}</span></div></li>`
+  ).join('');
+
+  document.getElementById('rightPanel').innerHTML = `
+    <div class="detail-view">
+      <div class="detail-header">
+        <div class="detail-title-wrap">
+          <div class="detail-badge-row">
+            <span class="detail-id">${r.id}</span>
+            <span class="priority-badge" style="${priorityColor}">${priorityText}</span>
+            <span class="req-status ${statusLabel(r.status)[1]}">${statusLbl}</span>
+          </div>
+          <div class="detail-machine">${r.machine} — <span style="color:var(--red)">${r.error}</span></div>
+          <div class="detail-error">신청인: ${r.name} · ${r.location} · ${r.time}</div>
+        </div>
+        <div class="detail-actions">${actionBtns}</div>
+      </div>
+
+      <div class="detail-body">
+        <!-- Left col: request info -->
+        <div class="detail-col">
+          <div class="detail-section-title">요청 정보</div>
+          <ul class="info-list">
+            <li><span class="info-key">신청인</span><span class="info-val">${r.name}</span></li>
+            <li><span class="info-key">이메일</span><span class="info-val">${r.email}</span></li>
+            <li><span class="info-key">현장</span><span class="info-val">${r.location}</span></li>
+            <li><span class="info-key">기계</span><span class="info-val">${r.machine}</span></li>
+            <li><span class="info-key">에러</span><span class="info-val">${r.error}</span></li>
+          </ul>
+
+          <div class="detail-section-title">에러 증상 설명</div>
+          <div class="desc-box">${r.desc}</div>
+
+          <div class="detail-section-title">첨부 사진</div>
+          <div class="photo-grid">
+            ${r.photos.map((p,i) => `
+              <div class="photo-item" style="background:linear-gradient(135deg,#1a1d21,#2d333b)">
+                <div class="photo-inner">${p}</div>
+                <div class="photo-label">${i===0 ? '에러 화면' : '기계 상태'}</div>
+              </div>`).join('')}
+          </div>
+
+          <div class="detail-section-title">처리 타임라인</div>
+          <ul class="timeline">${timelineHtml}</ul>
+        </div>
+
+        <!-- Right col: generated content -->
+        <div class="detail-col right">
+          <div class="detail-section-title">AI 생성 프롬프트</div>
+          <div class="prompt-box">
+<span class="pk">model:</span> <span class="pv">${r.prompt.model}</span>
+<span class="pk">start:</span> <span class="pv">${r.prompt.start}</span>
+<span class="pk">end:</span>   <span class="pv">${r.prompt.end}</span>
+<span class="pk">spec:</span>  <span class="pv">${r.prompt.duration}</span>
+          </div>
+
+          <div class="detail-section-title">생성된 영상 클립</div>
+          ${clipsHtml}
+
+          <div class="video-placeholder">
+            <div class="video-frame">
+              <div class="video-inner">
+                <div class="video-play">${r.clips.length ? '▶' : '⏳'}</div>
+                <div class="video-label">${r.clips.length ? r.error + ' — 트러블슈팅 가이드' : 'Higgsfield 영상 생성 중...'}</div>
+                <div class="video-meta">${r.prompt.duration}</div>
+              </div>
+              ${r.clips.length ? '<div class="video-bar"><div class="video-bar-fill"></div></div>' : ''}
+            </div>
+          </div>
+
+          ${r.status === 'review' ? `
+          <div style="background:rgba(36,161,72,0.06);border:1.5px solid rgba(36,161,72,0.2);border-radius:10px;padding:1rem;font-size:0.8rem;color:var(--slate);line-height:1.6;">
+            <strong style="color:var(--green);display:block;margin-bottom:0.4rem;">✅ 영상 생성 완료</strong>
+            · 품질 확인 후 <strong>승인 & 전송</strong> 버튼을 누르면 신청자에게 이메일 발송<br>
+            · <strong>재생성</strong>을 누르면 프롬프트를 수정해 다시 생성 가능<br>
+            · <strong>반려</strong>시 신청자에게 재신청 안내 메일 자동 발송
+          </div>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function selectClip(el) {
+  el.closest('.clip-row').querySelectorAll('.clip-thumb').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function regenerate(id) {
+  showToast('🔄 Higgsfield에 재생성 요청을 보냈습니다. 약 30초 후 새 클립이 생성됩니다.', '');
+}
+
+let sendTargetId = null;
+function openSendModal(id) {
+  sendTargetId = id;
+  const r = REQUESTS.find(x => x.id === id);
+  document.getElementById('modalTo').textContent = `${r.name} <${r.email}>`;
+  document.getElementById('sendModal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('sendModal').classList.remove('show');
+}
+function confirmSend() {
+  closeModal();
+  const r = REQUESTS.find(x => x.id === sendTargetId);
+  if (r) {
+    r.status = 'done';
+    r.timeline.push({ time: '지금', label: `✅ 이메일 전송 완료 → ${r.email}`, color: 'var(--green)' });
+    document.getElementById('cntPending').textContent = REQUESTS.filter(x => x.status === 'review').length;
+    renderList();
+    selectRequest(r.id);
+    showToast(`✅ ${r.name}에게 영상이 전송되었습니다.`, 'green');
+  }
+}
+
+function showToast(msg, cls) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (cls ? ' ' + cls : '');
+  setTimeout(() => { t.className = 'toast'; }, 3500);
+}
+
+// Init
+renderList();
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRU · 트러블슈팅 영상 자동 생성 신청</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #05195E; --navy2: #0A2A6E; --blue: #123A9E;
+  --ltblue: #AEB7D6; --red: #EB0414; --green: #24A148;
+  --fog: #E9ECF4; --white: #FFFFFF; --charcoal: #161616;
+  --slate: #525252; --steel: #8C8C8C; --line: #C7CEDC;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Malgun Gothic', -apple-system, sans-serif; background: #f0f2f8; color: var(--charcoal); font-size: 15px; min-height: 100vh; }
+
+/* Nav */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(5,25,94,0.97); backdrop-filter: blur(8px);
+  height: 56px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; border-bottom: 2px solid var(--red);
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo img { height: 26px; }
+.nav-logo-text { font-weight: 700; font-size: 0.88rem; color: var(--white); letter-spacing: 0.06em; }
+.nav-logo-text span { color: var(--ltblue); }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+.nav-badge { font-size: 0.75rem; color: var(--ltblue); letter-spacing: 0.06em; }
+.nav-link { font-size: 0.8rem; color: var(--ltblue); text-decoration: none; padding: 0.3rem 0.8rem; border: 1px solid rgba(174,183,214,0.3); border-radius: 4px; transition: all 0.2s; }
+.nav-link:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 60%, #071f7a 100%);
+  padding: 100px 2rem 60px; text-align: center; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; top: -30%; right: -5%; width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(18,58,158,0.3) 0%, transparent 70%); pointer-events: none;
+}
+.hero-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; color: var(--ltblue); text-transform: uppercase; margin-bottom: 1rem; }
+.hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 900; color: var(--white); line-height: 1.2; margin-bottom: 0.8rem; }
+.hero h1 em { color: var(--ltblue); font-style: normal; }
+.hero p { font-size: 1rem; color: rgba(174,183,214,0.85); max-width: 560px; margin: 0 auto; line-height: 1.7; }
+
+/* Form Container */
+.form-wrap { max-width: 780px; margin: -30px auto 60px; padding: 0 1.5rem; position: relative; z-index: 2; }
+
+/* Step indicator */
+.steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2rem; }
+.step { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; font-weight: 700; }
+.step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--ltblue); color: var(--navy); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 900; transition: all 0.3s; }
+.step.active .step-num { background: var(--red); color: var(--white); }
+.step.done .step-num { background: var(--green); color: var(--white); }
+.step-label { color: var(--ltblue); }
+.step.active .step-label { color: var(--white); font-weight: 900; }
+.step-line { width: 60px; height: 2px; background: rgba(174,183,214,0.3); margin: 0 0.5rem; }
+
+/* Card */
+.card { background: var(--white); border-radius: 20px; padding: 2.5rem; box-shadow: 0 8px 40px rgba(5,25,94,0.12); }
+.card-section { margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--line); }
+.card-section:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+.card-section-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; color: var(--red); text-transform: uppercase; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+.card-section-title::before { content: ""; display: inline-block; width: 20px; height: 2px; background: var(--red); }
+
+/* Form Fields */
+.field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.field-grid.single { grid-template-columns: 1fr; }
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+.field label { font-size: 0.82rem; font-weight: 700; color: var(--navy); }
+.field label .req { color: var(--red); margin-left: 2px; }
+.field input, .field select, .field textarea {
+  border: 1.5px solid var(--line); border-radius: 8px;
+  padding: 0.65rem 0.9rem; font-size: 0.9rem; color: var(--charcoal);
+  font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s;
+  background: var(--white);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(18,58,158,0.1);
+}
+.field textarea { resize: vertical; min-height: 100px; }
+.field-hint { font-size: 0.74rem; color: var(--steel); }
+
+/* File Upload */
+.upload-area {
+  border: 2px dashed var(--line); border-radius: 12px; padding: 2rem;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+  background: var(--fog);
+}
+.upload-area:hover { border-color: var(--blue); background: rgba(18,58,158,0.04); }
+.upload-area.has-file { border-color: var(--green); background: rgba(36,161,72,0.05); border-style: solid; }
+.upload-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.upload-text { font-size: 0.85rem; color: var(--slate); }
+.upload-text strong { color: var(--blue); }
+.upload-preview { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1rem; justify-content: center; }
+.preview-thumb { width: 72px; height: 72px; border-radius: 8px; object-fit: cover; border: 2px solid var(--green); }
+.upload-input { display: none; }
+
+/* Error type cascade */
+.error-chip-wrap { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.error-chip {
+  padding: 0.4rem 0.9rem; border-radius: 20px;
+  border: 1.5px solid var(--line); font-size: 0.8rem; color: var(--slate);
+  cursor: pointer; transition: all 0.2s; background: var(--white);
+}
+.error-chip:hover { border-color: var(--blue); color: var(--blue); }
+.error-chip.selected { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+/* Submit Button */
+.btn-primary {
+  width: 100%; padding: 1rem; border-radius: 10px;
+  background: linear-gradient(135deg, var(--navy), var(--blue));
+  color: var(--white); font-size: 1rem; font-weight: 700;
+  border: none; cursor: pointer; transition: all 0.2s;
+  letter-spacing: 0.04em; margin-top: 1.5rem;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(5,25,94,0.3); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Processing State */
+#stateProcessing { display: none; }
+#stateSuccess { display: none; }
+
+.processing-card { text-align: center; padding: 3rem 2rem; }
+.spinner { width: 56px; height: 56px; border: 4px solid var(--fog); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1.5rem; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.processing-steps { list-style: none; padding: 0; margin: 2rem auto; max-width: 320px; text-align: left; }
+.processing-steps li { font-size: 0.88rem; color: var(--slate); padding: 0.5rem 0; display: flex; align-items: center; gap: 0.7rem; }
+.p-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--fog); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; flex-shrink: 0; transition: all 0.4s; }
+.p-icon.done { background: var(--green); color: white; }
+.p-icon.active { background: var(--blue); color: white; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
+.success-card { text-align: center; padding: 3rem 2rem; }
+.success-icon { font-size: 4rem; margin-bottom: 1rem; }
+.success-card h2 { font-size: 1.6rem; font-weight: 900; color: var(--navy); margin-bottom: 0.8rem; }
+.success-card p { font-size: 0.95rem; color: var(--slate); line-height: 1.7; margin-bottom: 0.3rem; }
+.ticket-badge {
+  display: inline-block; background: var(--fog); border-radius: 8px;
+  padding: 0.7rem 1.5rem; font-size: 0.95rem; font-weight: 700; color: var(--navy);
+  margin: 1.5rem 0; border: 1.5px solid var(--line);
+}
+.ticket-badge span { color: var(--red); }
+.btn-secondary {
+  padding: 0.7rem 2rem; border-radius: 8px; border: 1.5px solid var(--navy);
+  color: var(--navy); font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  background: var(--white); transition: all 0.2s; margin-top: 1rem;
+}
+.btn-secondary:hover { background: var(--navy); color: var(--white); }
+
+/* Slack notification preview */
+.slack-preview {
+  background: #1a1d21; border-radius: 12px; padding: 1.2rem 1.5rem; margin: 1.5rem auto;
+  max-width: 400px; text-align: left;
+}
+.slack-header { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.8rem; }
+.slack-icon { width: 32px; height: 32px; border-radius: 6px; background: var(--red); display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.slack-channel { font-size: 0.8rem; color: #e8e8e8; font-weight: 700; }
+.slack-time { font-size: 0.7rem; color: #616061; margin-left: auto; }
+.slack-msg { font-size: 0.82rem; color: #e8e8e8; line-height: 1.6; }
+.slack-msg strong { color: #4ade80; }
+.slack-msg .tag { background: rgba(235,4,20,0.2); color: #fb7185; padding: 0 0.3rem; border-radius: 3px; font-size: 0.75rem; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../MIRU_AI_트러블슈팅_기획안_2026.html" class="nav-logo">
+    <img src="../miru_white_logo_enhanced_transparent.png" alt="MIRU">
+    <div class="nav-logo-text">MIRU <span>SYSTEMS</span></div>
+  </a>
+  <div class="nav-right">
+    <span class="nav-badge">AI 트러블슈팅 시스템</span>
+    <a href="admin.html" class="nav-link">관리자 페이지 →</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">MIRU SYSTEMS · AI 트러블슈팅 영상 자동 생성</div>
+  <h1>에러가 발생했나요?<br><em>영상 가이드</em>를 자동으로 만들어드립니다</h1>
+  <p>에러 정보와 사진을 입력하면 AI가 3~5초 트러블슈팅 영상을 자동 생성합니다.<br>담당자 검토 후 이메일로 발송됩니다.</p>
+</div>
+
+<div class="form-wrap">
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step done" id="step1">
+      <div class="step-num">✓</div>
+      <div class="step-label">에러 정보</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step active" id="step2">
+      <div class="step-num">2</div>
+      <div class="step-label">사진 첨부</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div>
+      <div class="step-label">생성 중</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step4">
+      <div class="step-num">4</div>
+      <div class="step-label">완료</div>
+    </div>
+  </div>
+
+  <!-- Form State -->
+  <div id="stateForm">
+    <div class="card">
+
+      <!-- 기본 정보 -->
+      <div class="card-section">
+        <div class="card-section-title">기본 정보</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>이름 <span class="req">*</span></label>
+            <input type="text" id="inputName" placeholder="홍길동" value="김철수">
+          </div>
+          <div class="field">
+            <label>이메일 <span class="req">*</span></label>
+            <input type="email" id="inputEmail" placeholder="name@mirusystems.com" value="cs.kim@mirusystems.com">
+          </div>
+          <div class="field">
+            <label>현장 위치 <span class="req">*</span></label>
+            <select id="inputLocation">
+              <option value="">-- 선택 --</option>
+              <option value="kyrgyzstan" selected>키르기스스탄 비슈케크</option>
+              <option value="philippines">필리핀 마닐라</option>
+              <option value="korea">한국 (본사)</option>
+              <option value="other">기타</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>우선순위</label>
+            <select id="inputPriority">
+              <option value="normal">일반</option>
+              <option value="high" selected>높음 — 선거 진행 중</option>
+              <option value="urgent">긴급</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- 기계 & 에러 정보 -->
+      <div class="card-section">
+        <div class="card-section-title">기계 및 에러 정보</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>기계 유형 <span class="req">*</span></label>
+            <select id="inputMachine" onchange="updateErrorTypes()">
+              <option value="">-- 선택 --</option>
+              <option value="acm_scanner" selected>ACM — 스캐너 (Scanner)</option>
+              <option value="acm_printer">ACM — 프린터 (Printer)</option>
+              <option value="acm_camera">ACM — 카메라 (Camera)</option>
+              <option value="acm_usb">ACM — USB 연결</option>
+              <option value="acm_battery">ACM — 배터리</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>에러 코드 / 화면 메시지</label>
+            <input type="text" id="inputErrorCode" placeholder="예: Ballot Paper Jam" value="Ballot Paper Jam">
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:1.2rem;">
+          <label>에러 유형 <span class="req">*</span></label>
+          <div class="error-chip-wrap" id="errorChips">
+            <div class="error-chip selected" onclick="selectChip(this)">Ballot Paper Jam</div>
+            <div class="error-chip" onclick="selectChip(this)">Scanner Cover Open</div>
+            <div class="error-chip" onclick="selectChip(this)">Ballot Double Feed</div>
+            <div class="error-chip" onclick="selectChip(this)">Not Found Ballot</div>
+            <div class="error-chip" onclick="selectChip(this)">Stain In Scanner</div>
+            <div class="error-chip" onclick="selectChip(this)">QR Not Detected</div>
+            <div class="error-chip" onclick="selectChip(this)">Stamp Issue</div>
+          </div>
+        </div>
+
+        <div class="field field-grid single" style="margin-top:1.2rem;">
+          <label>에러 증상 상세 설명 <span class="req">*</span></label>
+          <textarea id="inputDesc" placeholder="에러 발생 상황, 에러 발생 전 조작 내용, 현재 화면 상태 등을 자유롭게 설명해주세요.">투표지 투입 시 스캐너 내부에서 걸려 "A ballot paper jam has occurred" 메시지가 화면에 표시됨. OK 버튼을 눌러도 반복 발생. 투표지는 절반 정도 들어간 상태로 멈춰있음.</textarea>
+        </div>
+      </div>
+
+      <!-- 사진 업로드 -->
+      <div class="card-section">
+        <div class="card-section-title">사진 첨부</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>에러 화면 사진 <span class="req">*</span></label>
+            <div class="upload-area has-file" onclick="document.getElementById('fileScreen').click()">
+              <div class="upload-icon">🖥</div>
+              <div class="upload-text"><strong>1개 파일 첨부됨</strong><br>클릭하여 변경</div>
+              <div class="upload-preview">
+                <div style="width:72px;height:72px;border-radius:8px;background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:1.4rem;">📱</div>
+              </div>
+            </div>
+            <input type="file" class="upload-input" id="fileScreen" accept="image/*" onchange="handleFile(this,'previewScreen')">
+            <div class="field-hint">에러 메시지가 표시된 화면을 촬영해주세요.</div>
+          </div>
+          <div class="field">
+            <label>현재 기계 상태 사진</label>
+            <div class="upload-area" id="uploadState" onclick="document.getElementById('fileState').click()">
+              <div class="upload-icon">📷</div>
+              <div class="upload-text"><strong>클릭하여 업로드</strong><br>또는 파일을 드래그하세요</div>
+            </div>
+            <input type="file" class="upload-input" id="fileState" accept="image/*" onchange="handleFile(this,'uploadState')">
+            <div class="field-hint">기계 전체 또는 에러 부위를 촬영해주세요.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button class="btn-primary" onclick="submitForm()">
+        AI 영상 자동 생성 신청 →
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Processing State -->
+  <div id="stateProcessing">
+    <div class="card processing-card">
+      <div class="spinner"></div>
+      <h2 style="font-size:1.4rem;font-weight:900;color:var(--navy);margin-bottom:0.5rem;">AI가 영상을 생성하고 있습니다</h2>
+      <p style="color:var(--slate);font-size:0.9rem;">잠시만 기다려주세요. 약 30~60초 소요됩니다.</p>
+      <ul class="processing-steps" id="processingList">
+        <li><div class="p-icon" id="pi1">1</div><span id="pt1">에러 정보 분석 중...</span></li>
+        <li><div class="p-icon" id="pi2">2</div><span id="pt2">AI 프롬프트 생성 중...</span></li>
+        <li><div class="p-icon" id="pi3">3</div><span id="pt3">Higgsfield 영상 생성 중...</span></li>
+        <li><div class="p-icon" id="pi4">4</div><span id="pt4">슬랙 알림 발송 중...</span></li>
+        <li><div class="p-icon" id="pi5">5</div><span id="pt5">담당자 검토 대기...</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Success State -->
+  <div id="stateSuccess">
+    <div class="card success-card">
+      <div class="success-icon">✅</div>
+      <h2>신청이 완료되었습니다!</h2>
+      <p>영상 초안이 생성되어 담당자에게 전달되었습니다.</p>
+      <p>검토 후 <strong>이메일</strong>로 최종 영상을 받으실 수 있습니다.</p>
+
+      <div class="ticket-badge">접수번호 <span>#TS-2026-0047</span></div>
+
+      <!-- Slack preview -->
+      <div class="slack-preview">
+        <div class="slack-header">
+          <div class="slack-icon">M</div>
+          <div class="slack-channel">#miru-troubleshooting</div>
+          <div class="slack-time">방금 전</div>
+        </div>
+        <div class="slack-msg">
+          🔔 <strong>새 트러블슈팅 요청이 접수되었습니다</strong><br>
+          <span class="tag">긴급</span> <span class="tag">ACM 스캐너</span><br>
+          · 신청인: 김철수 (키르기스스탄)<br>
+          · 에러: <strong>Ballot Paper Jam</strong><br>
+          · 영상 초안 생성 완료 — 관리자 페이지에서 확인해주세요.
+        </div>
+      </div>
+
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <button class="btn-secondary" onclick="resetForm()">새 신청하기</button>
+        <button class="btn-secondary" onclick="window.open('admin.html')">관리자 페이지 보기</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function selectChip(el) {
+  document.querySelectorAll('.error-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function updateErrorTypes() {
+  const machine = document.getElementById('inputMachine').value;
+  const chips = document.getElementById('errorChips');
+  const sets = {
+    acm_scanner: ['Ballot Paper Jam','Scanner Cover Open','Ballot Double Feed','Not Found Ballot','Stain In Scanner','QR Not Detected','Stamp Issue'],
+    acm_printer: ['Paper Jam','Low Ink','Print Quality Error','Paper Misfeed','Cover Open'],
+    acm_camera: ['QR Not Recognized','Camera Connection Error','Focus Error'],
+    acm_usb: ['USB Not Detected','Too Few USB','Too Many USB','WORMed USB','Lost Connection'],
+    acm_battery: ['Low Battery','Battery Error','Power Adapter Issue'],
+  };
+  const list = sets[machine] || [];
+  chips.innerHTML = list.map(t => `<div class="error-chip" onclick="selectChip(this)">${t}</div>`).join('');
+  if (chips.firstChild) chips.firstChild.classList.add('selected');
+}
+
+function handleFile(input, targetId) {
+  const area = document.getElementById(targetId) || input.closest('.upload-area');
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const el = input.previousElementSibling || input.parentElement.querySelector('.upload-area');
+      if (el) {
+        el.classList.add('has-file');
+        const prev = el.querySelector('.upload-preview') || document.createElement('div');
+        prev.className = 'upload-preview';
+        prev.innerHTML = `<img src="${e.target.result}" class="preview-thumb" alt="preview">`;
+        if (!el.querySelector('.upload-preview')) el.appendChild(prev);
+        el.querySelector('.upload-text').innerHTML = `<strong>파일 첨부됨</strong><br>${input.files[0].name}`;
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+async function submitForm() {
+  document.getElementById('stateForm').style.display = 'none';
+  document.getElementById('stateProcessing').style.display = 'block';
+
+  // Update step indicators
+  document.getElementById('step2').className = 'step done';
+  document.getElementById('step2').querySelector('.step-num').textContent = '✓';
+  document.getElementById('step3').className = 'step active';
+
+  const steps = [
+    { id: 1, label: '에러 정보 분석 완료', delay: 1200 },
+    { id: 2, label: 'AI 프롬프트 생성 완료', delay: 2800 },
+    { id: 3, label: 'Higgsfield 영상 생성 완료', delay: 5500 },
+    { id: 4, label: '슬랙 알림 발송 완료', delay: 6500 },
+    { id: 5, label: '담당자 검토 대기 중', delay: 7200 },
+  ];
+
+  for (const s of steps) {
+    await new Promise(r => setTimeout(r, s.delay - (steps[steps.indexOf(s) - 1]?.delay || 0)));
+    document.getElementById(`pi${s.id}`).className = 'p-icon done';
+    document.getElementById(`pi${s.id}`).textContent = '✓';
+    document.getElementById(`pt${s.id}`).textContent = s.label;
+    document.getElementById(`pt${s.id}`).style.color = 'var(--green)';
+    if (s.id < 5) {
+      document.getElementById(`pi${s.id + 1}`).className = 'p-icon active';
+      document.getElementById(`pi${s.id + 1}`).textContent = '→';
+    }
+  }
+
+  await new Promise(r => setTimeout(r, 800));
+  document.getElementById('stateProcessing').style.display = 'none';
+  document.getElementById('stateSuccess').style.display = 'block';
+  document.getElementById('step3').className = 'step done';
+  document.getElementById('step3').querySelector('.step-num').textContent = '✓';
+  document.getElementById('step4').className = 'step active';
+}
+
+function resetForm() {
+  document.getElementById('stateSuccess').style.display = 'none';
+  document.getElementById('stateForm').style.display = 'block';
+  document.getElementById('step1').className = 'step active';
+  document.getElementById('step2').className = 'step';
+  document.getElementById('step3').className = 'step';
+  document.getElementById('step4').className = 'step';
+  ['step1','step2','step3','step4'].forEach(id => {
+    const n = document.getElementById(id).querySelector('.step-num');
+    n.textContent = id.replace('step','');
+  });
+  document.getElementById('step1').querySelector('.step-num').textContent = '1';
+}
+</script>
+</body>
+</html>

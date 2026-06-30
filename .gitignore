@@ -1,0 +1,5 @@
+logo_base64.txt
+*.pyc
+__pycache__/
+.DS_Store
+Thumbs.db
