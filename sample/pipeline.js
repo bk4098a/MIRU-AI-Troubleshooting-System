@@ -168,9 +168,18 @@ async function uploadPhotoToHiggsfield(base64DataUrl, apiKey) {
   }
 }
 
+// ─── Pollinations.ai image generation (free, no API key, CORS OK) ────────────
+// Used when no Higgsfield API key is configured — generates error-specific images
+async function generatePollinationsImage(prompt) {
+  const enriched = `${prompt} Professional studio product photography, clean neutral light-grey background, sharp focus, 16:9`;
+  const seed = Math.floor(Math.random() * 999999);
+  // pollinations.ai returns image directly — usable as img src or preloaded via fetch
+  return `https://image.pollinations.ai/prompt/${encodeURIComponent(enriched)}?width=1280&height=720&nologo=true&model=flux&seed=${seed}`;
+}
+
 // ─── Higgsfield image generation ──────────────────────────────────────────────
 // Builds reference_elements from: user photos + admin master photos
-// Demo mode (no API key): returns pre-generated sample images
+// No API key: uses pollinations.ai for dynamic per-error image generation
 async function generateHiggsImages(clips, photos, onProgress) {
   const apiKey = window.MIRU_CONFIG?.HIGGSFIELD_API_KEY;
 
@@ -223,9 +232,15 @@ async function generateHiggsImages(clips, photos, onProgress) {
         images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
       }
     } else {
-      // Demo mode: simulate generation delay, return pre-generated images
-      await sleep(1000 + i * 300);
-      images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
+      // No Higgsfield key: generate via pollinations.ai (free, dynamic, error-specific)
+      try {
+        const imagePrompt = `PCOS polling station optical scanner, ${clip.start_frame}`;
+        images[clip.clip_id] = await generatePollinationsImage(imagePrompt);
+        await sleep(200); // brief pause between requests
+      } catch(e) {
+        console.warn(`pollinations.ai failed for ${clip.clip_id}:`, e.message);
+        images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
+      }
     }
   }
 
