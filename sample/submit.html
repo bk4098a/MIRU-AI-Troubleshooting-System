@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MIRU · 트러블슈팅 영상 자동 생성 신청</title>
 <style>
+@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; font-style:normal; }
+@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; font-style:normal; }
+@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; font-style:normal; }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --navy:#05195E; --navy2:#0A2A6E; --blue:#123A9E;
@@ -12,14 +16,12 @@
   --fog:#E9ECF4; --white:#FFFFFF; --charcoal:#161616;
   --slate:#525252; --steel:#8C8C8C; --line:#C7CEDC;
 }
-html { scroll-behavior: smooth; }
-body { font-family:'Malgun Gothic',-apple-system,sans-serif; background:#f0f2f8; color:var(--charcoal); font-size:15px; min-height:100vh; }
-
-/* placeholder color */
+html { scroll-behavior:smooth; }
+body { font-family:'GmarketSans','Malgun Gothic',sans-serif; font-weight:500; background:#f0f2f8; color:var(--charcoal); font-size:15px; min-height:100vh; }
 ::placeholder { color:#b0b8c9; }
 :-ms-input-placeholder { color:#b0b8c9; }
 
-/* Nav */
+/* NAV */
 nav {
   position:fixed; top:0; left:0; right:0; z-index:100;
   background:rgba(5,25,94,0.97); backdrop-filter:blur(8px);
@@ -27,171 +29,202 @@ nav {
   padding:0 2rem; border-bottom:2px solid var(--red);
 }
 .nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
-.nav-logo img { height:26px; }
-.nav-logo-text { font-weight:700; font-size:0.88rem; color:var(--white); letter-spacing:0.06em; }
+.nav-logo img { height:24px; }
+.nav-logo-text { font-weight:700; font-size:0.85rem; color:var(--white); letter-spacing:0.08em; }
 .nav-logo-text span { color:var(--ltblue); }
 .nav-right { display:flex; align-items:center; gap:1rem; }
-.nav-badge { font-size:0.75rem; color:var(--ltblue); letter-spacing:0.06em; }
-.nav-link { font-size:0.8rem; color:var(--ltblue); text-decoration:none; padding:0.3rem 0.8rem; border:1px solid rgba(174,183,214,0.3); border-radius:4px; transition:all 0.2s; }
+.nav-badge { font-size:0.72rem; color:var(--ltblue); letter-spacing:0.06em; font-weight:500; }
+.nav-link { font-size:0.78rem; color:var(--ltblue); text-decoration:none; padding:0.28rem 0.75rem; border:1px solid rgba(174,183,214,0.35); border-radius:4px; transition:all 0.2s; font-weight:500; }
 .nav-link:hover { background:rgba(255,255,255,0.1); color:var(--white); }
 
-/* Hero */
+/* HERO */
 .hero {
   background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,#071f7a 100%);
-  padding:96px 2rem 56px; text-align:center; position:relative; overflow:hidden;
+  padding:100px 2rem 60px; text-align:center; position:relative; overflow:hidden;
 }
-.hero::before { content:""; position:absolute; top:-30%; right:-5%; width:500px; height:500px; background:radial-gradient(circle,rgba(18,58,158,0.3) 0%,transparent 70%); pointer-events:none; }
-.hero-tag { font-size:0.72rem; font-weight:700; letter-spacing:0.18em; color:var(--ltblue); text-transform:uppercase; margin-bottom:1rem; }
-.hero h1 { font-size:clamp(1.7rem,3.8vw,2.6rem); font-weight:900; color:var(--white); line-height:1.2; margin-bottom:0.8rem; }
+.hero::before { content:""; position:absolute; top:-30%; right:-5%; width:500px; height:500px; background:radial-gradient(circle,rgba(18,58,158,0.28) 0%,transparent 70%); pointer-events:none; }
+.hero-tag { font-size:0.68rem; font-weight:700; letter-spacing:0.2em; color:var(--ltblue); text-transform:uppercase; margin-bottom:1rem; }
+.hero h1 { font-size:clamp(1.6rem,3.5vw,2.5rem); font-weight:700; color:var(--white); line-height:1.25; margin-bottom:0.9rem; }
 .hero h1 em { color:var(--ltblue); font-style:normal; }
-.hero p { font-size:0.95rem; color:rgba(174,183,214,0.85); max-width:520px; margin:0 auto; line-height:1.7; }
+.hero p { font-size:0.92rem; color:rgba(174,183,214,0.85); max-width:500px; margin:0 auto; line-height:1.75; font-weight:300; }
 
-/* Step Bar */
-.step-bar { display:flex; align-items:center; justify-content:center; gap:0; padding:1.4rem 1rem; background:var(--white); border-bottom:1px solid var(--line); position:sticky; top:56px; z-index:50; }
-.sb-item { display:flex; align-items:center; gap:0.5rem; font-size:0.76rem; font-weight:700; }
-.sb-num { width:26px; height:26px; border-radius:50%; background:var(--fog); color:var(--steel); display:flex; align-items:center; justify-content:center; font-size:0.7rem; font-weight:900; transition:all 0.3s; flex-shrink:0; }
+/* STEP BAR */
+.step-bar {
+  display:flex; align-items:center; justify-content:center; gap:0;
+  padding:1.2rem 1rem; background:var(--white); border-bottom:1px solid var(--line);
+  position:sticky; top:56px; z-index:50;
+}
+.sb-item { display:flex; align-items:center; gap:0.5rem; font-size:0.74rem; font-weight:700; }
+.sb-num { width:24px; height:24px; border-radius:50%; background:var(--fog); color:var(--steel); display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:700; transition:all 0.3s; flex-shrink:0; }
 .sb-item.active .sb-num { background:var(--red); color:var(--white); }
-.sb-item.done .sb-num { background:var(--green); color:var(--white); font-size:0.65rem; }
+.sb-item.done .sb-num { background:var(--green); color:var(--white); }
 .sb-label { color:var(--steel); }
 .sb-item.active .sb-label { color:var(--navy); }
 .sb-item.done .sb-label { color:var(--green); }
-.sb-line { width:40px; height:2px; background:var(--line); margin:0 0.4rem; }
-@media(max-width:600px){ .sb-label { display:none; } .sb-line { width:20px; } }
+.sb-line { width:36px; height:1.5px; background:var(--line); margin:0 0.35rem; }
+@media(max-width:600px){ .sb-label { display:none; } .sb-line { width:16px; } }
 
-/* Form Wrap */
-.form-wrap { max-width:800px; margin:0 auto; padding:2rem 1.5rem 4rem; }
+/* FORM */
+.form-wrap { max-width:780px; margin:0 auto; padding:2rem 1.5rem 4rem; }
 
-/* Card */
-.card { background:var(--white); border-radius:16px; padding:2rem; box-shadow:0 4px 24px rgba(5,25,94,0.09); margin-bottom:1.2rem; }
-.card-title { font-size:0.68rem; font-weight:700; letter-spacing:0.16em; color:var(--red); text-transform:uppercase; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.5rem; }
-.card-title::before { content:""; display:inline-block; width:18px; height:2px; background:var(--red); }
+/* CARD */
+.card { background:var(--white); border-radius:14px; padding:1.8rem; box-shadow:0 2px 18px rgba(5,25,94,0.08); margin-bottom:1rem; }
+.card-title { font-size:0.65rem; font-weight:700; letter-spacing:0.18em; color:var(--red); text-transform:uppercase; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.45rem; }
+.card-title::before { content:""; display:inline-block; width:16px; height:2px; background:var(--red); }
 
-/* Field */
-.field-row { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; }
-.field-row.triple { grid-template-columns:1fr 1fr 1fr; }
-.field { display:flex; flex-direction:column; gap:0.35rem; margin-bottom:0.1rem; }
-label { font-size:0.8rem; font-weight:700; color:var(--navy); }
-label .opt { font-size:0.68rem; color:var(--steel); font-weight:400; margin-left:4px; }
+/* FIELDS */
+.field-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.field { display:flex; flex-direction:column; gap:0.32rem; }
+label { font-size:0.78rem; font-weight:700; color:var(--navy); }
+label .opt { font-size:0.66rem; color:var(--steel); font-weight:500; margin-left:4px; }
 label .req { color:var(--red); }
 input[type=text], input[type=email], select, textarea {
   border:1.5px solid var(--line); border-radius:8px;
-  padding:0.6rem 0.85rem; font-size:0.88rem; color:var(--charcoal);
-  font-family:inherit; transition:border-color 0.2s,box-shadow 0.2s; background:var(--white); width:100%;
+  padding:0.58rem 0.82rem; font-size:0.86rem; color:var(--charcoal);
+  font-family:'GmarketSans','Malgun Gothic',sans-serif; font-weight:500;
+  transition:border-color 0.2s,box-shadow 0.2s; background:var(--white); width:100%;
 }
 input:focus, select:focus, textarea:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 3px rgba(18,58,158,0.1); }
 textarea { resize:vertical; min-height:90px; }
-.field-hint { font-size:0.72rem; color:var(--steel); }
+.field-hint { font-size:0.7rem; color:var(--steel); font-weight:300; }
 
-/* Country Cards */
-.country-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.9rem; }
-@media(max-width:540px){ .country-grid { grid-template-columns:repeat(2,1fr); } }
+/* COUNTRY CARDS */
+.country-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:0.7rem; }
+@media(max-width:700px){ .country-grid { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:480px){ .country-grid { grid-template-columns:repeat(2,1fr); } }
 .country-card {
-  border:2px solid var(--line); border-radius:12px; padding:1rem 0.8rem;
+  border:1.5px solid var(--line); border-radius:10px; padding:1rem 0.6rem;
   text-align:center; cursor:pointer; transition:all 0.2s; background:var(--white);
-  display:flex; flex-direction:column; align-items:center; gap:0.4rem;
+  display:flex; flex-direction:column; align-items:center; gap:0.35rem;
 }
-.country-card:hover { border-color:var(--blue); background:rgba(18,58,158,0.03); transform:translateY(-2px); }
-.country-card.selected { border-color:var(--navy); background:rgba(5,25,94,0.06); box-shadow:0 4px 16px rgba(5,25,94,0.12); }
-.country-flag { font-size:2rem; }
-.country-name { font-size:0.8rem; font-weight:700; color:var(--navy); }
-.country-sub { font-size:0.68rem; color:var(--steel); }
+.country-card:hover { border-color:var(--blue); background:rgba(18,58,158,0.03); transform:translateY(-2px); box-shadow:0 4px 12px rgba(5,25,94,0.1); }
+.country-card.selected { border-color:var(--navy); background:rgba(5,25,94,0.05); box-shadow:0 4px 14px rgba(5,25,94,0.14); }
+.country-code {
+  width:36px; height:36px; border-radius:8px;
+  background:var(--fog); border:1.5px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.65rem; font-weight:700; color:var(--navy); letter-spacing:0.04em;
+  transition:all 0.2s; flex-shrink:0;
+}
+.country-card.selected .country-code { background:var(--navy); color:var(--white); border-color:var(--navy); }
+.country-name { font-size:0.78rem; font-weight:700; color:var(--navy); }
+.country-sub { font-size:0.6rem; color:var(--steel); font-weight:300; line-height:1.4; }
 
-/* HW/SW Tabs */
-.hw-sw-tabs { display:flex; gap:0; border:1.5px solid var(--line); border-radius:10px; overflow:hidden; margin-bottom:1.2rem; }
-.hw-sw-tab { flex:1; padding:0.65rem 1rem; text-align:center; font-size:0.82rem; font-weight:700; cursor:pointer; border:none; background:var(--white); color:var(--steel); transition:all 0.2s; }
+/* HW/SW TABS */
+.hw-sw-tabs { display:flex; border:1.5px solid var(--line); border-radius:8px; overflow:hidden; margin-bottom:1.1rem; }
+.hw-sw-tab { flex:1; padding:0.6rem 1rem; text-align:center; font-size:0.8rem; font-weight:700; cursor:pointer; border:none; background:var(--white); color:var(--steel); transition:all 0.2s; font-family:'GmarketSans','Malgun Gothic',sans-serif; }
 .hw-sw-tab.active { background:var(--navy); color:var(--white); }
 
-/* Product List */
-.product-list { display:flex; flex-direction:column; gap:0.55rem; }
+/* PRODUCT LIST */
+.product-list { display:flex; flex-direction:column; gap:0.5rem; }
 .product-item {
-  border:1.5px solid var(--line); border-radius:10px; padding:0.7rem 1rem;
+  border:1.5px solid var(--line); border-radius:9px; padding:0.75rem 1rem;
   cursor:pointer; transition:all 0.18s; display:flex; align-items:center; gap:0.8rem;
 }
 .product-item:hover { border-color:var(--blue); background:rgba(18,58,158,0.03); }
-.product-item.selected { border-color:var(--navy); background:rgba(5,25,94,0.05); }
-.product-icon { font-size:1.3rem; flex-shrink:0; }
+.product-item.selected { border-color:var(--navy); background:rgba(5,25,94,0.04); }
+.product-badge {
+  width:40px; height:40px; border-radius:7px; background:var(--fog); border:1.5px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.55rem; font-weight:700; color:var(--slate); letter-spacing:0.02em; flex-shrink:0; text-align:center; line-height:1.3;
+}
+.product-item.selected .product-badge { background:var(--navy); color:var(--white); border-color:var(--navy); }
 .product-name { font-size:0.86rem; font-weight:700; color:var(--navy); }
-.product-sub { font-size:0.72rem; color:var(--steel); margin-top:1px; }
-.product-radio { width:18px; height:18px; border:2px solid var(--line); border-radius:50%; margin-left:auto; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.product-sub { font-size:0.7rem; color:var(--steel); margin-top:1px; font-weight:300; }
+.product-radio { width:17px; height:17px; border:2px solid var(--line); border-radius:50%; margin-left:auto; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
 .product-item.selected .product-radio { border-color:var(--navy); background:var(--navy); }
-.product-item.selected .product-radio::after { content:""; width:8px; height:8px; border-radius:50%; background:var(--white); }
+.product-item.selected .product-radio::after { content:""; width:7px; height:7px; border-radius:50%; background:var(--white); }
 
-/* Error Chips */
-.chip-area { display:flex; flex-wrap:wrap; gap:0.55rem; align-items:center; }
+/* ERROR CHIPS */
+.chip-area { display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; }
 .error-chip {
-  padding:0.38rem 0.85rem; border-radius:20px;
-  border:1.5px solid var(--line); font-size:0.8rem; color:var(--slate);
+  padding:0.34rem 0.8rem; border-radius:20px;
+  border:1.5px solid var(--line); font-size:0.78rem; color:var(--slate);
   cursor:pointer; transition:all 0.18s; background:var(--white);
-  user-select:none;
+  user-select:none; font-family:'GmarketSans','Malgun Gothic',sans-serif; font-weight:500;
 }
 .error-chip:hover { border-color:var(--blue); color:var(--blue); }
 .error-chip.selected { background:var(--navy); color:var(--white); border-color:var(--navy); }
 .chip-add-btn {
-  width:32px; height:32px; border-radius:50%; border:1.5px dashed var(--ltblue);
-  display:flex; align-items:center; justify-content:center; cursor:pointer;
-  font-size:1.1rem; color:var(--ltblue); transition:all 0.2s; background:var(--white); flex-shrink:0;
+  padding:0.3rem 0.75rem; border-radius:20px;
+  border:1.5px dashed var(--ltblue); font-size:0.76rem; color:var(--steel);
+  cursor:pointer; transition:all 0.2s; background:var(--white);
+  font-family:'GmarketSans','Malgun Gothic',sans-serif; font-weight:500;
 }
-.chip-add-btn:hover { border-color:var(--blue); color:var(--blue); background:rgba(18,58,158,0.05); }
-.chip-add-input { display:none; align-items:center; gap:0.5rem; width:100%; }
+.chip-add-btn:hover { border-color:var(--blue); color:var(--blue); }
+.chip-add-input { display:none; align-items:center; gap:0.5rem; width:100%; margin-top:0.8rem; }
 .chip-add-input.show { display:flex; }
-.chip-add-input input { flex:1; font-size:0.82rem; }
-.chip-add-input button { padding:0.38rem 0.8rem; border-radius:6px; border:none; background:var(--navy); color:var(--white); font-size:0.78rem; font-weight:700; cursor:pointer; }
+.chip-add-input input { flex:1; max-width:240px; font-size:0.82rem; }
+.btn-add { padding:0.36rem 0.8rem; border-radius:6px; border:none; background:var(--navy); color:var(--white); font-size:0.76rem; font-weight:700; cursor:pointer; font-family:'GmarketSans','Malgun Gothic',sans-serif; }
+.btn-cancel-text { font-size:0.74rem; color:var(--steel); cursor:pointer; }
 
-/* Upload */
-.upload-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-.upload-area {
-  border:2px dashed var(--line); border-radius:12px; padding:1.5rem 1rem;
-  text-align:center; cursor:pointer; transition:all 0.2s; background:var(--fog); position:relative;
+/* SUB TABS */
+.sub-tabs { display:flex; flex-wrap:wrap; gap:0.4rem; width:100%; margin-bottom:0.75rem; }
+.sub-tab {
+  padding:0.28rem 0.75rem; border-radius:6px; font-size:0.74rem; font-weight:700;
+  cursor:pointer; border:1.5px solid var(--line); background:var(--white);
+  color:var(--slate); transition:all 0.18s; font-family:'GmarketSans','Malgun Gothic',sans-serif;
 }
-.upload-area:hover { border-color:var(--blue); background:rgba(18,58,158,0.04); }
-.upload-area.has-file { border-color:var(--green); background:rgba(36,161,72,0.04); border-style:solid; }
-.upload-icon { font-size:1.8rem; margin-bottom:0.4rem; }
-.upload-text { font-size:0.8rem; color:var(--slate); }
-.upload-text strong { color:var(--blue); }
-.upload-preview { margin-top:0.7rem; }
-.preview-thumb { width:60px; height:60px; border-radius:8px; object-fit:cover; border:2px solid var(--green); }
-.upload-input { display:none; }
-.upload-opt-badge { position:absolute; top:8px; right:10px; font-size:0.62rem; font-weight:700; color:var(--steel); background:var(--line); border-radius:4px; padding:1px 6px; }
+.sub-tab.active { background:var(--navy); color:var(--white); border-color:var(--navy); }
+.sub-chips-wrap { display:flex; flex-wrap:wrap; gap:0.5rem; width:100%; }
 
-/* Empty state */
-.empty-state { padding:2rem; text-align:center; color:var(--steel); font-size:0.88rem; }
-.empty-icon { font-size:2.5rem; opacity:0.4; margin-bottom:0.5rem; }
+/* UPLOAD */
+.upload-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+@media(max-width:540px){ .upload-grid { grid-template-columns:1fr; } }
+.upload-box {
+  border:1.5px dashed var(--line); border-radius:10px; padding:1.6rem 1rem;
+  text-align:center; cursor:pointer; transition:all 0.2s; background:var(--fog);
+  position:relative;
+}
+.upload-box:hover { border-color:var(--blue); background:rgba(18,58,158,0.04); }
+.upload-box.has-file { border-color:var(--green); background:rgba(36,161,72,0.04); border-style:solid; }
+.upload-icon-wrap { width:36px; height:36px; border-radius:8px; background:var(--line); margin:0 auto 0.6rem; display:flex; align-items:center; justify-content:center; }
+.upload-icon-wrap svg { width:18px; height:18px; stroke:var(--steel); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.upload-text { font-size:0.8rem; color:var(--slate); line-height:1.5; font-weight:300; }
+.upload-text strong { color:var(--blue); font-weight:700; }
+.upload-opt-badge { position:absolute; top:8px; right:10px; font-size:0.6rem; font-weight:700; color:var(--steel); background:var(--line); border-radius:4px; padding:1px 6px; letter-spacing:0.04em; }
+.upload-input { display:none; }
+.preview-thumb { width:56px; height:56px; border-radius:6px; object-fit:cover; border:2px solid var(--green); margin:0.5rem auto 0; display:block; }
+.info-box { font-size:0.75rem; color:var(--slate); margin-top:0.75rem; padding:0.6rem 0.85rem; background:var(--fog); border-radius:7px; line-height:1.65; font-weight:300; }
 
 /* CTA */
-.cta-wrap { display:flex; gap:1rem; align-items:center; }
 .btn-primary {
-  flex:1; padding:0.95rem; border-radius:10px;
+  width:100%; padding:0.95rem; border-radius:10px;
   background:linear-gradient(135deg,var(--navy),var(--blue));
-  color:var(--white); font-size:0.95rem; font-weight:700;
+  color:var(--white); font-size:0.92rem; font-weight:700;
   border:none; cursor:pointer; transition:all 0.2s;
+  font-family:'GmarketSans','Malgun Gothic',sans-serif;
 }
-.btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(5,25,94,0.3); }
-.btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-.cta-note { font-size:0.76rem; color:var(--steel); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(5,25,94,0.28); }
+.cta-note { text-align:center; font-size:0.73rem; color:var(--steel); margin-top:0.7rem; font-weight:300; }
 
-/* Processing */
+/* PROCESSING */
 #stateProcessing, #stateSuccess { display:none; }
-.spinner { width:52px; height:52px; border:4px solid var(--fog); border-top-color:var(--navy); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 1.5rem; }
+.spinner { width:46px; height:46px; border:3px solid var(--fog); border-top-color:var(--navy); border-radius:50%; animation:spin 0.85s linear infinite; margin:0 auto 1.5rem; }
 @keyframes spin { to { transform:rotate(360deg); } }
-.processing-steps { list-style:none; padding:0; margin:2rem auto; max-width:300px; text-align:left; }
-.processing-steps li { font-size:0.86rem; color:var(--slate); padding:0.45rem 0; display:flex; align-items:center; gap:0.7rem; }
-.p-icon { width:20px; height:20px; border-radius:50%; background:var(--fog); display:flex; align-items:center; justify-content:center; font-size:0.62rem; flex-shrink:0; transition:all 0.4s; color:var(--steel); }
-.p-icon.done { background:var(--green); color:white; }
-.p-icon.act { background:var(--blue); color:white; animation:pulse 1s infinite; }
-@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
-.success-icon { font-size:3.5rem; margin-bottom:1rem; }
-.ticket-badge { display:inline-block; background:var(--fog); border-radius:8px; padding:0.6rem 1.4rem; font-size:0.9rem; font-weight:700; color:var(--navy); margin:1.2rem 0; border:1.5px solid var(--line); }
-.ticket-badge span { color:var(--red); }
-.slack-preview { background:#1a1d21; border-radius:10px; padding:1rem 1.2rem; margin:1.2rem auto; max-width:380px; text-align:left; }
-.slack-header { display:flex; align-items:center; gap:0.6rem; margin-bottom:0.7rem; }
-.slack-icon { width:28px; height:28px; border-radius:5px; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:0.85rem; color:white; font-weight:700; }
-.slack-ch { font-size:0.78rem; color:#e8e8e8; font-weight:700; }
-.slack-time { font-size:0.68rem; color:#616061; margin-left:auto; }
-.slack-msg { font-size:0.8rem; color:#e8e8e8; line-height:1.6; }
-.slack-msg strong { color:#4ade80; }
-.slack-tag { background:rgba(235,4,20,0.2); color:#fb7185; padding:0 0.3rem; border-radius:3px; font-size:0.72rem; }
-.btn-outline { padding:0.65rem 1.5rem; border-radius:8px; border:1.5px solid var(--navy); color:var(--navy); font-size:0.86rem; font-weight:700; cursor:pointer; background:var(--white); transition:all 0.2s; }
+.proc-steps { list-style:none; margin:2rem auto; max-width:290px; text-align:left; }
+.proc-steps li { font-size:0.84rem; color:var(--slate); padding:0.4rem 0; display:flex; align-items:center; gap:0.65rem; font-weight:300; }
+.p-num { width:22px; height:22px; border-radius:50%; background:var(--fog); display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:700; flex-shrink:0; transition:all 0.4s; color:var(--steel); border:1.5px solid var(--line); }
+.p-num.done { background:var(--green); color:white; border-color:var(--green); }
+.p-num.act { background:var(--blue); color:white; border-color:var(--blue); animation:pulse 1s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
+
+/* SUCCESS */
+.success-check { width:54px; height:54px; border-radius:50%; background:var(--green); margin:0 auto 1.2rem; display:flex; align-items:center; justify-content:center; }
+.success-check svg { width:26px; height:26px; stroke:white; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+.ticket-box { display:inline-block; background:var(--fog); border:1.5px solid var(--line); border-radius:8px; padding:0.5rem 1.4rem; font-size:0.88rem; font-weight:700; color:var(--navy); margin:1rem 0; }
+.ticket-box span { color:var(--red); }
+.slack-card { background:#1a1d21; border-radius:10px; padding:1rem 1.2rem; margin:1.1rem auto; max-width:370px; text-align:left; }
+.slack-header { display:flex; align-items:center; gap:0.55rem; margin-bottom:0.65rem; }
+.slack-icon-box { width:26px; height:26px; border-radius:5px; background:var(--red); display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:white; font-weight:700; font-family:'GmarketSans','Malgun Gothic',sans-serif; }
+.slack-ch { font-size:0.74rem; color:#e8e8e8; font-weight:700; }
+.slack-time { font-size:0.64rem; color:#616061; margin-left:auto; }
+.slack-msg { font-size:0.77rem; color:#d1d1d1; line-height:1.7; font-weight:300; }
+.slack-msg strong { color:#86efac; font-weight:700; }
+.slack-tag { display:inline-block; background:rgba(235,4,20,0.18); color:#fca5a5; padding:0 0.28rem; border-radius:3px; font-size:0.66rem; }
+.btn-outline { padding:0.58rem 1.4rem; border-radius:8px; border:1.5px solid var(--navy); color:var(--navy); font-size:0.84rem; font-weight:700; cursor:pointer; background:var(--white); transition:all 0.2s; font-family:'GmarketSans','Malgun Gothic',sans-serif; }
 .btn-outline:hover { background:var(--navy); color:var(--white); }
+.empty-state { padding:1.5rem; text-align:center; color:var(--steel); font-size:0.84rem; font-weight:300; }
 </style>
 </head>
 <body>
@@ -202,26 +235,25 @@ textarea { resize:vertical; min-height:90px; }
     <div class="nav-logo-text">MIRU <span>SYSTEMS</span></div>
   </a>
   <div class="nav-right">
-    <span class="nav-badge">AI 트러블슈팅 시스템</span>
-    <a href="admin.html" class="nav-link">관리자 페이지 →</a>
+    <span class="nav-badge">AI Troubleshooting System</span>
+    <a href="admin.html" class="nav-link">관리자 페이지</a>
   </div>
 </nav>
 
 <div class="hero">
-  <div class="hero-tag">MIRU SYSTEMS · AI 트러블슈팅 영상 자동 생성</div>
+  <div class="hero-tag">MIRU SYSTEMS &nbsp;&middot;&nbsp; AI Troubleshooting Video Auto-Generation</div>
   <h1>에러가 발생했나요?<br><em>영상 가이드</em>를 자동으로 만들어드립니다</h1>
   <p>에러 정보를 입력하면 AI가 3~5초 트러블슈팅 영상을 자동 생성합니다.<br>담당자 검토 후 이메일로 발송됩니다.</p>
 </div>
 
-<!-- Step Bar -->
 <div class="step-bar" id="stepBar">
-  <div class="sb-item done" id="sb1"><div class="sb-num">1</div><div class="sb-label">기본 정보</div></div>
+  <div class="sb-item active" id="sb1"><div class="sb-num">1</div><div class="sb-label">기본 정보</div></div>
   <div class="sb-line"></div>
-  <div class="sb-item active" id="sb2"><div class="sb-num">2</div><div class="sb-label">현장 & 제품</div></div>
+  <div class="sb-item" id="sb2"><div class="sb-num">2</div><div class="sb-label">현장 &amp; 제품</div></div>
   <div class="sb-line"></div>
   <div class="sb-item" id="sb3"><div class="sb-num">3</div><div class="sb-label">에러 유형</div></div>
   <div class="sb-line"></div>
-  <div class="sb-item" id="sb4"><div class="sb-num">4</div><div class="sb-label">사진 & 설명</div></div>
+  <div class="sb-item" id="sb4"><div class="sb-num">4</div><div class="sb-label">사진 &amp; 설명</div></div>
   <div class="sb-line"></div>
   <div class="sb-item" id="sb5"><div class="sb-num">5</div><div class="sb-label">완료</div></div>
 </div>
@@ -229,10 +261,9 @@ textarea { resize:vertical; min-height:90px; }
 <div class="form-wrap">
 <div id="stateForm">
 
-  <!-- 기본 정보 -->
   <div class="card">
     <div class="card-title">기본 정보</div>
-    <div class="field-row">
+    <div class="field-row" style="margin-bottom:1rem">
       <div class="field">
         <label>이름 <span class="req">*</span></label>
         <input type="text" id="iName" placeholder="홍길동">
@@ -242,7 +273,7 @@ textarea { resize:vertical; min-height:90px; }
         <input type="email" id="iEmail" placeholder="name@mirusystems.com">
       </div>
     </div>
-    <div class="field-row" style="margin-top:1rem">
+    <div class="field-row">
       <div class="field">
         <label>우선순위 <span class="req">*</span></label>
         <select id="iPriority">
@@ -253,54 +284,52 @@ textarea { resize:vertical; min-height:90px; }
       </div>
       <div class="field">
         <label>에러 코드 / 화면 메시지 <span class="opt">(있는 경우)</span></label>
-        <input type="text" id="iErrCode" placeholder="예: Ballot Paper Jam, Error Code 0x04...">
+        <input type="text" id="iErrCode" placeholder="예: Paper Jam, Error Code 0x04">
       </div>
     </div>
   </div>
 
-  <!-- 현장 국가 선택 -->
   <div class="card">
-    <div class="card-title">현장 국가 선택 <span style="color:var(--red);font-size:0.8rem;">*</span></div>
+    <div class="card-title">현장 국가 선택 <span style="color:var(--red);font-weight:700;">*</span></div>
     <div class="country-grid" id="countryGrid"></div>
   </div>
 
-  <!-- 제품 선택 (국가 선택 후 표시) -->
   <div class="card" id="productCard" style="display:none">
-    <div class="card-title">제품 선택 <span style="color:var(--red);font-size:0.8rem;">*</span></div>
+    <div class="card-title">제품 선택 <span style="color:var(--red);font-weight:700;">*</span></div>
     <div class="hw-sw-tabs">
-      <button class="hw-sw-tab active" id="tabHW" onclick="switchTab('hw')">🖥 하드웨어 (Hardware)</button>
-      <button class="hw-sw-tab" id="tabSW" onclick="switchTab('sw')">💻 소프트웨어 (Software)</button>
+      <button class="hw-sw-tab active" id="tabHW" onclick="switchTab('hw')">Hardware</button>
+      <button class="hw-sw-tab" id="tabSW" onclick="switchTab('sw')">Software</button>
     </div>
     <div class="product-list" id="productList"></div>
   </div>
 
-  <!-- 에러 유형 (제품 선택 후 표시) -->
   <div class="card" id="errorCard" style="display:none">
-    <div class="card-title">에러 유형 선택 <span style="color:var(--red);font-size:0.8rem;">*</span></div>
+    <div class="card-title">에러 유형 선택 <span style="color:var(--red);font-weight:700;">*</span></div>
     <div class="chip-area" id="chipArea"></div>
-    <div class="chip-add-input" id="chipAddInput" style="margin-top:0.8rem;">
-      <input type="text" id="customChipInput" placeholder="직접 입력..." style="max-width:260px;">
-      <button onclick="addCustomChip()">추가</button>
-      <span style="font-size:0.78rem;color:var(--steel);cursor:pointer;" onclick="closeChipInput()">취소</span>
+    <div class="chip-add-input" id="chipAddInput">
+      <input type="text" id="customInput" placeholder="직접 입력...">
+      <button class="btn-add" onclick="addCustomChip()">추가</button>
+      <span class="btn-cancel-text" onclick="closeChipInput()">취소</span>
     </div>
   </div>
 
-  <!-- 사진 & 설명 -->
   <div class="card">
-    <div class="card-title">에러 상세 설명 <span style="color:var(--red);font-size:0.8rem;">*</span></div>
+    <div class="card-title">에러 상세 설명 <span style="color:var(--red);font-weight:700;">*</span></div>
     <div class="field">
       <textarea id="iDesc" rows="4" placeholder="에러 발생 상황, 에러 발생 전 조작 내용, 현재 기계 상태 등을 자유롭게 설명해주세요.&#10;&#10;예: 투표지 투입 시 스캐너 내부에서 걸려 에러 메시지가 표시됨. OK 버튼을 눌러도 반복 발생."></textarea>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-title">사진 첨부 <span style="font-size:0.72rem;font-weight:400;color:var(--steel);letter-spacing:0;text-transform:none;">(선택 — 있으면 영상 품질이 크게 향상됩니다)</span></div>
+    <div class="card-title">사진 첨부 <span style="font-size:0.68rem;font-weight:500;color:var(--steel);letter-spacing:0;text-transform:none;">(선택 사항)</span></div>
     <div class="upload-grid">
       <div class="field">
         <label>에러 화면 사진 <span class="opt">(선택)</span></label>
-        <div class="upload-area" id="ua1" onclick="document.getElementById('f1').click()">
+        <div class="upload-box" id="ua1" onclick="document.getElementById('f1').click()">
           <div class="upload-opt-badge">선택</div>
-          <div class="upload-icon">🖥</div>
+          <div class="upload-icon-wrap">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="14" rx="2"/><path d="M3 17l4-4 3 3 4-5 4 6"/></svg>
+          </div>
           <div class="upload-text"><strong>클릭하여 업로드</strong><br>에러 화면을 촬영한 사진</div>
         </div>
         <input type="file" class="upload-input" id="f1" accept="image/*" onchange="handleUpload(this,'ua1')">
@@ -308,395 +337,360 @@ textarea { resize:vertical; min-height:90px; }
       </div>
       <div class="field">
         <label>현재 기계 상태 사진 <span class="opt">(선택)</span></label>
-        <div class="upload-area" id="ua2" onclick="document.getElementById('f2').click()">
+        <div class="upload-box" id="ua2" onclick="document.getElementById('f2').click()">
           <div class="upload-opt-badge">선택</div>
-          <div class="upload-icon">📷</div>
+          <div class="upload-icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </div>
           <div class="upload-text"><strong>클릭하여 업로드</strong><br>기계 전체 또는 에러 부위</div>
         </div>
         <input type="file" class="upload-input" id="f2" accept="image/*" onchange="handleUpload(this,'ua2')">
         <div class="field-hint">에러 발생 부위 클로즈업 권장</div>
       </div>
     </div>
-    <p style="font-size:0.78rem;color:var(--steel);margin-top:0.8rem;padding:0.6rem 0.8rem;background:var(--fog);border-radius:6px;">
-      📌 사진이 없어도 신청 가능합니다. 다만 에러 화면 사진이 있으면 AI 영상 품질이 크게 향상됩니다.
-    </p>
+    <div class="info-box">사진이 없어도 신청 가능합니다. 에러 화면 사진이 있으면 AI 영상 품질이 크게 향상됩니다.</div>
   </div>
 
-  <!-- Submit -->
-  <div class="cta-wrap">
-    <button class="btn-primary" id="btnSubmit" onclick="submitForm()">AI 영상 자동 생성 신청 →</button>
-  </div>
-  <p class="cta-note" style="text-align:center;margin-top:0.8rem;">담당자 검토 후 이메일로 최종 영상이 발송됩니다 · 평균 처리 시간 10~30분</p>
+  <button class="btn-primary" onclick="submitForm()">AI 영상 자동 생성 신청</button>
+  <p class="cta-note">담당자 검토 후 이메일로 최종 영상이 발송됩니다 &nbsp;&middot;&nbsp; 평균 처리 시간 10~30분</p>
 
-</div><!-- /stateForm -->
+</div>
 
-<!-- Processing -->
 <div id="stateProcessing">
   <div class="card" style="text-align:center;padding:3rem 2rem;">
     <div class="spinner"></div>
-    <h2 style="font-size:1.3rem;font-weight:900;color:var(--navy);margin-bottom:0.5rem;">AI가 영상을 생성하고 있습니다</h2>
-    <p style="color:var(--slate);font-size:0.88rem;">잠시만 기다려주세요. 약 30~60초 소요됩니다.</p>
-    <ul class="processing-steps">
-      <li><div class="p-icon" id="pi1">1</div><span id="pt1">에러 정보 분석 중...</span></li>
-      <li><div class="p-icon" id="pi2">2</div><span id="pt2">AI 프롬프트 생성 중...</span></li>
-      <li><div class="p-icon" id="pi3">3</div><span id="pt3">Higgsfield 영상 생성 중...</span></li>
-      <li><div class="p-icon" id="pi4">4</div><span id="pt4">슬랙 알림 발송 중...</span></li>
-      <li><div class="p-icon" id="pi5">5</div><span id="pt5">담당자 검토 대기...</span></li>
+    <h2 style="font-size:1.2rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem;">AI가 영상을 생성하고 있습니다</h2>
+    <p style="color:var(--slate);font-size:0.86rem;font-weight:300;">잠시만 기다려주세요. 약 30~60초 소요됩니다.</p>
+    <ul class="proc-steps">
+      <li><div class="p-num" id="pi1">1</div><span id="pt1">에러 정보 분석 중...</span></li>
+      <li><div class="p-num" id="pi2">2</div><span id="pt2">AI 프롬프트 생성 중...</span></li>
+      <li><div class="p-num" id="pi3">3</div><span id="pt3">Higgsfield 영상 생성 중...</span></li>
+      <li><div class="p-num" id="pi4">4</div><span id="pt4">슬랙 알림 발송 중...</span></li>
+      <li><div class="p-num" id="pi5">5</div><span id="pt5">담당자 검토 대기...</span></li>
     </ul>
   </div>
 </div>
 
-<!-- Success -->
 <div id="stateSuccess">
   <div class="card" style="text-align:center;padding:3rem 2rem;">
-    <div class="success-icon">✅</div>
-    <h2 style="font-size:1.5rem;font-weight:900;color:var(--navy);margin-bottom:0.6rem;">신청이 완료되었습니다!</h2>
-    <p style="color:var(--slate);margin-bottom:0.3rem;">영상 초안이 생성되어 담당자에게 전달되었습니다.</p>
-    <p style="color:var(--slate);">검토 후 <strong>이메일</strong>로 최종 영상을 받으실 수 있습니다.</p>
-    <div class="ticket-badge">접수번호 <span id="ticketNum">#TS-2026-0001</span></div>
-    <div class="slack-preview">
+    <div class="success-check">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h2 style="font-size:1.35rem;font-weight:700;color:var(--navy);margin-bottom:0.5rem;">신청이 완료되었습니다</h2>
+    <p style="color:var(--slate);font-size:0.87rem;font-weight:300;margin-bottom:0.2rem;">영상 초안이 생성되어 담당자에게 전달되었습니다.</p>
+    <p style="color:var(--slate);font-size:0.87rem;font-weight:300;">검토 후 <strong style="font-weight:700;">이메일</strong>로 최종 영상을 받으실 수 있습니다.</p>
+    <div class="ticket-box">접수번호 <span id="ticketNum">#TS-2026-0001</span></div>
+    <div class="slack-card">
       <div class="slack-header">
-        <div class="slack-icon">M</div>
+        <div class="slack-icon-box">M</div>
         <div class="slack-ch">#miru-troubleshooting</div>
         <div class="slack-time">방금 전</div>
       </div>
       <div class="slack-msg" id="slackMsg"></div>
     </div>
-    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:1rem;">
+    <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.2rem;">
       <button class="btn-outline" onclick="resetForm()">새 신청하기</button>
-      <button class="btn-outline" onclick="window.open('admin.html')">관리자 페이지 →</button>
+      <button class="btn-outline" onclick="window.open('admin.html')">관리자 페이지</button>
     </div>
   </div>
 </div>
 
-</div><!-- /form-wrap -->
+</div>
 
 <script>
-// ─── DATA ───────────────────────────────────────────────────
 const COUNTRIES = [
-  { id:'philippines', name:'필리핀', flag:'🇵🇭', sub:'ACM · CCS · EMS 등',
+  {
+    id:'philippines', code:'PH', name:'필리핀', sub:'ACM · CCS · EMS',
     hw:[
-      { id:'acm', icon:'🗳', name:'ACM', sub:'Automated Counting Machine' },
-      { id:'ccs_server', icon:'🖥', name:'CCS 서버', sub:'Consolidation & Canvassing Server' },
-      { id:'ccs_printer', icon:'🖨', name:'CCS 프린터', sub:'Consolidation Printer' },
+      { id:'acm',         badge:'ACM',  name:'ACM',        sub:'Automated Counting Machine' },
+      { id:'ccs_server',  badge:'CCS',  name:'CCS 서버',    sub:'Consolidation & Canvassing Server' },
+      { id:'ccs_printer', badge:'PRT',  name:'CCS 프린터',  sub:'Consolidation Printer' },
     ],
     sw:[
-      { id:'ems', icon:'💾', name:'EMS', sub:'Election Management System' },
-      { id:'ccs_sw', icon:'📊', name:'CCS', sub:'Consolidation & Canvassing System' },
-      { id:'edas', icon:'🗂', name:'EDAS', sub:'Election Data Archive System' },
-      { id:'dts_sw', icon:'📡', name:'DTS', sub:'Device Tracking System' },
+      { id:'ems',    badge:'EMS',  name:'EMS',  sub:'Election Management System' },
+      { id:'ccs_sw', badge:'CCS',  name:'CCS',  sub:'Consolidation & Canvassing System' },
+      { id:'edas',   badge:'EDAS', name:'EDAS', sub:'Election Data Archive System' },
+      { id:'dts_sw', badge:'DTS',  name:'DTS',  sub:'Device Tracking System' },
     ]
   },
-  { id:'iraq', name:'이라크', flag:'🇮🇶', sub:'PCOS · VVD · VSAT RTS 등',
+  {
+    id:'iraq', code:'IQ', name:'이라크', sub:'PCOS · VVD · VSAT RTS',
     hw:[
-      { id:'pcos', icon:'🔬', name:'PCOS', sub:'Polling Station Count Optical Scanner' },
-      { id:'ccos', icon:'🔍', name:'CCOS', sub:'Consolidation Count Optical Scanner' },
-      { id:'vvd', icon:'👆', name:'VVD', sub:'Voter Verification Device' },
-      { id:'vsat', icon:'📡', name:'VSAT RTS', sub:'Result Transmission System' },
+      { id:'pcos', badge:'PCOS', name:'PCOS',      sub:'Polling Station Count Optical Scanner' },
+      { id:'ccos', badge:'CCOS', name:'CCOS',      sub:'Consolidation Count Optical Scanner' },
+      { id:'vvd',  badge:'VVD',  name:'VVD',       sub:'Voter Verification Device' },
+      { id:'vsat', badge:'VSAT', name:'VSAT RTS',  sub:'Result Transmission System' },
     ],
     sw:[
-      { id:'ems', icon:'💾', name:'EMS', sub:'Election Management System' },
-      { id:'ccs_sw', icon:'📊', name:'CCS', sub:'Consolidation & Canvassing System' },
-      { id:'edas', icon:'🗂', name:'EDAS', sub:'Election Data Archive System' },
-      { id:'dts_sw', icon:'📡', name:'DTS', sub:'Device Tracking System' },
+      { id:'ems',    badge:'EMS',  name:'EMS',  sub:'Election Management System' },
+      { id:'ccs_sw', badge:'CCS',  name:'CCS',  sub:'Consolidation & Canvassing System' },
+      { id:'edas',   badge:'EDAS', name:'EDAS', sub:'Election Data Archive System' },
+      { id:'dts_sw', badge:'DTS',  name:'DTS',  sub:'Device Tracking System' },
     ]
   },
-  { id:'kyrgyzstan', name:'키르기스스탄', flag:'🇰🇬', sub:'PCOS · RTS',
+  {
+    id:'kyrgyzstan', code:'KG', name:'키르기스스탄', sub:'PCOS · RTS',
     hw:[
-      { id:'pcos', icon:'🔬', name:'PCOS', sub:'Polling Station Count Optical Scanner' },
-      { id:'rts', icon:'📡', name:'RTS', sub:'Results Transmission System' },
+      { id:'pcos', badge:'PCOS', name:'PCOS', sub:'Polling Station Count Optical Scanner' },
+      { id:'rts',  badge:'RTS',  name:'RTS',  sub:'Results Transmission System' },
     ],
     sw:[
-      { id:'ems', icon:'💾', name:'EMS', sub:'Election Management System' },
-      { id:'ccs_sw', icon:'📊', name:'CCS', sub:'Consolidation & Canvassing System' },
+      { id:'ems',    badge:'EMS', name:'EMS', sub:'Election Management System' },
+      { id:'ccs_sw', badge:'CCS', name:'CCS', sub:'Consolidation & Canvassing System' },
     ]
   },
-  { id:'congo', name:'DR 콩고', flag:'🇨🇩', sub:'BMS · VSAT · BVRD 등',
+  {
+    id:'congo', code:'CD', name:'DR 콩고', sub:'BMS · VSAT · BVRD',
     hw:[
-      { id:'bms', icon:'🗳', name:'BMS', sub:'Ballot Marking System' },
-      { id:'vsat', icon:'📡', name:'VSAT RTS', sub:'Result Transmission System' },
-      { id:'bvrd', icon:'🪪', name:'BVRD', sub:'Biometric Voter Registration Device' },
-      { id:'bvvd', icon:'👆', name:'BVVD', sub:'Biometric Voter Verification Device' },
+      { id:'bms',  badge:'BMS',  name:'BMS',      sub:'Ballot Marking System' },
+      { id:'vsat', badge:'VSAT', name:'VSAT RTS', sub:'Result Transmission System' },
+      { id:'bvrd', badge:'BVRD', name:'BVRD',     sub:'Biometric Voter Registration Device' },
+      { id:'bvvd', badge:'BVVD', name:'BVVD',     sub:'Biometric Voter Verification Device' },
     ],
     sw:[
-      { id:'ems', icon:'💾', name:'EMS', sub:'Election Management System' },
+      { id:'ems', badge:'EMS', name:'EMS', sub:'Election Management System' },
     ]
   },
-  { id:'russia', name:'러시아', flag:'🇷🇺', sub:'PCOS',
+  {
+    id:'korea', code:'KR', name:'대한민국', sub:'사전투표 발급기 · 개표분류기',
     hw:[
-      { id:'pcos', icon:'🔬', name:'PCOS', sub:'Polling Station Count Optical Scanner' },
+      { id:'ballot_printer',  badge:'BPR', name:'사전투표 발급기',   sub:'Early Voting Ballot Printer — 전국 8,500대 운용' },
+      { id:'ballot_sorter',   badge:'BSR', name:'개표분류기',        sub:'Ballot Counting & Sorting System' },
+      { id:'voter_terminal',  badge:'VVT', name:'선거인 확인 단말기', sub:'Voter Verification Terminal — 생체인증 지원' },
     ],
-    sw:[]
-  },
-  { id:'zambia', name:'잠비아', flag:'🇿🇲', sub:'BVRD',
-    hw:[
-      { id:'bvrd', icon:'🪪', name:'BVRD', sub:'Biometric Voter Registration Device' },
-    ],
-    sw:[]
+    sw:[
+      { id:'ems',        badge:'EMS', name:'EMS',            sub:'Election Management System' },
+      { id:'voter_mgmt', badge:'VMS', name:'선거인 확인 시스템', sub:'Integrated Voter Verification & Management System' },
+    ]
   },
 ];
 
 const ERROR_TYPES = {
-  // HW
+  pcos:           ['Paper Jam','Scanner Cover Open','Double Feed','Stain In Scanner','Network Connection Error','Battery Low','Display Error','USB Error','Results Not Transmitted'],
+  ccos:           ['Paper Jam','Scanner Error','Count Mismatch','Network Connection Error','Print Error'],
+  vvd:            ['Fingerprint Not Recognized','Face Scan Error','Network Error','Battery Low','Display Error','Card Reader Error'],
+  bvrd:           ['Fingerprint Scanner Error','Face Camera Error','Printer Error','Network Error','Card Reader Error','Battery Low','Data Sync Error'],
+  bvvd:           ['Fingerprint Not Recognized','Face Scan Error','Printer Error','Network Error','Display Error','Battery Low'],
+  bms:            ['Touchscreen Not Responding','Printer Jam','Network Connection Error','Battery Low','Card Reader Error','QR Scan Error','Voting Record Error'],
+  vsat:           ['Satellite Connection Lost','Data Transmission Error','Antenna Alignment Error','Power Error','Encryption Error'],
+  rts:            ['Connection Error','Data Sync Error','Encryption Error','Power Issue'],
+  ccs_server:     ['Server Boot Error','Network Connection Error','Data Sync Error','Storage Full','Report Generation Error'],
+  ccs_printer:    ['Paper Jam','Print Error','Network Connection Error'],
+  ballot_printer: ['용지 걸림 (Paper Jam)','용지 부족','인쇄 품질 오류','네트워크 연결 오류','선거인 인증 오류','바코드 인식 오류','시스템 부팅 오류'],
+  ballot_sorter:  ['용지 걸림','분류 오류','카운트 불일치','네트워크 오류','재시작 필요','센서 감지 오류'],
+  voter_terminal: ['지문 인식 오류','안면 인식 오류','네트워크 연결 오류','선거인 정보 조회 오류','배터리 방전','카드 리더 오류'],
+  ems:            ['로그인 / 접근 오류','기기 등록 오류','투표지 설정 오류','데이터 동기화 오류','내보내기 오류','시스템 충돌'],
+  ccs_sw:         ['집계 오류','서버 연결 오류','데이터 통합 오류','보고서 생성 오류'],
+  edas:           ['아카이브 오류','데이터 조회 오류','저장 공간 부족','백업 실패'],
+  dts_sw:         ['기기 추적 오류','실시간 동기화 오류','지도 뷰 오류','상태 업데이트 오류'],
+  voter_mgmt:     ['선거인 조회 오류','데이터 동기화 오류','서버 연결 오류','인증 오류'],
   acm: {
     'Scanner': ['Ballot Paper Jam','Scanner Cover Open','Ballot Double Feed','Not Found Ballot','Stain In Scanner','QR Not Detected','Stamp Issue'],
-    'Printer': ['Paper Jam','Low Ink','Print Quality Error','Paper Misfeed','Cover Open'],
-    'Camera': ['QR Not Recognized','Camera Connection Error','Focus Error'],
-    'USB': ['USB Not Detected','Too Few USB Detected','Too Many USB Connected','WORMed USB','USB Lost Connection'],
-    'Battery': ['Low Battery Warning','Battery Not Charging','Power Adapter Error'],
+    'Printer':  ['Paper Jam','Low Ink','Print Quality Error','Paper Misfeed','Cover Open'],
+    'Camera':   ['QR Not Recognized','Camera Connection Error','Focus Error'],
+    'USB':      ['USB Not Detected','Too Few USB Detected','Too Many USB Connected','WORMed USB','USB Lost Connection'],
+    'Battery':  ['Low Battery Warning','Battery Not Charging','Power Adapter Error'],
   },
-  pcos: ['Paper Jam','Scanner Cover Open','Double Feed','Stain In Scanner','Network Connection Error','Battery Low','Display Error','USB Error','Results Not Transmitted'],
-  ccos: ['Paper Jam','Scanner Error','Count Mismatch','Network Connection Error','Print Error'],
-  vvd: ['Fingerprint Not Recognized','Face Scan Error','Network Error','Battery Low','Display Error','Card Reader Error'],
-  bvrd: ['Fingerprint Scanner Error','Face Camera Error','Printer Error','Network Error','Card Reader Error','Battery Low','Data Sync Error'],
-  bvvd: ['Fingerprint Not Recognized','Face Scan Error','Printer Error','Network Error','Display Error','Battery Low'],
-  bms: ['Touchscreen Not Responding','Printer Jam','Network Connection Error','Battery Low','Card Reader Error','QR Scan Error','Voting Record Error'],
-  vsat: ['Satellite Connection Lost','Data Transmission Error','Antenna Alignment Error','Power Error','Encryption Error'],
-  rts: ['Connection Error','Data Sync Error','Encryption Error','Power Issue'],
-  ccs_server: ['Server Boot Error','Network Connection Error','Data Sync Error','Storage Full','Report Generation Error'],
-  ccs_printer: ['Paper Jam','Print Error','Network Connection Error'],
-  // SW
-  ems: ['Login / Access Error','Device Registration Error','Ballot Configuration Error','Data Sync Error','Export Error','System Crash'],
-  ccs_sw: ['Tallying Error','Server Connection Error','Data Consolidation Error','Report Generation Error','Canvassing Error'],
-  edas: ['Archive Error','Data Retrieval Error','Storage Full','Backup Failure'],
-  dts_sw: ['Device Tracking Error','Real-time Sync Error','Map View Error','Status Update Error'],
 };
 
-// ─── STATE ──────────────────────────────────────────────────
-let selectedCountry = null;
-let selectedTab = 'hw';
-let selectedProduct = null;
-let selectedChips = new Set();
-let subCategory = null;
+let selCountry = null, selTab = 'hw', selProduct = null;
+let selChips = new Set();
 
-// ─── INIT ────────────────────────────────────────────────────
 function init() {
-  const grid = document.getElementById('countryGrid');
-  grid.innerHTML = COUNTRIES.map(c => `
-    <div class="country-card" id="cc_${c.id}" onclick="selectCountry('${c.id}')">
-      <div class="country-flag">${c.flag}</div>
+  document.getElementById('countryGrid').innerHTML = COUNTRIES.map(c =>
+    `<div class="country-card" id="cc_${c.id}" onclick="selectCountry('${c.id}')">
+      <div class="country-code">${c.code}</div>
       <div class="country-name">${c.name}</div>
       <div class="country-sub">${c.sub}</div>
     </div>`).join('');
 }
 
 function selectCountry(id) {
-  selectedCountry = id;
-  selectedProduct = null;
-  selectedChips.clear();
-  subCategory = null;
-
+  selCountry = id; selProduct = null; selChips.clear();
   document.querySelectorAll('.country-card').forEach(el => el.classList.remove('selected'));
   document.getElementById('cc_' + id).classList.add('selected');
-
   document.getElementById('productCard').style.display = 'block';
   document.getElementById('errorCard').style.display = 'none';
-
-  const country = COUNTRIES.find(c => c.id === id);
-  // Auto-switch to hw if has hw, else sw
-  if (country.hw.length > 0) { switchTab('hw'); }
-  else { switchTab('sw'); }
-
-  setSB(2, 'active');
-  setSB(3, ''); setSB(4, '');
-  document.getElementById('productCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+  const c = COUNTRIES.find(x => x.id === id);
+  switchTab(c.hw.length > 0 ? 'hw' : 'sw');
+  setSB(1,'done'); setSB(2,'active');
+  document.getElementById('productCard').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function switchTab(tab) {
-  selectedTab = tab;
-  selectedProduct = null;
-  selectedChips.clear();
+  selTab = tab; selProduct = null; selChips.clear();
   document.getElementById('errorCard').style.display = 'none';
-  document.getElementById('tabHW').className = 'hw-sw-tab' + (tab==='hw'?' active':'');
-  document.getElementById('tabSW').className = 'hw-sw-tab' + (tab==='sw'?' active':'');
+  document.getElementById('tabHW').className = 'hw-sw-tab' + (tab === 'hw' ? ' active' : '');
+  document.getElementById('tabSW').className = 'hw-sw-tab' + (tab === 'sw' ? ' active' : '');
   renderProducts();
 }
 
 function renderProducts() {
-  if (!selectedCountry) return;
-  const country = COUNTRIES.find(c => c.id === selectedCountry);
-  const list = selectedTab === 'hw' ? country.hw : country.sw;
-  const container = document.getElementById('productList');
-  if (!list.length) {
-    container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div>해당 카테고리의 제품이 없습니다.</div>';
-    return;
-  }
-  container.innerHTML = list.map(p => `
-    <div class="product-item" id="pi_${p.id}" onclick="selectProduct('${p.id}','${p.name}')">
-      <div class="product-icon">${p.icon}</div>
+  if (!selCountry) return;
+  const c    = COUNTRIES.find(x => x.id === selCountry);
+  const list = selTab === 'hw' ? c.hw : c.sw;
+  const el   = document.getElementById('productList');
+  if (!list.length) { el.innerHTML = '<div class="empty-state">해당 카테고리의 제품이 없습니다.</div>'; return; }
+  el.innerHTML = list.map(p =>
+    `<div class="product-item" id="pi_${p.id}" onclick="selectProduct('${p.id}')">
+      <div class="product-badge">${p.badge}</div>
       <div><div class="product-name">${p.name}</div><div class="product-sub">${p.sub}</div></div>
       <div class="product-radio" id="pr_${p.id}"></div>
     </div>`).join('');
 }
 
-function selectProduct(id, name) {
-  selectedProduct = id;
-  selectedChips.clear();
-  subCategory = null;
+function selectProduct(id) {
+  selProduct = id; selChips.clear();
   document.querySelectorAll('.product-item').forEach(el => el.classList.remove('selected'));
   document.getElementById('pi_' + id).classList.add('selected');
   document.getElementById('errorCard').style.display = 'block';
-  renderErrorChips(id);
-  setSB(3, 'active');
-  setSB(4, '');
-  document.getElementById('errorCard').scrollIntoView({behavior:'smooth', block:'nearest'});
+  renderChips(id);
+  setSB(2,'done'); setSB(3,'active');
+  document.getElementById('errorCard').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
-function renderErrorChips(productId) {
+function renderChips(pid) {
   const area = document.getElementById('chipArea');
-  const errors = ERROR_TYPES[productId];
-  if (!errors) { area.innerHTML = '<span style="font-size:0.85rem;color:var(--steel)">에러 유형을 직접 입력해주세요.</span>'; appendAddBtn(area); return; }
+  const data = ERROR_TYPES[pid];
+  area.innerHTML = '';
+  if (!data) { appendAddBtn(area); return; }
 
-  if (Array.isArray(errors)) {
-    // simple list
-    area.innerHTML = errors.map(e => `<div class="error-chip" onclick="toggleChip(this,'${e}')">${e}</div>`).join('');
+  if (Array.isArray(data)) {
+    data.forEach(e => area.appendChild(makeChip(e)));
   } else {
-    // grouped (ACM)
-    area.innerHTML = '';
-    // sub-category tabs first
-    const subTabWrap = document.createElement('div');
-    subTabWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:0.5rem;width:100%;margin-bottom:0.7rem;';
-    Object.keys(errors).forEach((cat,i) => {
+    const subTabsEl  = document.createElement('div'); subTabsEl.className  = 'sub-tabs';
+    const chipsWrap  = document.createElement('div'); chipsWrap.className  = 'sub-chips-wrap'; chipsWrap.id = 'subChipsWrap';
+    const cats = Object.keys(data);
+    cats.forEach((cat, i) => {
       const btn = document.createElement('button');
+      btn.className = 'sub-tab' + (i === 0 ? ' active' : '');
       btn.textContent = cat;
-      btn.style.cssText = `padding:0.3rem 0.8rem;border-radius:6px;font-size:0.78rem;font-weight:700;cursor:pointer;border:1.5px solid var(--line);background:${i===0?'var(--navy)':'var(--white)'};color:${i===0?'var(--white)':'var(--steel)'};transition:all 0.18s;`;
       btn.onclick = () => {
-        subTabWrap.querySelectorAll('button').forEach(b => { b.style.background='var(--white)'; b.style.color='var(--steel)'; b.style.borderColor='var(--line)'; });
-        btn.style.background='var(--navy)'; btn.style.color='var(--white)'; btn.style.borderColor='var(--navy)';
-        subCategory = cat;
-        renderSubChips(errors[cat]);
+        subTabsEl.querySelectorAll('.sub-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        chipsWrap.innerHTML = '';
+        data[cat].forEach(e => chipsWrap.appendChild(makeChip(e)));
       };
-      subTabWrap.appendChild(btn);
+      subTabsEl.appendChild(btn);
     });
-    area.appendChild(subTabWrap);
-    // default first category
-    const firstKey = Object.keys(errors)[0];
-    subCategory = firstKey;
-    const chipsWrap = document.createElement('div');
-    chipsWrap.id = 'subChipsWrap';
-    chipsWrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:0.55rem;width:100%;';
-    area.appendChild(chipsWrap);
-    renderSubChips(errors[firstKey]);
+    area.appendChild(subTabsEl); area.appendChild(chipsWrap);
+    data[cats[0]].forEach(e => chipsWrap.appendChild(makeChip(e)));
   }
   appendAddBtn(area);
 }
 
-function renderSubChips(list) {
-  const wrap = document.getElementById('subChipsWrap');
-  if (!wrap) return;
-  wrap.innerHTML = list.map(e => `<div class="error-chip${selectedChips.has(e)?' selected':''}" onclick="toggleChip(this,'${e}')">${e}</div>`).join('');
+function makeChip(label) {
+  const d = document.createElement('div');
+  d.className = 'error-chip'; d.textContent = label;
+  d.onclick = () => toggleChip(d, label);
+  return d;
 }
 
 function toggleChip(el, val) {
-  if (selectedChips.has(val)) { selectedChips.delete(val); el.classList.remove('selected'); }
-  else { selectedChips.add(val); el.classList.add('selected'); }
-  if (selectedChips.size > 0) setSB(4, 'active');
+  if (selChips.has(val)) { selChips.delete(val); el.classList.remove('selected'); }
+  else { selChips.add(val); el.classList.add('selected'); }
+  if (selChips.size > 0) setSB(3,'done'), setSB(4,'active');
 }
 
 function appendAddBtn(area) {
   const btn = document.createElement('div');
-  btn.className = 'chip-add-btn';
-  btn.title = '직접 에러 유형 추가';
-  btn.textContent = '+';
-  btn.onclick = () => { document.getElementById('chipAddInput').classList.add('show'); document.getElementById('customChipInput').focus(); };
+  btn.className = 'chip-add-btn'; btn.textContent = '+ 직접 추가';
+  btn.onclick = () => { document.getElementById('chipAddInput').classList.add('show'); document.getElementById('customInput').focus(); };
   area.appendChild(btn);
 }
 
 function addCustomChip() {
-  const val = document.getElementById('customChipInput').value.trim();
+  const val = document.getElementById('customInput').value.trim();
   if (!val) return;
-  selectedChips.add(val);
-  const area = document.getElementById('chipArea');
-  const btn = area.querySelector('.chip-add-btn');
-  const chip = document.createElement('div');
-  chip.className = 'error-chip selected';
-  chip.textContent = val;
-  chip.onclick = () => toggleChip(chip, val);
-  area.insertBefore(chip, btn);
-  document.getElementById('customChipInput').value = '';
+  selChips.add(val);
+  const area   = document.getElementById('chipArea');
+  const addBtn = area.querySelector('.chip-add-btn');
+  const chip   = makeChip(val); chip.classList.add('selected');
+  area.insertBefore(chip, addBtn);
+  document.getElementById('customInput').value = '';
   document.getElementById('chipAddInput').classList.remove('show');
-  setSB(4, 'active');
+  setSB(3,'done'); setSB(4,'active');
 }
 
 function closeChipInput() {
-  document.getElementById('customChipInput').value = '';
+  document.getElementById('customInput').value = '';
   document.getElementById('chipAddInput').classList.remove('show');
 }
 
-document.getElementById('customChipInput').addEventListener('keydown', e => { if (e.key === 'Enter') addCustomChip(); if (e.key === 'Escape') closeChipInput(); });
+document.getElementById('customInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addCustomChip();
+  if (e.key === 'Escape') closeChipInput();
+});
 
 function handleUpload(input, areaId) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const area = document.getElementById(areaId);
-      area.classList.add('has-file');
-      area.innerHTML = `<div class="upload-opt-badge">선택됨</div><div class="upload-preview"><img src="${e.target.result}" class="preview-thumb" alt="preview"></div><div class="upload-text" style="margin-top:0.4rem"><strong>${input.files[0].name}</strong></div>`;
-      area.onclick = null;
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const area = document.getElementById(areaId);
+    area.classList.add('has-file'); area.onclick = null;
+    area.innerHTML = `<div class="upload-opt-badge">선택됨</div><img src="${ev.target.result}" class="preview-thumb" alt="preview"><div class="upload-text" style="margin-top:0.4rem"><strong>${input.files[0].name}</strong></div>`;
+  };
+  reader.readAsDataURL(input.files[0]);
 }
 
 function setSB(num, cls) {
   const el = document.getElementById('sb' + num);
   el.className = 'sb-item' + (cls ? ' ' + cls : '');
-  if (cls === 'done') el.querySelector('.sb-num').textContent = '✓';
-  else el.querySelector('.sb-num').textContent = num;
+  el.querySelector('.sb-num').textContent = cls === 'done' ? 'v' : num;
 }
 
 async function submitForm() {
-  const name = document.getElementById('iName').value.trim();
+  const name  = document.getElementById('iName').value.trim();
   const email = document.getElementById('iEmail').value.trim();
-  const desc = document.getElementById('iDesc').value.trim();
-  if (!name || !email) { alert('이름과 이메일을 입력해주세요.'); return; }
-  if (!selectedCountry) { alert('현장 국가를 선택해주세요.'); document.getElementById('countryGrid').scrollIntoView({behavior:'smooth'}); return; }
-  if (!selectedProduct) { alert('제품을 선택해주세요.'); document.getElementById('productCard').scrollIntoView({behavior:'smooth'}); return; }
-  if (selectedChips.size === 0) { alert('에러 유형을 하나 이상 선택하거나 직접 입력해주세요.'); return; }
-  if (!desc) { alert('에러 상세 설명을 입력해주세요.'); return; }
+  const desc  = document.getElementById('iDesc').value.trim();
+  if (!name || !email)       { alert('이름과 이메일을 입력해주세요.'); return; }
+  if (!selCountry)           { alert('현장 국가를 선택해주세요.'); document.getElementById('countryGrid').scrollIntoView({behavior:'smooth'}); return; }
+  if (!selProduct)           { alert('제품을 선택해주세요.'); document.getElementById('productCard').scrollIntoView({behavior:'smooth'}); return; }
+  if (selChips.size === 0)   { alert('에러 유형을 하나 이상 선택하거나 직접 입력해주세요.'); return; }
+  if (!desc)                 { alert('에러 상세 설명을 입력해주세요.'); return; }
 
-  const country = COUNTRIES.find(c => c.id === selectedCountry);
-  const product = [...(country.hw), ...(country.sw)].find(p => p.id === selectedProduct);
+  const country  = COUNTRIES.find(c => c.id === selCountry);
+  const product  = [...country.hw, ...country.sw].find(p => p.id === selProduct);
+  const priority = document.getElementById('iPriority');
+  const pLabel   = priority.options[priority.selectedIndex].text.split('—')[0].trim();
 
   document.getElementById('stateForm').style.display = 'none';
   document.getElementById('stateProcessing').style.display = 'block';
-  setSB(3, 'done'); setSB(4, 'done'); setSB(5, 'active');
+  setSB(4,'done'); setSB(5,'active');
 
-  const steps = [1200, 2800, 5500, 6500, 7200];
-  const labels = ['에러 정보 분석 완료','AI 프롬프트 생성 완료','Higgsfield 영상 생성 완료','슬랙 알림 발송 완료','담당자 검토 대기 중'];
+  const timings = [1200,2800,5500,6500,7200];
+  const labels  = ['에러 정보 분석 완료','AI 프롬프트 생성 완료','Higgsfield 영상 생성 완료','슬랙 알림 발송 완료','담당자 검토 대기 중'];
   let prev = 0;
   for (let i = 0; i < 5; i++) {
-    await new Promise(r => setTimeout(r, steps[i] - prev));
-    prev = steps[i];
-    document.getElementById('pi' + (i+1)).className = 'p-icon done';
-    document.getElementById('pi' + (i+1)).textContent = '✓';
-    document.getElementById('pt' + (i+1)).textContent = labels[i];
-    document.getElementById('pt' + (i+1)).style.color = 'var(--green)';
-    if (i < 4) { document.getElementById('pi' + (i+2)).className = 'p-icon act'; document.getElementById('pi' + (i+2)).textContent = '→'; }
+    await new Promise(r => setTimeout(r, timings[i] - prev)); prev = timings[i];
+    const pn = document.getElementById('pi' + (i+1)); pn.className = 'p-num done'; pn.textContent = 'v';
+    const pt = document.getElementById('pt' + (i+1)); pt.textContent = labels[i]; pt.style.color = 'var(--green)';
+    if (i < 4) { const nx = document.getElementById('pi' + (i+2)); nx.className = 'p-num act'; nx.textContent = '...'; }
   }
-  await new Promise(r => setTimeout(r, 600));
+  await new Promise(r => setTimeout(r, 500));
 
   document.getElementById('stateProcessing').style.display = 'none';
   document.getElementById('stateSuccess').style.display = 'block';
-  setSB(5, 'done');
+  setSB(5,'done');
 
-  const ticketNum = '#TS-2026-' + String(Math.floor(Math.random()*100)+1).padStart(4,'0');
-  document.getElementById('ticketNum').textContent = ticketNum;
-
-  const priority = document.getElementById('iPriority');
-  const pLabel = priority.options[priority.selectedIndex].text;
-  document.getElementById('slackMsg').innerHTML = `🔔 <strong>새 트러블슈팅 요청 접수</strong><br><span class="slack-tag">${pLabel.split('—')[0].trim()}</span> <span class="slack-tag">${country.flag} ${country.name}</span> <span class="slack-tag">${product ? product.name : ''}</span><br>· 신청인: ${name}<br>· 에러: <strong>${[...selectedChips].join(', ')}</strong><br>· 관리자 페이지에서 확인해주세요.`;
+  document.getElementById('ticketNum').textContent = '#TS-2026-' + String(Math.floor(Math.random() * 100) + 1).padStart(4,'0');
+  document.getElementById('slackMsg').innerHTML =
+    `<strong>새 트러블슈팅 요청 접수</strong><br>` +
+    `<span class="slack-tag">${pLabel}</span> ` +
+    `<span class="slack-tag">${country.name}</span> ` +
+    `<span class="slack-tag">${product ? product.name : ''}</span><br>` +
+    `&middot; 신청인: ${name}<br>&middot; 에러: <strong>${[...selChips].join(', ')}</strong><br>` +
+    `&middot; 관리자 페이지에서 확인해주세요.`;
 }
 
 function resetForm() {
   document.getElementById('stateSuccess').style.display = 'none';
   document.getElementById('stateForm').style.display = 'block';
-  selectedCountry = null; selectedProduct = null; selectedChips.clear();
+  selCountry = null; selProduct = null; selChips.clear();
   document.querySelectorAll('.country-card').forEach(el => el.classList.remove('selected'));
-  document.getElementById('productCard').style.display = 'none';
-  document.getElementById('errorCard').style.display = 'none';
-  document.getElementById('iDesc').value = '';
-  [1,2,3,4,5].forEach(n => setSB(n, n<=1?'done':n===2?'active':''));
+  ['productCard','errorCard'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['iName','iEmail','iDesc'].forEach(id => document.getElementById(id).value = '');
+  [1,2,3,4,5].forEach(n => setSB(n, n === 1 ? 'active' : ''));
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
