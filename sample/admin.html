@@ -310,7 +310,13 @@ nav {
       <div class="setup-panel-title">API 키 설정</div>
       <p style="font-size:0.76rem;color:var(--slate);font-weight:300;margin-bottom:0.7rem;line-height:1.6;">GitHub Pages 배포용. 키는 이 기기 브라우저에만 저장됩니다 (localStorage).</p>
       <div style="margin-bottom:0.7rem;">
-        <label style="font-size:0.72rem;color:var(--steel);display:block;margin-bottom:0.3rem;font-weight:500;">Groq API Key</label>
+        <label style="font-size:0.72rem;color:var(--steel);display:block;margin-bottom:0.3rem;font-weight:500;">OpenAI API Key <span style="background:#e8f5ee;color:var(--green);font-size:0.6rem;padding:1px 6px;border-radius:10px;margin-left:4px;">이미지 생성 우선</span></label>
+        <input type="password" id="inputOpenAIKey" placeholder="sk-proj-..." autocomplete="off"
+          style="width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.8rem;font-family:monospace;background:var(--fog);">
+        <div style="font-size:0.68rem;color:var(--steel);margin-top:0.3rem;">gpt-image-1 → dall-e-3 순서로 시도. 비즈니스 계정 sk-proj-... 형식.</div>
+      </div>
+      <div style="margin-bottom:0.7rem;">
+        <label style="font-size:0.72rem;color:var(--steel);display:block;margin-bottom:0.3rem;font-weight:500;">Groq API Key <span style="background:var(--fog);color:var(--steel);font-size:0.6rem;padding:1px 6px;border-radius:10px;margin-left:4px;">번역 + 스크립트</span></label>
         <input type="password" id="inputGroqKey" placeholder="gsk_..." autocomplete="off"
           style="width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.8rem;font-family:monospace;background:var(--fog);">
       </div>
@@ -580,8 +586,11 @@ function showToast(msg, cls) {
 
 // ─── Setup Modal (PCOS Master + Manual) ────────────────────────────────
 function saveApiKeys() {
-  const groqKey = document.getElementById('inputGroqKey').value.trim();
+  const openaiKey = document.getElementById('inputOpenAIKey').value.trim();
+  const groqKey   = document.getElementById('inputGroqKey').value.trim();
   try {
+    if (openaiKey) localStorage.setItem('OPENAI_API_KEY', openaiKey);
+    else localStorage.removeItem('OPENAI_API_KEY');
     if (groqKey) localStorage.setItem('GROQ_API_KEY', groqKey);
     else localStorage.removeItem('GROQ_API_KEY');
   } catch(e) {}
@@ -594,6 +603,8 @@ function saveApiKeys() {
 function openSetupModal() {
   // Load saved API keys
   try {
+    const openaiKey = localStorage.getItem('OPENAI_API_KEY');
+    if (openaiKey) document.getElementById('inputOpenAIKey').value = openaiKey;
     const groqKey = localStorage.getItem('GROQ_API_KEY');
     if (groqKey) document.getElementById('inputGroqKey').value = groqKey;
   } catch(e) {}

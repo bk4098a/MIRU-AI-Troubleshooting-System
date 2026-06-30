@@ -171,6 +171,48 @@ async function uploadPhotoToHiggsfield(base64DataUrl, apiKey) {
   }
 }
 
+// ─── OpenAI image generation (gpt-image-1 → dall-e-3 fallback) ───────────────
+async function generateOpenAIImage(prompt, apiKey) {
+  // gpt-image-1 먼저 시도 (비즈니스 계정), 실패 시 dall-e-3 fallback
+  const configs = [
+    { model: 'gpt-image-1', size: '1536x1024', quality: 'medium' },
+    { model: 'dall-e-3',    size: '1792x1024', quality: 'hd', response_format: 'url' },
+  ];
+
+  for (const cfg of configs) {
+    try {
+      const body = { model: cfg.model, prompt, n: 1, size: cfg.size };
+      if (cfg.quality)          body.quality = cfg.quality;
+      if (cfg.response_format)  body.response_format = cfg.response_format;
+
+      const res = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.warn(`OpenAI ${cfg.model} failed (${res.status}):`, err?.error?.message);
+        continue;
+      }
+
+      const data = await res.json();
+      const item = data.data?.[0];
+      if (!item) continue;
+      if (item.b64_json) return `data:image/png;base64,${item.b64_json}`;
+      if (item.url)      return item.url;
+
+    } catch(e) {
+      console.warn(`OpenAI ${cfg.model} error:`, e.message);
+    }
+  }
+  throw new Error('OpenAI image generation failed — both models exhausted');
+}
+
 // ─── Pollinations.ai image generation (free, no API key, CORS OK) ────────────
 // Used when no Higgsfield API key is configured — generates error-specific images
 async function generatePollinationsImage(prompt) {
@@ -180,11 +222,15 @@ async function generatePollinationsImage(prompt) {
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(enriched)}?width=1280&height=720&nologo=true&model=flux&seed=${seed}`;
 }
 
-// ─── Higgsfield image generation ──────────────────────────────────────────────
-// Builds reference_elements from: user photos + admin master photos
-// No API key: uses pollinations.ai for dynamic per-error image generation
+// ─── Image generation orchestrator ────────────────────────────────────────────
+// Priority: Higgsfield (reference_elements) > OpenAI (gpt-image-1) > pollinations.ai
 async function generateHiggsImages(clips, photos, onProgress) {
-  const apiKey = window.MIRU_CONFIG?.HIGGSFIELD_API_KEY;
+  const higgsfieldKey = window.MIRU_CONFIG?.HIGGSFIELD_API_KEY;
+  const openaiKey = (() => {
+    try { return localStorage.getItem('OPENAI_API_KEY') || window.MIRU_CONFIG?.OPENAI_API_KEY || ''; }
+    catch(e) { return ''; }
+  })();
+  const apiKey = higgsfieldKey; // Higgsfield path uses this variable below
 
   // Load admin master media IDs — localStorage first, fallback to config.js hardcoded list
   let masterMediaIds = [];
@@ -234,12 +280,22 @@ async function generateHiggsImages(clips, photos, onProgress) {
         console.warn(`Higgsfield API failed for ${clip.clip_id}:`, e.message);
         images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
       }
+    } else if (openaiKey) {
+      // OpenAI: gpt-image-1 → dall-e-3 fallback
+      if (onProgress) onProgress(i, `${clip.clip_id} GPT 이미지 생성 중...`);
+      try {
+        const imagePrompt = `PCOS polling station optical scanner (ballot counting machine). ${clip.start_frame} ${BG_STANDARD} Technical product photography, 16:9.`;
+        images[clip.clip_id] = await generateOpenAIImage(imagePrompt, openaiKey);
+      } catch(e) {
+        console.warn(`OpenAI failed for ${clip.clip_id}:`, e.message);
+        images[clip.clip_id] = await generatePollinationsImage(`PCOS scanner ${clip.start_frame}`).catch(() => DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01']);
+      }
     } else {
-      // No Higgsfield key: generate via pollinations.ai (free, dynamic, error-specific)
+      // No API key: pollinations.ai (free, dynamic)
       try {
         const imagePrompt = `PCOS polling station optical scanner, ${clip.start_frame}`;
         images[clip.clip_id] = await generatePollinationsImage(imagePrompt);
-        await sleep(200); // brief pause between requests
+        await sleep(200);
       } catch(e) {
         console.warn(`pollinations.ai failed for ${clip.clip_id}:`, e.message);
         images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
