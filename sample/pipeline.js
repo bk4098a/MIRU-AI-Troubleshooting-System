@@ -213,6 +213,87 @@ async function generateOpenAIImage(prompt, apiKey) {
   throw new Error('OpenAI image generation failed — both models exhausted');
 }
 
+// ─── PCOS master image mapping (error type → 2 reference images) ─────────────
+const PCOS_MASTER_BASE = 'https://bk4098a.github.io/MIRU-AI-Troubleshooting-System/sample/pcos_ref';
+
+const ERROR_MASTER_MAP = {
+  'UIK Mismatch':        ['IMG_9849', 'IMG_9850'],
+  'Flash Card Mismatch': ['IMG_9849', 'IMG_9852'],
+  'ECF NOT FOUND':       ['IMG_9849', 'IMG_9851'],
+  'Paper Jam':           ['IMG_9852', 'IMG_9856'],
+  'Double Feed':         ['IMG_9860', 'IMG_9856'],
+  'Scanner Cover Open':  ['IMG_9850', 'IMG_9852'],
+  'Stain on Glass':      ['IMG_9856', 'IMG_9860'],
+  'Network Disconnect':  ['IMG_9849', 'IMG_9850'],
+  'Battery Low':         ['IMG_9849', 'IMG_9853'],
+  'SD Card Error':       ['IMG_9849', 'IMG_9854'],
+  'Smart Card Error':    ['IMG_9849', 'IMG_9855'],
+};
+
+function pickMasterImages(errorTypes) {
+  for (const et of (errorTypes || [])) {
+    for (const [key, imgs] of Object.entries(ERROR_MASTER_MAP)) {
+      if (et.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(et.toLowerCase())) {
+        return imgs.map(name => `${PCOS_MASTER_BASE}/${name}.jpg`);
+      }
+    }
+  }
+  return ['IMG_9849', 'IMG_9850'].map(name => `${PCOS_MASTER_BASE}/${name}.jpg`);
+}
+
+async function fetchImageAsBase64(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Image fetch failed ${res.status}: ${url}`);
+  const blob = await res.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+// OpenAI Responses API — gpt-4o with image_generation tool + reference images
+async function generateOpenAIImageWithRefs(prompt, refImageUrls, apiKey) {
+  const content = [];
+
+  for (const url of refImageUrls) {
+    try {
+      const b64 = await fetchImageAsBase64(url);
+      content.push({ type: 'input_image', image_url: b64 });
+    } catch(e) {
+      console.warn('Reference image load failed, skipping:', url, e.message);
+    }
+  }
+  content.push({ type: 'input_text', text: prompt });
+
+  const res = await fetch('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      input: [{ role: 'user', content }],
+      tools: [{ type: 'image_generation', size: '1536x1024', quality: 'medium' }],
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`OpenAI Responses API ${res.status}: ${err?.error?.message || res.statusText}`);
+  }
+
+  const data = await res.json();
+  for (const out of (data.output || [])) {
+    if (out.type === 'image_generation_call' && out.result) {
+      return `data:image/png;base64,${out.result}`;
+    }
+  }
+  throw new Error('No image_generation_call result in Responses API output');
+}
+
 // ─── Pollinations.ai image generation (free, no API key, CORS OK) ────────────
 // Used when no Higgsfield API key is configured — generates error-specific images
 async function generatePollinationsImage(prompt) {
@@ -223,8 +304,8 @@ async function generatePollinationsImage(prompt) {
 }
 
 // ─── Image generation orchestrator ────────────────────────────────────────────
-// Priority: Higgsfield (reference_elements) > OpenAI (gpt-image-1) > pollinations.ai
-async function generateHiggsImages(clips, photos, onProgress) {
+// Priority: Higgsfield (reference_elements) > OpenAI (Responses API + master refs) > pollinations.ai
+async function generateHiggsImages(clips, photos, onProgress, errorTypes) {
   const higgsfieldKey = window.MIRU_CONFIG?.HIGGSFIELD_API_KEY;
   const openaiKey = (() => {
     try { return localStorage.getItem('OPENAI_API_KEY') || window.MIRU_CONFIG?.OPENAI_API_KEY || ''; }
@@ -281,14 +362,21 @@ async function generateHiggsImages(clips, photos, onProgress) {
         images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
       }
     } else if (openaiKey) {
-      // OpenAI: gpt-image-1 → dall-e-3 fallback
+      // OpenAI: Responses API (gpt-4o + reference images) → gpt-image-1 → pollinations.ai
       if (onProgress) onProgress(i, `${clip.clip_id} GPT 이미지 생성 중...`);
+      const masterUrls = pickMasterImages(errorTypes);
+      const imagePrompt = `You are generating a technical troubleshooting image for MIRU Systems' PCOS (Polling Station Count Optical Scanner) product manual. Use the reference images above as the exact visual style and machine appearance guide.\n\n${clip.start_frame}\n\n${BG_STANDARD}\n\nMatch the machine's exact appearance, color, and proportions from the reference images. Technical product photography, 16:9.`;
       try {
-        const imagePrompt = `PCOS polling station optical scanner (ballot counting machine). ${clip.start_frame} ${BG_STANDARD} Technical product photography, 16:9.`;
-        images[clip.clip_id] = await generateOpenAIImage(imagePrompt, openaiKey);
+        images[clip.clip_id] = await generateOpenAIImageWithRefs(imagePrompt, masterUrls, openaiKey);
       } catch(e) {
-        console.warn(`OpenAI failed for ${clip.clip_id}:`, e.message);
-        images[clip.clip_id] = await generatePollinationsImage(`PCOS scanner ${clip.start_frame}`).catch(() => DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01']);
+        console.warn(`OpenAI Responses API failed for ${clip.clip_id}:`, e.message);
+        try {
+          const fallbackPrompt = `PCOS polling station optical scanner (ballot counting machine). ${clip.start_frame} ${BG_STANDARD} Technical product photography, 16:9.`;
+          images[clip.clip_id] = await generateOpenAIImage(fallbackPrompt, openaiKey);
+        } catch(e2) {
+          console.warn(`OpenAI gpt-image-1 also failed for ${clip.clip_id}:`, e2.message);
+          images[clip.clip_id] = await generatePollinationsImage(`PCOS scanner ${clip.start_frame}`).catch(() => DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01']);
+        }
       }
     } else {
       // No API key: pollinations.ai (free, dynamic)
@@ -414,11 +502,11 @@ async function runPipeline(formData, onProgress) {
   onProgress(1, 'Kling 프롬프트 생성 완료');
   await sleep(300);
 
-  // Generate Higgsfield images with reference_elements support
+  // Generate images — master reference images selected by error type
   const clips = result.kling_clips || [];
   const images = await generateHiggsImages(clips, formData.photos, (idx, msg) => {
     onProgress(2 + idx, msg);
-  });
+  }, formData.errorTypes);
   result.images = images;
 
   const slackStep = 2 + clips.length;
