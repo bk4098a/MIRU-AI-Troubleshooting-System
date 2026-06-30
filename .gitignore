@@ -3,3 +3,4 @@ logo_base64.txt
 __pycache__/
 .DS_Store
 Thumbs.db
+sample/config.js
