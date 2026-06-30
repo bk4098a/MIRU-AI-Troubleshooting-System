@@ -114,8 +114,11 @@ Respond ONLY with valid JSON, no markdown:
 
 // ─── Groq API ─────────────────────────────────────────────────────────────────
 async function callGeminiFlash(prompt) {
-  const apiKey = window.MIRU_CONFIG?.GROQ_API_KEY;
-  if (!apiKey) throw new Error('GROQ_API_KEY not set in config.js');
+  const apiKey = (() => {
+    try { return localStorage.getItem('GROQ_API_KEY') || window.MIRU_CONFIG?.GROQ_API_KEY || ''; }
+    catch(e) { return window.MIRU_CONFIG?.GROQ_API_KEY || ''; }
+  })();
+  if (!apiKey) throw new Error('GROQ_API_KEY not set — admin.html > PCOS 마스터 설정에서 입력하세요');
 
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',

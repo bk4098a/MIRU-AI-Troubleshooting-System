@@ -307,6 +307,17 @@ nav {
     </div>
 
     <div class="setup-panel">
+      <div class="setup-panel-title">API 키 설정</div>
+      <p style="font-size:0.76rem;color:var(--slate);font-weight:300;margin-bottom:0.7rem;line-height:1.6;">GitHub Pages 배포용. 키는 이 기기 브라우저에만 저장됩니다 (localStorage).</p>
+      <div style="margin-bottom:0.7rem;">
+        <label style="font-size:0.72rem;color:var(--steel);display:block;margin-bottom:0.3rem;font-weight:500;">Groq API Key</label>
+        <input type="password" id="inputGroqKey" placeholder="gsk_..." autocomplete="off"
+          style="width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.8rem;font-family:monospace;background:var(--fog);">
+      </div>
+      <button class="btn-setup-save" id="btnSaveKeys" onclick="saveApiKeys()">API 키 저장</button>
+    </div>
+
+    <div class="setup-panel">
       <div class="setup-panel-title">PCOS 트러블슈팅 메뉴얼</div>
       <p style="font-size:0.76rem;color:var(--slate);font-weight:300;margin-bottom:0.7rem;line-height:1.6;">메뉴얼 텍스트를 붙여넣으세요. Groq LLM의 컨텍스트로 사용되어 더 정확한 프롬프트가 생성됩니다.</p>
       <textarea class="setup-textarea" id="manualTextarea" placeholder="PCOS 트러블슈팅 메뉴얼 내용을 붙여넣어 주세요...&#10;&#10;예: Paper Jam 발생 시 → 기기 후면 커버 열기 → 걸린 용지 제거 → 커버 닫기 → OK 버튼"></textarea>
@@ -568,7 +579,24 @@ function showToast(msg, cls) {
 }
 
 // ─── Setup Modal (PCOS Master + Manual) ────────────────────────────────
+function saveApiKeys() {
+  const groqKey = document.getElementById('inputGroqKey').value.trim();
+  try {
+    if (groqKey) localStorage.setItem('GROQ_API_KEY', groqKey);
+    else localStorage.removeItem('GROQ_API_KEY');
+  } catch(e) {}
+  const btn = document.getElementById('btnSaveKeys');
+  btn.classList.add('saved');
+  btn.textContent = '저장됨';
+  setTimeout(() => { btn.classList.remove('saved'); btn.textContent = 'API 키 저장'; }, 2000);
+}
+
 function openSetupModal() {
+  // Load saved API keys
+  try {
+    const groqKey = localStorage.getItem('GROQ_API_KEY');
+    if (groqKey) document.getElementById('inputGroqKey').value = groqKey;
+  } catch(e) {}
   // Load saved manual
   try {
     const saved = localStorage.getItem('PCOS_MANUAL_CONTEXT');
