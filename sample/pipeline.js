@@ -333,10 +333,31 @@ async function generateHiggsImages(clips, photos, onProgress, errorTypes) {
     } catch(e) { return window.MIRU_CONFIG?.PCOS_MASTER_MEDIA_IDS || []; }
   })();
 
+  // Resolve preset images for the first matching error type
+  const presetMap = window.MIRU_CONFIG?.PRESET_IMAGES || {};
+  function findPreset(clipId) {
+    for (const et of (errorTypes || [])) {
+      for (const [key, imgs] of Object.entries(presetMap)) {
+        if (et.toLowerCase().includes(key.toLowerCase()) || key.toLowerCase().includes(et.toLowerCase())) {
+          return imgs[clipId] || null;
+        }
+      }
+    }
+    return null;
+  }
+
   const images = {};
 
   for (let i = 0; i < clips.length; i++) {
     const clip = clips[i];
+
+    const preset = findPreset(clip.clip_id);
+    if (preset) {
+      if (onProgress) onProgress(i, `${clip.clip_id} 프리셋 이미지 사용`);
+      images[clip.clip_id] = preset;
+      continue;
+    }
+
     const imagePrompt = `${clip.start_frame} ${BG_STANDARD} Fixed camera, 16:9, studio lighting.`;
 
     if (proxyUrl) {

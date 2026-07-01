@@ -47,6 +47,66 @@ Cause: A UIK number that does not exist in the database was entered.
 - Standby screen top: shows ECF filename (e.g., ecf_11158_...tar.gz) and prompt "Смарт-картаны салыңыз." (Insert smart card.)
 - All error screens show yellow warning box with Kyrgyz text and a Cancel (ЖОККО ЧЫГАРУУ) button.`,
 
+  // Pre-generated 16:9 images for all 11 PCOS error types (33 total, Higgsfield nano_banana)
+  // Generated 2026-07-01. Keys match ERROR_MASTER_MAP in pipeline.js.
+  PRESET_IMAGES: {
+    'Paper Jam': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021013_2fbf190b-8be2-452d-aafe-e7abaa1edd5c.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021924_3e6fec02-5d13-48b3-bab0-9efd1bdb28b7.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021020_416fea42-af1d-4e39-b2d8-d57cbef034f5.png',
+    },
+    'UIK Mismatch': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021926_07dbee45-1df0-409e-988c-fa91ee1f465d.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021933_c3e850c5-70a9-4daa-8dff-382e970d9d22.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021936_2cc85363-c7b6-43dd-8d93-b6c438a99423.png',
+    },
+    'Flash Card Mismatch': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021946_82b349a9-fc66-4043-80d6-cd608b088b0e.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021949_f6793847-184d-4c5a-8553-24453c678d2d.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_023144_2e57f049-0603-429c-a61b-b28a37c52c5f.png',
+    },
+    'ECF NOT FOUND': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022015_ab1f284c-0d9e-4a68-9027-ec1a52065c96.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022017_ba7b014f-31a7-42ee-bbd9-c413562eb903.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_023228_14c8bc2f-eaea-4c93-ac18-9940098ab1e0.png',
+    },
+    'Double Feed': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022047_48222032-b361-478b-a726-d0c9634ebd34.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022050_d05eed39-d294-45f5-a4b8-7c46f9c64461.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_023146_32f6a718-723d-4c8d-b757-d730f5606ae8.png',
+    },
+    'Scanner Cover Open': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022111_5d5ac6d7-a1a9-4220-8c98-5ac6be73ba39.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022113_fd8d3891-8309-448a-b33f-f75b0c49be2c.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_023135_04f10b44-d98f-4abb-94e0-2fe6d2ebc513.png',
+    },
+    'Stain on Glass': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022135_aaf41793-ccb9-47b4-a66e-5183366d4a8c.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022138_7907e1ca-57d4-400f-b98f-86968b2a283a.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022259_87c99e7c-9322-44ee-a465-6e2b2b0dec06.png',
+    },
+    'Network Disconnect': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022145_779538f4-b176-4701-9fe9-bbc4d32570e9.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022148_6589dc2a-d3fe-4fe3-88f9-3a1f11d43ee7.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022151_b9749816-2e9e-45da-882b-02f2bd82670a.png',
+    },
+    'Battery Low': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022211_f1a38300-0b40-4d7d-94ef-8d3404fe8b95.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022215_f1a23321-446a-4a88-9845-2785baac1832.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022218_d826cfb8-e9f6-4cb3-aadb-3593f57508a1.png',
+    },
+    'SD Card Error': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022221_5a01604a-e973-48fc-9faf-ea5105479c7d.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022223_cdd85a40-b5ab-4605-9caf-0932115e4923.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022226_879cc5b4-5b66-4482-a03f-cb893b315ab5.png',
+    },
+    'Smart Card Error': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022228_967fd81c-e892-4750-b847-932ef7e4acd0.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022231_4f1b8c9d-e4d6-478a-873c-f15ea9cf4b67.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022234_ea97ebf0-720a-4723-a0d6-e0da839b5f3a.png',
+    },
+  },
+
   // PCOS master reference images — pre-uploaded to Higgsfield (14 background-removed shots)
   // IMG_9849~9868, uploaded 2026-06-30. Used as reference_elements in all image generations.
   PCOS_MASTER_MEDIA_IDS: [
