@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIRU AI 트러블슈팅 시스템 — 사용 매뉴얼</title>
+<style>
+@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; }
+@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; }
+@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; }
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+:root {
+  --navy:#05195E; --navy2:#0A2A6E; --blue:#123A9E;
+  --ltblue:#AEB7D6; --red:#EB0414; --green:#24A148;
+  --fog:#E9ECF4; --white:#FFFFFF; --charcoal:#161616;
+  --slate:#525252; --steel:#8C8C8C; --line:#C7CEDC;
+}
+html { scroll-behavior:smooth; }
+body { font-family:'GmarketSans','Malgun Gothic',sans-serif; font-weight:500; background:#f0f2f8; color:var(--charcoal); font-size:15px; }
+
+/* NAV */
+nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,25,94,0.97); height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 2rem; border-bottom:2px solid var(--red); }
+.nav-logo { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nav-logo-text { font-weight:700; font-size:0.85rem; color:var(--white); letter-spacing:0.08em; }
+.nav-logo-text span { color:var(--ltblue); }
+.nav-badge { font-size:0.72rem; color:var(--ltblue); letter-spacing:0.06em; }
+.nav-right { display:flex; align-items:center; gap:1rem; }
+.nav-link-btn { font-size:0.76rem; color:var(--ltblue); text-decoration:none; padding:0.25rem 0.7rem; border:1px solid rgba(174,183,214,0.35); border-radius:4px; }
+
+/* COVER */
+.cover { background:linear-gradient(150deg, var(--navy) 0%, #071f7a 50%, #0d1f5c 100%); padding:140px 2rem 80px; text-align:center; position:relative; overflow:hidden; }
+.cover::before { content:''; position:absolute; top:-20%; right:-10%; width:600px; height:600px; background:radial-gradient(circle, rgba(18,58,158,0.3) 0%, transparent 65%); pointer-events:none; }
+.cover::after { content:''; position:absolute; bottom:-20%; left:-5%; width:400px; height:400px; background:radial-gradient(circle, rgba(235,4,20,0.08) 0%, transparent 65%); pointer-events:none; }
+.cover-eyebrow { font-size:0.65rem; font-weight:700; letter-spacing:0.25em; color:var(--ltblue); text-transform:uppercase; margin-bottom:1.2rem; }
+.cover h1 { font-size:clamp(2rem,4vw,3.2rem); font-weight:700; color:var(--white); line-height:1.2; margin-bottom:0.9rem; }
+.cover h1 em { color:var(--ltblue); font-style:normal; }
+.cover-sub { font-size:1rem; color:rgba(174,183,214,0.8); max-width:560px; margin:0 auto 2.5rem; line-height:1.75; font-weight:300; }
+.cover-meta { display:flex; align-items:center; justify-content:center; gap:2rem; flex-wrap:wrap; }
+.cover-meta-item { font-size:0.75rem; color:rgba(174,183,214,0.7); }
+.cover-meta-item strong { color:var(--ltblue); font-weight:700; display:block; font-size:0.82rem; margin-bottom:0.2rem; }
+.cover-divider { width:1px; height:32px; background:rgba(174,183,214,0.3); }
+.cover-badge { display:inline-flex; align-items:center; gap:0.5rem; padding:0.45rem 1.1rem; border:1.5px solid rgba(174,183,214,0.3); border-radius:20px; font-size:0.7rem; color:var(--ltblue); font-weight:700; letter-spacing:0.08em; margin-top:2rem; }
+
+/* TOC */
+.toc-section { background:var(--white); border-bottom:1px solid var(--line); padding:2.5rem 2rem; }
+.toc-inner { max-width:880px; margin:0 auto; }
+.toc-title { font-size:0.62rem; font-weight:700; letter-spacing:0.2em; color:var(--red); text-transform:uppercase; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.5rem; }
+.toc-title::before { content:''; display:inline-block; width:18px; height:2px; background:var(--red); }
+.toc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:0.6rem; }
+.toc-item { display:flex; align-items:center; gap:0.6rem; padding:0.6rem 0.9rem; border:1.5px solid var(--line); border-radius:8px; text-decoration:none; color:var(--charcoal); font-size:0.8rem; font-weight:500; transition:all 0.2s; }
+.toc-item:hover { border-color:var(--navy); background:var(--fog); }
+.toc-num { width:22px; height:22px; border-radius:50%; background:var(--navy); color:var(--white); font-size:0.6rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.toc-num.admin { background:var(--red); }
+
+/* CONTENT */
+.content { max-width:920px; margin:0 auto; padding:3rem 1.5rem 5rem; }
+
+/* SECTION */
+.section { margin-bottom:3.5rem; scroll-margin-top:72px; }
+.section-header { display:flex; align-items:flex-start; gap:1rem; margin-bottom:1.6rem; }
+.section-num { width:40px; height:40px; border-radius:50%; background:var(--navy); color:var(--white); font-size:0.85rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.section-num.red { background:var(--red); }
+.section-title { font-size:1.3rem; font-weight:700; color:var(--navy); margin-bottom:0.3rem; }
+.section-desc { font-size:0.85rem; color:var(--slate); font-weight:300; line-height:1.65; }
+
+/* CARD */
+.card { background:var(--white); border-radius:14px; padding:1.6rem; box-shadow:0 2px 20px rgba(5,25,94,0.07); margin-bottom:1.2rem; }
+.card-label { font-size:0.6rem; font-weight:700; letter-spacing:0.18em; color:var(--red); text-transform:uppercase; margin-bottom:0.9rem; display:flex; align-items:center; gap:0.4rem; }
+.card-label::before { content:''; display:inline-block; width:14px; height:2px; background:var(--red); }
+
+/* MOCKUP FIGURE */
+.mockup-fig { margin:1.4rem 0; }
+.mockup-frame { background:var(--white); border:1.5px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 4px 32px rgba(5,25,94,0.12); }
+.mockup-chrome { background:#f5f5f7; border-bottom:1px solid #ddd; padding:8px 14px; display:flex; align-items:center; gap:7px; }
+.mockup-dot { width:10px; height:10px; border-radius:50%; }
+.mockup-dot.r { background:#ff5f57; }
+.mockup-dot.y { background:#febc2e; }
+.mockup-dot.g { background:#28c840; }
+.mockup-url { flex:1; background:white; border:1px solid #e0e0e0; border-radius:5px; padding:3px 10px; font-size:0.65rem; color:#888; margin:0 8px; font-family:monospace; }
+.mockup-caption { font-size:0.72rem; color:var(--steel); text-align:center; margin-top:0.5rem; font-weight:300; }
+
+/* INFO BOX */
+.info-box { display:flex; gap:0.85rem; padding:0.9rem 1.1rem; border-radius:10px; margin:1rem 0; }
+.info-box.tip { background:rgba(5,25,94,0.04); border:1.5px solid rgba(5,25,94,0.12); }
+.info-box.warn { background:rgba(235,4,20,0.04); border:1.5px solid rgba(235,4,20,0.15); }
+.info-box.ok { background:rgba(36,161,72,0.05); border:1.5px solid rgba(36,161,72,0.2); }
+.info-icon { font-size:1.1rem; flex-shrink:0; margin-top:0.05rem; }
+.info-text { font-size:0.82rem; color:var(--slate); font-weight:300; line-height:1.65; }
+.info-text strong { color:var(--charcoal); font-weight:700; }
+
+/* STEPS LIST */
+.step-list { list-style:none; }
+.step-list li { display:flex; gap:1rem; padding:0.8rem 0; border-bottom:1px solid var(--fog); }
+.step-list li:last-child { border-bottom:none; }
+.step-dot { width:26px; height:26px; border-radius:50%; background:var(--navy); color:var(--white); font-size:0.7rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:0.05rem; }
+.step-content strong { display:block; font-size:0.88rem; color:var(--navy); margin-bottom:0.2rem; }
+.step-content span { font-size:0.8rem; color:var(--slate); font-weight:300; line-height:1.6; }
+
+/* FIELD TABLE */
+.field-table { width:100%; border-collapse:collapse; font-size:0.82rem; margin:0.8rem 0; }
+.field-table th { background:var(--navy); color:var(--white); padding:0.55rem 0.8rem; text-align:left; font-size:0.72rem; font-weight:700; letter-spacing:0.05em; }
+.field-table th:first-child { border-radius:6px 0 0 0; }
+.field-table th:last-child { border-radius:0 6px 0 0; }
+.field-table td { padding:0.55rem 0.8rem; border-bottom:1px solid var(--line); color:var(--slate); font-weight:300; vertical-align:top; }
+.field-table tr:last-child td { border-bottom:none; }
+.field-table tr:nth-child(even) td { background:rgba(233,236,244,0.4); }
+.req-badge { display:inline-block; background:rgba(235,4,20,0.1); color:var(--red); font-size:0.6rem; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; }
+.opt-badge { display:inline-block; background:var(--fog); color:var(--steel); font-size:0.6rem; font-weight:700; padding:1px 6px; border-radius:3px; margin-left:4px; }
+
+/* CHIP DEMO */
+.chip-demo { display:flex; flex-wrap:wrap; gap:0.45rem; margin:0.8rem 0; }
+.chip { padding:0.35rem 0.8rem; border:1.5px solid var(--line); border-radius:20px; font-size:0.74rem; color:var(--slate); font-weight:500; }
+.chip.sel { border-color:var(--navy); background:var(--navy); color:var(--white); }
+.chip.custom { border-color:var(--ltblue); border-style:dashed; color:var(--blue); }
+
+/* FLOW */
+.flow { display:flex; align-items:center; gap:0.5rem; margin:1.2rem 0; flex-wrap:wrap; }
+.flow-step { background:var(--navy); color:var(--white); border-radius:8px; padding:0.45rem 0.9rem; font-size:0.76rem; font-weight:700; white-space:nowrap; }
+.flow-arrow { color:var(--steel); font-size:0.9rem; }
+.flow-step.result { background:var(--green); }
+.flow-step.admin { background:var(--red); }
+
+/* PRIORITY CHIPS */
+.priority-demo { display:grid; grid-template-columns:repeat(3,1fr); gap:0.7rem; margin:0.8rem 0; }
+.priority-card { border-radius:10px; padding:0.8rem; text-align:center; border:2px solid; }
+.priority-card.normal { border-color:var(--line); background:var(--fog); }
+.priority-card.high { border-color:rgba(249,115,22,0.3); background:rgba(249,115,22,0.05); }
+.priority-card.urgent { border-color:rgba(235,4,20,0.3); background:rgba(235,4,20,0.04); }
+.priority-label { font-size:0.85rem; font-weight:700; margin-bottom:0.25rem; }
+.priority-label.normal { color:var(--slate); }
+.priority-label.high { color:#c2410c; }
+.priority-label.urgent { color:var(--red); }
+.priority-desc { font-size:0.72rem; color:var(--steel); font-weight:300; }
+
+/* PHOTO GUIDE */
+.photo-guide { display:grid; grid-template-columns:repeat(3,1fr); gap:0.8rem; margin:0.8rem 0; }
+.photo-card { border:1.5px solid var(--line); border-radius:10px; overflow:hidden; }
+.photo-header { background:var(--navy); color:var(--white); padding:0.4rem 0.7rem; font-size:0.68rem; font-weight:700; display:flex; align-items:center; justify-content:space-between; }
+.photo-clip { font-size:0.6rem; background:rgba(255,255,255,0.2); padding:1px 5px; border-radius:3px; }
+.photo-body { padding:0.65rem 0.7rem; background:var(--white); }
+.photo-body strong { font-size:0.76rem; color:var(--charcoal); display:block; margin-bottom:0.2rem; }
+.photo-body span { font-size:0.7rem; color:var(--steel); font-weight:300; line-height:1.5; }
+
+/* ADMIN GUIDE */
+.admin-layout-demo { display:grid; grid-template-columns:180px 1fr; gap:0.8rem; margin:1rem 0; }
+.admin-left { border:1.5px solid var(--line); border-radius:10px; overflow:hidden; }
+.admin-left-header { background:var(--navy); color:var(--white); padding:0.5rem 0.7rem; font-size:0.72rem; font-weight:700; }
+.admin-left-item { padding:0.5rem 0.7rem; border-bottom:1px solid var(--fog); font-size:0.72rem; }
+.admin-left-item:last-child { border-bottom:none; }
+.admin-left-item.active { background:rgba(5,25,94,0.06); }
+.admin-right { border:1.5px solid var(--line); border-radius:10px; padding:0.8rem; }
+
+/* DIVIDER */
+.divider { border:none; border-top:1.5px solid var(--line); margin:2rem 0; }
+
+/* FOOTER */
+footer { background:var(--navy); color:rgba(174,183,214,0.7); text-align:center; padding:2.5rem 2rem; font-size:0.76rem; font-weight:300; line-height:2; }
+footer strong { color:var(--ltblue); font-weight:700; }
+
+/* PRINT */
+@media print {
+  nav, .toc-section { display:none; }
+  .content { max-width:100%; padding:1rem; }
+  .section { page-break-inside:avoid; }
+}
+
+/* ANNOTATION CALLOUT */
+.callout-wrap { position:relative; }
+.callout-list { list-style:none; margin-top:0.7rem; display:flex; flex-wrap:wrap; gap:0.5rem; }
+.callout-list li { display:flex; align-items:center; gap:0.4rem; font-size:0.74rem; color:var(--slate); font-weight:300; }
+.callout-num { width:18px; height:18px; border-radius:50%; background:var(--red); color:var(--white); font-size:0.6rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+/* SVG SCALE HINT */
+.mockup-frame svg { display:block; width:100%; height:auto; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../MIRU_AI_트러블슈팅_기획안_2026.html" class="nav-logo">
+    <div class="nav-logo-text">MIRU <span>SYSTEMS</span></div>
+  </a>
+  <div class="nav-badge">AI TROUBLESHOOTING SYSTEM</div>
+  <div class="nav-right">
+    <a href="submit.html" class="nav-link-btn">신청 폼 →</a>
+    <a href="admin.html" class="nav-link-btn">관리자 →</a>
+  </div>
+</nav>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-eyebrow">MIRU SYSTEMS · INTERNAL DOCUMENT</div>
+  <h1>AI 트러블슈팅<br><em>시스템 사용 매뉴얼</em></h1>
+  <p class="cover-sub">현장 엔지니어가 에러 상황을 신청하면<br>AI가 즉시 이미지·스크립트를 자동 생성하는 시스템의 전체 사용 가이드입니다.</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><strong>버전</strong>v2.0 (2026)</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta-item"><strong>대상</strong>현장 엔지니어 · 관리자</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta-item"><strong>작성</strong>MIRU Systems AI팀</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta-item"><strong>지원국가</strong>IQ · PH · KG · CD · KR</div>
+  </div>
+  <div class="cover-badge">CONFIDENTIAL — INTERNAL USE ONLY</div>
+</div>
+
+<!-- TOC -->
+<div class="toc-section">
+  <div class="toc-inner">
+    <div class="toc-title">목차</div>
+    <div class="toc-grid">
+      <a href="#s0" class="toc-item"><div class="toc-num">0</div>시스템 개요</a>
+      <a href="#s1" class="toc-item"><div class="toc-num">1</div>접속 방법</a>
+      <a href="#s2" class="toc-item"><div class="toc-num">2</div>기본 정보 입력</a>
+      <a href="#s3" class="toc-item"><div class="toc-num">3</div>현장 국가 선택</a>
+      <a href="#s4" class="toc-item"><div class="toc-num">4</div>제품 &amp; 에러 선택</a>
+      <a href="#s5" class="toc-item"><div class="toc-num">5</div>에러 상세 설명</a>
+      <a href="#s6" class="toc-item"><div class="toc-num">6</div>사진 첨부</a>
+      <a href="#s7" class="toc-item"><div class="toc-num">7</div>AI 결과 확인</a>
+      <a href="#sadmin" class="toc-item"><div class="toc-num admin">A</div>관리자 페이지</a>
+      <a href="#sfaq" class="toc-item"><div class="toc-num admin">?</div>FAQ</a>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════ SECTION 0 ═══════════════════ -->
+<div class="section" id="s0">
+  <div class="section-header">
+    <div class="section-num">0</div>
+    <div>
+      <div class="section-title">시스템 개요</div>
+      <div class="section-desc">MIRU AI 트러블슈팅 시스템이 무엇을 하는지 한눈에 이해합니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">처리 흐름</div>
+    <div class="flow">
+      <div class="flow-step">① 신청서 작성</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">② Groq AI 스크립트 생성</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">③ Higgsfield 이미지 생성</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step result">④ 결과 확인</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step admin">⑤ 관리자 검토</div>
+    </div>
+    <div class="info-box tip" style="margin-top:1rem;">
+      <div class="info-icon">💡</div>
+      <div class="info-text">
+        <strong>전체 소요 시간:</strong> 신청 후 AI 생성까지 평균 <strong>20~60초</strong>. Groq LLM이 에러 상황을 분석해 Kling/Seedance용 영상 스크립트를 생성하고, Higgsfield가 PCOS 기기 이미지 3장(에러 상황 · 해결 1단계 · 정상 복귀)을 자동 생성합니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">생성물 구성</div>
+    <table class="field-table">
+      <thead><tr><th>클립 ID</th><th>구분</th><th>내용</th><th>활용</th></tr></thead>
+      <tbody>
+        <tr><td><strong>PROB-01</strong></td><td>에러 발생 장면</td><td>PCOS 화면에 에러 메시지가 표시된 상태</td><td>Kling 영상 시작 프레임</td></tr>
+        <tr><td><strong>SOL-01</strong></td><td>해결 1단계</td><td>엔지니어가 조작 중인 장면 (손동작 포함)</td><td>Kling 영상 중간 프레임</td></tr>
+        <tr><td><strong>SOL-02</strong></td><td>정상 복귀</td><td>PCOS가 정상 대기 상태로 복귀한 장면</td><td>Seedance 영상 종료 프레임</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
+<div class="section" id="s1">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div>
+      <div class="section-title">접속 방법</div>
+      <div class="section-desc">시스템에 접속하는 URL과 지원 환경을 확인합니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">접속 URL</div>
+    <div class="mockup-fig">
+      <div class="mockup-frame">
+        <div class="mockup-chrome">
+          <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+          <div class="mockup-url">https://bk4098a.github.io/MIRU-AI-Troubleshooting-System/sample/submit.html</div>
+        </div>
+        <svg viewBox="0 0 900 180" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="180" fill="#f0f2f8"/>
+          <!-- Nav -->
+          <rect width="900" height="56" fill="#05195E"/>
+          <rect y="54" width="900" height="2" fill="#EB0414"/>
+          <text x="28" y="35" font-family="sans-serif" font-size="14" font-weight="bold" fill="white">MIRU <tspan fill="#AEB7D6">SYSTEMS</tspan></text>
+          <text x="320" y="34" font-family="sans-serif" font-size="11" fill="#AEB7D6" text-anchor="middle">AI 트러블슈팅 영상 자동 생성 신청</text>
+          <rect x="680" y="16" width="100" height="24" rx="4" fill="none" stroke="#AEB7D6" stroke-width="1" opacity="0.5"/>
+          <text x="730" y="32" font-family="sans-serif" font-size="10" fill="#AEB7D6" text-anchor="middle">관리자 페이지 →</text>
+          <!-- Hero area -->
+          <rect y="58" width="900" height="122" fill="url(#heroGrad)"/>
+          <defs>
+            <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#05195E"/>
+              <stop offset="100%" style="stop-color:#071f7a"/>
+            </linearGradient>
+          </defs>
+          <text x="450" y="105" font-family="sans-serif" font-size="11" fill="#AEB7D6" text-anchor="middle" letter-spacing="3">AI TROUBLESHOOTING · 영상 자동 생성 신청</text>
+          <text x="450" y="135" font-family="sans-serif" font-size="22" font-weight="bold" fill="white" text-anchor="middle">트러블슈팅 영상 자동 생성 신청</text>
+          <text x="450" y="158" font-family="sans-serif" font-size="11" fill="#AEB7D6" text-anchor="middle">에러 상황을 입력하면 AI가 즉시 이미지 및 영상 스크립트를 생성합니다</text>
+        </svg>
+      </div>
+      <div class="mockup-caption">신청 폼 메인 화면 — 위 URL로 접속하면 바로 시작할 수 있습니다.</div>
+    </div>
+
+    <table class="field-table">
+      <thead><tr><th>구분</th><th>URL</th><th>대상</th></tr></thead>
+      <tbody>
+        <tr><td><strong>신청 폼</strong></td><td style="font-family:monospace;font-size:0.76rem;">/sample/submit.html</td><td>현장 엔지니어</td></tr>
+        <tr><td><strong>관리자</strong></td><td style="font-family:monospace;font-size:0.76rem;">/sample/admin.html</td><td>관리자 (김별하)</td></tr>
+        <tr><td><strong>기획 개요</strong></td><td style="font-family:monospace;font-size:0.76rem;">/MIRU_AI_트러블슈팅_기획안_2026.html</td><td>내부 참고</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box tip" style="margin-top:0.8rem;">
+      <div class="info-icon">🌐</div>
+      <div class="info-text"><strong>지원 브라우저:</strong> Chrome 100+, Edge 100+, Firefox 100+, Safari 15+ 권장. Internet Explorer는 미지원.</div>
+    </div>
+    <div class="info-box warn">
+      <div class="info-icon">⚠</div>
+      <div class="info-text"><strong>Groq API 키 필요:</strong> 첫 사용 전 관리자 페이지(admin.html) → PCOS 마스터 설정에서 Groq API Key를 입력해야 합니다. 키를 입력하지 않으면 AI 스크립트 생성이 실행되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
+<div class="section" id="s2">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div>
+      <div class="section-title">Step 1 — 기본 정보 입력</div>
+      <div class="section-desc">신청인 이름, 이메일, 긴급도를 입력합니다. 모두 필수 항목입니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">화면 안내</div>
+    <div class="mockup-fig">
+      <div class="mockup-frame">
+        <div class="mockup-chrome">
+          <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+          <div class="mockup-url">submit.html</div>
+        </div>
+        <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="300" fill="#f0f2f8"/>
+          <!-- Nav -->
+          <rect width="900" height="48" fill="#05195E"/>
+          <rect y="46" width="900" height="2" fill="#EB0414"/>
+          <text x="28" y="30" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">MIRU <tspan fill="#AEB7D6">SYSTEMS</tspan></text>
+          <!-- Stepbar -->
+          <rect y="50" width="900" height="38" fill="white"/>
+          <rect y="87" width="900" height="1" fill="#C7CEDC"/>
+          <circle cx="90" cy="69" r="11" fill="#EB0414"/>
+          <text x="90" y="73" font-family="sans-serif" font-size="10" fill="white" text-anchor="middle">1</text>
+          <text x="110" y="73" font-family="sans-serif" font-size="10" fill="#05195E">기본 정보</text>
+          <line x1="162" y1="69" x2="190" y2="69" stroke="#C7CEDC" stroke-width="1.5"/>
+          <circle cx="210" cy="69" r="11" fill="#E9ECF4"/>
+          <text x="210" y="73" font-family="sans-serif" font-size="10" fill="#8C8C8C" text-anchor="middle">2</text>
+          <text x="228" y="73" font-family="sans-serif" font-size="10" fill="#8C8C8C">국가 선택</text>
+          <line x1="279" y1="69" x2="307" y2="69" stroke="#C7CEDC" stroke-width="1.5"/>
+          <circle cx="325" cy="69" r="11" fill="#E9ECF4"/>
+          <text x="325" y="73" font-family="sans-serif" font-size="10" fill="#8C8C8C" text-anchor="middle">3</text>
+          <text x="343" y="73" font-family="sans-serif" font-size="10" fill="#8C8C8C">제품/에러</text>
+          <line x1="394" y1="69" x2="422" y2="69" stroke="#C7CEDC" stroke-width="1.5"/>
+          <circle cx="440" cy="69" r="11" fill="#E9ECF4"/>
+          <text x="440" y="73" font-family="sans-serif" font-size="10" fill="#8C8C8C" text-anchor="middle">4</text>
+          <text x="458" y="73" font-family="sans-serif" font-size="10" fill="#8C8C8C">에러 설명</text>
+          <!-- Card -->
+          <rect x="60" y="104" width="780" height="180" rx="12" fill="white" filter="url(#shadow)"/>
+          <defs><filter id="shadow"><feDropShadow dx="0" dy="2" stdDeviation="8" flood-color="#05195E" flood-opacity="0.07"/></filter></defs>
+          <!-- Card label -->
+          <rect x="80" y="122" width="12" height="2" fill="#EB0414"/>
+          <text x="100" y="125" font-family="sans-serif" font-size="9" font-weight="bold" fill="#EB0414" letter-spacing="2">STEP 1 · 신청인 기본 정보</text>
+          <!-- Name field -->
+          <rect x="80" y="140" width="330" height="36" rx="7" fill="#f9f9f9" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="92" y="154" font-family="sans-serif" font-size="9" fill="#05195E" font-weight="bold">이름 *</text>
+          <text x="92" y="168" font-family="sans-serif" font-size="11" fill="#b0b8c9">홍길동</text>
+          <!-- Red callout 1 -->
+          <circle cx="76" cy="158" r="9" fill="#EB0414"/>
+          <text x="76" y="162" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">1</text>
+          <!-- Email field -->
+          <rect x="440" y="140" width="380" height="36" rx="7" fill="#f9f9f9" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="452" y="154" font-family="sans-serif" font-size="9" fill="#05195E" font-weight="bold">이메일 *</text>
+          <text x="452" y="168" font-family="sans-serif" font-size="11" fill="#b0b8c9">engineer@company.com</text>
+          <circle cx="436" cy="158" r="9" fill="#EB0414"/>
+          <text x="436" y="162" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">2</text>
+          <!-- Priority dropdown -->
+          <rect x="80" y="196" width="740" height="36" rx="7" fill="#f9f9f9" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="92" y="210" font-family="sans-serif" font-size="9" fill="#05195E" font-weight="bold">긴급도 *</text>
+          <text x="92" y="224" font-family="sans-serif" font-size="11" fill="#525252">일반 — 정규 처리 (24시간 내)</text>
+          <text x="800" y="222" font-family="sans-serif" font-size="14" fill="#8C8C8C">▾</text>
+          <circle cx="76" cy="214" r="9" fill="#EB0414"/>
+          <text x="76" y="218" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">3</text>
+          <!-- Highlight box on name -->
+          <rect x="79" y="139" width="332" height="38" rx="7" fill="none" stroke="#EB0414" stroke-width="2" opacity="0.5"/>
+        </svg>
+      </div>
+      <ul class="callout-list">
+        <li><div class="callout-num">1</div> 신청인 한국어 이름을 입력합니다.</li>
+        <li><div class="callout-num">2</div> AI 결과물을 수신할 이메일 주소입니다.</li>
+        <li><div class="callout-num">3</div> 긴급도를 선택합니다 (아래 참조).</li>
+      </ul>
+    </div>
+
+    <div class="priority-demo">
+      <div class="priority-card normal">
+        <div class="priority-label normal">일반</div>
+        <div class="priority-desc">정규 처리 · 24시간 내<br>비긴급 에러 상황</div>
+      </div>
+      <div class="priority-card high">
+        <div class="priority-label high">높음</div>
+        <div class="priority-desc">우선 처리 · 4시간 내<br>투표 진행 중 발생</div>
+      </div>
+      <div class="priority-card urgent">
+        <div class="priority-label urgent">긴급</div>
+        <div class="priority-desc">즉시 처리<br>투표 중단 위험 상황</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
+<div class="section" id="s3">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div>
+      <div class="section-title">Step 2 — 현장 국가 선택</div>
+      <div class="section-desc">현재 배치된 현장 국가를 선택합니다. 선택한 국가에 따라 제품 목록이 달라집니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">화면 안내</div>
+    <div class="mockup-fig">
+      <div class="mockup-frame">
+        <div class="mockup-chrome">
+          <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+          <div class="mockup-url">submit.html</div>
+        </div>
+        <svg viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="260" fill="#f0f2f8"/>
+          <rect width="900" height="40" fill="#05195E"/>
+          <rect y="38" width="900" height="2" fill="#EB0414"/>
+          <text x="28" y="26" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">MIRU <tspan fill="#AEB7D6">SYSTEMS</tspan></text>
+          <!-- Card -->
+          <rect x="40" y="54" width="820" height="195" rx="12" fill="white" filter="url(#shadow2)"/>
+          <defs><filter id="shadow2"><feDropShadow dx="0" dy="2" stdDeviation="8" flood-color="#05195E" flood-opacity="0.07"/></filter></defs>
+          <rect x="60" y="72" width="12" height="2" fill="#EB0414"/>
+          <text x="80" y="75" font-family="sans-serif" font-size="9" font-weight="bold" fill="#EB0414" letter-spacing="2">STEP 2 · 현장 국가 선택</text>
+          <!-- Country cards -->
+          <!-- PH -->
+          <rect x="60" y="90" width="144" height="72" rx="10" fill="white" stroke="#05195E" stroke-width="2"/>
+          <rect x="60" y="90" width="144" height="72" rx="10" fill="rgba(5,25,94,0.04)"/>
+          <text x="132" y="122" font-family="sans-serif" font-size="22" font-weight="bold" fill="#05195E" text-anchor="middle">PH</text>
+          <text x="132" y="140" font-family="sans-serif" font-size="10" fill="#525252" text-anchor="middle">필리핀</text>
+          <text x="132" y="154" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">ACM · CCS · EMS</text>
+          <!-- IQ (selected) -->
+          <rect x="218" y="90" width="144" height="72" rx="10" fill="#05195E"/>
+          <text x="290" y="122" font-family="sans-serif" font-size="22" font-weight="bold" fill="white" text-anchor="middle">IQ</text>
+          <text x="290" y="140" font-family="sans-serif" font-size="10" fill="#AEB7D6" text-anchor="middle">이라크</text>
+          <text x="290" y="154" font-family="sans-serif" font-size="8" fill="rgba(174,183,214,0.8)" text-anchor="middle">PCOS · VVD · VSAT</text>
+          <!-- KG -->
+          <rect x="376" y="90" width="144" height="72" rx="10" fill="white" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="448" y="122" font-family="sans-serif" font-size="22" font-weight="bold" fill="#525252" text-anchor="middle">KG</text>
+          <text x="448" y="140" font-family="sans-serif" font-size="10" fill="#525252" text-anchor="middle">키르기스스탄</text>
+          <text x="448" y="154" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">PCOS · RTS</text>
+          <!-- CD -->
+          <rect x="534" y="90" width="144" height="72" rx="10" fill="white" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="606" y="122" font-family="sans-serif" font-size="22" font-weight="bold" fill="#525252" text-anchor="middle">CD</text>
+          <text x="606" y="140" font-family="sans-serif" font-size="10" fill="#525252" text-anchor="middle">DR 콩고</text>
+          <text x="606" y="154" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">BMS · VSAT · BVRD</text>
+          <!-- KR -->
+          <rect x="692" y="90" width="144" height="72" rx="10" fill="white" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="764" y="122" font-family="sans-serif" font-size="22" font-weight="bold" fill="#525252" text-anchor="middle">KR</text>
+          <text x="764" y="140" font-family="sans-serif" font-size="10" fill="#525252" text-anchor="middle">대한민국</text>
+          <text x="764" y="154" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">사전투표 발급기 · 개표분류기</text>
+          <!-- Callout arrow for IQ -->
+          <circle cx="214" cy="86" r="9" fill="#EB0414"/>
+          <text x="214" y="90" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">1</text>
+          <!-- Hint text -->
+          <text x="450" y="200" font-family="sans-serif" font-size="10" fill="#8C8C8C" text-anchor="middle">현장 국가를 클릭하면 파란색으로 선택됩니다. 이후 아래에 제품 목록이 표시됩니다.</text>
+          <text x="450" y="218" font-family="sans-serif" font-size="9" fill="#AEB7D6" text-anchor="middle">▼ 제품 선택으로 이동</text>
+          <rect x="200" y="225" width="500" height="14" rx="4" fill="#E9ECF4"/>
+          <rect x="200" y="225" width="320" height="14" rx="4" fill="#AEB7D6" opacity="0.5"/>
+        </svg>
+      </div>
+      <ul class="callout-list">
+        <li><div class="callout-num">1</div> 현재 배치된 국가 카드를 클릭합니다. 선택된 카드는 진한 파란색으로 변합니다.</li>
+      </ul>
+    </div>
+
+    <table class="field-table">
+      <thead><tr><th>국가 코드</th><th>국가명</th><th>주요 HW 제품</th><th>SW 제품</th></tr></thead>
+      <tbody>
+        <tr><td><strong>PH</strong></td><td>필리핀</td><td>ACM, CCS 서버, CCS 프린터</td><td>EMS, CCS, EDAS, DTS</td></tr>
+        <tr><td><strong>IQ</strong></td><td>이라크</td><td>PCOS, CCOS, VVD, VSAT RTS</td><td>EMS, CCS, EDAS, DTS</td></tr>
+        <tr><td><strong>KG</strong></td><td>키르기스스탄</td><td>PCOS, RTS</td><td>EMS, CCS</td></tr>
+        <tr><td><strong>CD</strong></td><td>DR 콩고</td><td>BMS, VSAT RTS, BVRD, BVVD</td><td>EMS</td></tr>
+        <tr><td><strong>KR</strong></td><td>대한민국</td><td>사전투표 발급기, 개표분류기, 선거인 단말기</td><td>EMS, 선거인 확인 시스템</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
+<div class="section" id="s4">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div>
+      <div class="section-title">Step 3 — 제품 &amp; 에러 유형 선택</div>
+      <div class="section-desc">국가 선택 후 제품을 선택하고, 발생한 에러 유형 칩을 클릭합니다. 여러 개 선택 가능하며, 목록에 없는 경우 직접 입력할 수 있습니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">화면 안내</div>
+    <div class="mockup-fig">
+      <div class="mockup-frame">
+        <div class="mockup-chrome">
+          <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+          <div class="mockup-url">submit.html</div>
+        </div>
+        <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="320" fill="#f0f2f8"/>
+          <rect width="900" height="40" fill="#05195E"/>
+          <rect y="38" width="900" height="2" fill="#EB0414"/>
+          <text x="28" y="26" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">MIRU <tspan fill="#AEB7D6">SYSTEMS</tspan></text>
+          <!-- Product card -->
+          <rect x="40" y="52" width="380" height="255" rx="12" fill="white" filter="url(#shadow3)"/>
+          <defs><filter id="shadow3"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#05195E" flood-opacity="0.08"/></filter></defs>
+          <rect x="60" y="70" width="10" height="2" fill="#EB0414"/>
+          <text x="78" y="73" font-family="sans-serif" font-size="8" font-weight="bold" fill="#EB0414" letter-spacing="2">STEP 3 · 제품 선택</text>
+          <!-- Tabs -->
+          <rect x="60" y="82" width="70" height="24" rx="5" fill="#05195E"/>
+          <text x="95" y="98" font-family="sans-serif" font-size="10" fill="white" text-anchor="middle">HW</text>
+          <rect x="135" y="82" width="70" height="24" rx="5" fill="none" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="170" y="98" font-family="sans-serif" font-size="10" fill="#8C8C8C" text-anchor="middle">SW</text>
+          <!-- Product list items -->
+          <rect x="60" y="116" width="340" height="36" rx="6" fill="white" stroke="#05195E" stroke-width="2"/>
+          <rect x="60" y="116" width="340" height="36" rx="6" fill="rgba(5,25,94,0.04)"/>
+          <rect x="70" y="124" width="28" height="20" rx="3" fill="#05195E"/>
+          <text x="84" y="138" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">PCOS</text>
+          <text x="112" y="132" font-family="sans-serif" font-size="10" fill="#05195E" font-weight="bold">PCOS</text>
+          <text x="112" y="146" font-family="sans-serif" font-size="9" fill="#8C8C8C">Polling Station Count Optical Scanner</text>
+          <circle cx="388" cy="134" r="7" fill="#24A148"/>
+          <text x="388" y="138" font-family="sans-serif" font-size="9" fill="white" text-anchor="middle">✓</text>
+          <!-- CCOS -->
+          <rect x="60" y="158" width="340" height="36" rx="6" fill="white" stroke="#C7CEDC" stroke-width="1.5"/>
+          <rect x="70" y="166" width="30" height="20" rx="3" fill="#E9ECF4"/>
+          <text x="85" y="180" font-family="sans-serif" font-size="8" fill="#525252" text-anchor="middle">CCOS</text>
+          <text x="115" y="174" font-family="sans-serif" font-size="10" fill="#525252">CCOS</text>
+          <text x="115" y="187" font-family="sans-serif" font-size="9" fill="#8C8C8C">Consolidation Count Optical Scanner</text>
+          <!-- VVD -->
+          <rect x="60" y="200" width="340" height="36" rx="6" fill="white" stroke="#C7CEDC" stroke-width="1.5"/>
+          <rect x="70" y="208" width="28" height="20" rx="3" fill="#E9ECF4"/>
+          <text x="84" y="222" font-family="sans-serif" font-size="8" fill="#525252" text-anchor="middle">VVD</text>
+          <text x="112" y="216" font-family="sans-serif" font-size="10" fill="#525252">VVD</text>
+          <text x="112" y="229" font-family="sans-serif" font-size="9" fill="#8C8C8C">Voter Verification Device</text>
+          <!-- Callout 1 -->
+          <circle cx="48" cy="134" r="9" fill="#EB0414"/>
+          <text x="48" y="138" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">1</text>
+          <!-- Error chip card -->
+          <rect x="440" y="52" width="420" height="255" rx="12" fill="white" filter="url(#shadow3)"/>
+          <rect x="460" y="70" width="10" height="2" fill="#EB0414"/>
+          <text x="478" y="73" font-family="sans-serif" font-size="8" font-weight="bold" fill="#EB0414" letter-spacing="2">에러 유형 선택</text>
+          <!-- Chips -->
+          <rect x="460" y="84" width="130" height="26" rx="13" fill="#05195E"/>
+          <text x="525" y="101" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">Paper Jam</text>
+          <rect x="600" y="84" width="150" height="26" rx="13" fill="#05195E"/>
+          <text x="675" y="101" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">UIK Number Mismatch</text>
+          <rect x="460" y="120" width="160" height="26" rx="13" fill="none" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="540" y="137" font-family="sans-serif" font-size="9" fill="#525252" text-anchor="middle">Flash Card Mismatch</text>
+          <rect x="630" y="120" width="110" height="26" rx="13" fill="none" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="685" y="137" font-family="sans-serif" font-size="9" fill="#525252" text-anchor="middle">ECF NOT FOUND</text>
+          <rect x="460" y="156" width="130" height="26" rx="13" fill="none" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="525" y="173" font-family="sans-serif" font-size="9" fill="#525252" text-anchor="middle">Scanner Cover Open</text>
+          <rect x="600" y="156" width="100" height="26" rx="13" fill="none" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="650" y="173" font-family="sans-serif" font-size="9" fill="#525252" text-anchor="middle">Double Feed</text>
+          <rect x="460" y="192" width="120" height="26" rx="13" fill="none" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="520" y="209" font-family="sans-serif" font-size="9" fill="#525252" text-anchor="middle">Stain In Scanner</text>
+          <rect x="590" y="192" width="140" height="26" rx="13" fill="none" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="660" y="209" font-family="sans-serif" font-size="9" fill="#525252" text-anchor="middle">Network Conn. Error</text>
+          <!-- Custom add -->
+          <rect x="460" y="228" width="100" height="24" rx="5" fill="none" stroke="#AEB7D6" stroke-width="1.5" stroke-dasharray="4,3"/>
+          <text x="510" y="244" font-family="sans-serif" font-size="9" fill="#AEB7D6" text-anchor="middle">+ 직접 입력</text>
+          <!-- Callout 2 -->
+          <circle cx="436" cy="97" r="9" fill="#EB0414"/>
+          <text x="436" y="101" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">2</text>
+        </svg>
+      </div>
+      <ul class="callout-list">
+        <li><div class="callout-num">1</div> 제품을 클릭하면 체크 표시와 함께 선택됩니다.</li>
+        <li><div class="callout-num">2</div> 파란색 칩 = 선택됨. 흰색 = 미선택. 여러 개 동시 선택 가능.</li>
+      </ul>
+    </div>
+
+    <div class="info-box tip">
+      <div class="info-icon">💡</div>
+      <div class="info-text">
+        <strong>목록에 없는 에러:</strong> 칩 영역 하단의 <strong>"+ 직접 입력"</strong> 버튼을 눌러 텍스트를 직접 입력할 수 있습니다. 직접 입력한 값은 AI 스크립트 생성에 그대로 반영됩니다.<br>
+        <strong>ACM의 경우:</strong> Scanner / Printer / Camera / USB / Battery 탭이 별도로 표시됩니다.
+      </div>
+    </div>
+
+    <div class="info-box warn">
+      <div class="info-icon">⚠</div>
+      <div class="info-text"><strong>AI 프리셋 이미지:</strong> PCOS 제품의 11개 주요 에러(Paper Jam, UIK Mismatch, Flash Card Mismatch 등)는 사전 생성된 고품질 이미지를 즉시 표시합니다. 프리셋 외 에러는 실시간 AI 생성됩니다.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
+<div class="section" id="s5">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div>
+      <div class="section-title">Step 4 — 에러 상세 설명 (3단계)</div>
+      <div class="section-desc">에러 상황을 3개 항목으로 순서대로 작성합니다. 이전 항목을 5자 이상 작성해야 다음 항목이 활성화됩니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">화면 안내</div>
+    <div class="mockup-fig">
+      <div class="mockup-frame">
+        <div class="mockup-chrome">
+          <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+          <div class="mockup-url">submit.html</div>
+        </div>
+        <svg viewBox="0 0 900 310" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="310" fill="#f0f2f8"/>
+          <rect width="900" height="40" fill="#05195E"/>
+          <rect y="38" width="900" height="2" fill="#EB0414"/>
+          <text x="28" y="26" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">MIRU <tspan fill="#AEB7D6">SYSTEMS</tspan></text>
+          <!-- Card A: Done -->
+          <rect x="40" y="52" width="820" height="68" rx="10" fill="white" filter="url(#shadow4)"/>
+          <defs><filter id="shadow4"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#05195E" flood-opacity="0.07"/></filter></defs>
+          <rect x="40" y="52" width="820" height="68" rx="10" fill="rgba(36,161,72,0.04)"/>
+          <rect x="40" y="52" width="4" height="68" rx="2" fill="#24A148"/>
+          <circle cx="70" cy="76" r="12" fill="#24A148"/>
+          <text x="70" y="80" font-family="sans-serif" font-size="11" fill="white" font-weight="bold" text-anchor="middle">✓</text>
+          <text x="96" y="72" font-family="sans-serif" font-size="11" font-weight="bold" fill="#05195E">A. 에러 발생 상황</text>
+          <text x="96" y="88" font-family="sans-serif" font-size="10" fill="#525252">투표 진행 중 Paper Jam 에러가 발생하였습니다. PCOS 화면에 'Paper Jam' 메시지 표시됨.</text>
+          <rect x="820" y="60" width="28" height="52" rx="4" fill="none"/>
+          <text x="834" y="90" font-family="sans-serif" font-size="9" fill="#24A148" text-anchor="middle">완료</text>
+          <!-- Callout A -->
+          <circle cx="856" cy="76" r="9" fill="#EB0414"/>
+          <text x="856" y="80" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">1</text>
+          <!-- Card B: Active -->
+          <rect x="40" y="130" width="820" height="78" rx="10" fill="white" filter="url(#shadow4)"/>
+          <rect x="40" y="130" width="4" height="78" rx="2" fill="#EB0414"/>
+          <circle cx="70" cy="169" r="12" fill="#EB0414"/>
+          <text x="70" y="173" font-family="sans-serif" font-size="11" fill="white" font-weight="bold" text-anchor="middle">B</text>
+          <text x="96" y="155" font-family="sans-serif" font-size="11" font-weight="bold" fill="#05195E">B. 에러 발생 전 조작 내용</text>
+          <rect x="96" y="165" width="700" height="32" rx="6" fill="#f9f9f9" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="108" y="185" font-family="sans-serif" font-size="10" fill="#b0b8c9">투표용지를 삽입하기 전 스캐너 커버를 열었다가 닫았습니다. 이후 용지를 삽입하자...</text>
+          <circle cx="856" cy="169" r="9" fill="#EB0414"/>
+          <text x="856" y="173" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">2</text>
+          <!-- Card C: Locked -->
+          <rect x="40" y="218" width="820" height="68" rx="10" fill="white" filter="url(#shadow4)" opacity="0.45"/>
+          <rect x="40" y="218" width="820" height="68" rx="10" fill="none" stroke="#C7CEDC" stroke-width="1.5" opacity="0.45"/>
+          <circle cx="70" cy="252" r="12" fill="#C7CEDC" opacity="0.45"/>
+          <text x="70" y="256" font-family="sans-serif" font-size="11" fill="#8C8C8C" font-weight="bold" text-anchor="middle" opacity="0.45">C</text>
+          <text x="96" y="248" font-family="sans-serif" font-size="11" font-weight="bold" fill="#8C8C8C" opacity="0.45">C. 해결 방법</text>
+          <text x="96" y="265" font-family="sans-serif" font-size="10" fill="#8C8C8C" opacity="0.45">B 항목 입력 완료 후 활성화됩니다...</text>
+          <circle cx="856" cy="252" r="9" fill="#EB0414"/>
+          <text x="856" y="256" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">3</text>
+        </svg>
+      </div>
+      <ul class="callout-list">
+        <li><div class="callout-num">1</div> A 완료 — 녹색으로 완료 표시됩니다.</li>
+        <li><div class="callout-num">2</div> B 활성화 — A 작성 후 B 입력란이 나타납니다.</li>
+        <li><div class="callout-num">3</div> C 잠김 — B 완료 전까지 흐리게 표시됩니다.</li>
+      </ul>
+    </div>
+
+    <table class="field-table">
+      <thead><tr><th>항목</th><th>입력 내용</th><th>예시</th><th>최소 길이</th></tr></thead>
+      <tbody>
+        <tr><td><strong>A. 에러 발생 상황</strong><span class="req-badge">필수</span></td><td>현재 화면에 표시되는 에러 메시지, 기기 상태</td><td>"PCOS 화면에 'Paper Jam' 메시지 표시. 투표 진행 불가."</td><td>5자</td></tr>
+        <tr><td><strong>B. 에러 발생 전 조작</strong><span class="req-badge">필수</span></td><td>에러 발생 직전에 한 조작 내용</td><td>"투표용지를 삽입하려다가 스캐너 커버를 먼저 열었다가 닫음."</td><td>5자</td></tr>
+        <tr><td><strong>C. 해결 방법</strong><span class="req-badge">필수</span></td><td>시도한 해결 방법 또는 알려진 해결 절차</td><td>"후면 커버 열어 걸린 용지 제거 후 OK 버튼 누름."</td><td>5자</td></tr>
+      </tbody>
+    </table>
+    <div class="info-box tip">
+      <div class="info-icon">💡</div>
+      <div class="info-text"><strong>영문 입력도 OK:</strong> 이라크 등 현장에서 영어로 작성해도 됩니다. Groq AI가 자동 분석 후 영어 스크립트로 생성합니다. 번역 결과는 AI 결과 화면에서 확인 가능합니다.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
+<div class="section" id="s6">
+  <div class="section-header">
+    <div class="section-num">6</div>
+    <div>
+      <div class="section-title">Step 5 — 사진 첨부</div>
+      <div class="section-desc">에러 화면, 기계 상태, 정상 복귀 상태 사진을 순서대로 첨부합니다. 각 사진은 AI 이미지 생성의 레퍼런스로 활용됩니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="photo-guide">
+      <div class="photo-card">
+        <div class="photo-header">사진 1 — 에러 화면 <span class="photo-clip">PROB-01</span></div>
+        <div class="photo-body">
+          <strong>PCOS 에러 메시지 화면</strong>
+          <span>화면에 에러 코드·메시지가 표시된 상태를 촬영합니다.<br>AI가 에러 상황 이미지(PROB-01) 생성 시 참조합니다.</span>
+        </div>
+      </div>
+      <div class="photo-card">
+        <div class="photo-header">사진 2 — 기계 상태 <span class="photo-clip">SOL-01</span></div>
+        <div class="photo-body">
+          <strong>해결 과정 중 기계 상태</strong>
+          <span>용지를 꺼내는 등 해결 조작 중의 기계 상태를 촬영합니다.<br>해결 1단계 이미지(SOL-01) 생성에 사용됩니다.</span>
+        </div>
+      </div>
+      <div class="photo-card">
+        <div class="photo-header">사진 3 — 정상 복귀 <span class="photo-clip">SOL-02</span></div>
+        <div class="photo-body">
+          <strong>정상 대기 상태 화면</strong>
+          <span>에러 해결 후 PCOS가 정상 대기 상태로 돌아온 화면을 촬영합니다.<br>손이 화면에 보이지 않도록 주의하세요.</span>
+        </div>
+      </div>
+    </div>
+    <div class="info-box ok">
+      <div class="info-icon">✅</div>
+      <div class="info-text"><strong>사진 없이도 신청 가능:</strong> 사진은 선택 사항입니다. 사진이 없으면 AI가 프롬프트만으로 이미지를 생성합니다. 단, 사진이 있을 때 생성 품질이 향상됩니다.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
+<div class="section" id="s7">
+  <div class="section-header">
+    <div class="section-num">7</div>
+    <div>
+      <div class="section-title">Step 6 — 제출 및 AI 결과 확인</div>
+      <div class="section-desc">제출 버튼을 누르면 AI 파이프라인이 실행되고, 약 20~60초 후 이미지 3장과 영상 생성 프롬프트가 표시됩니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">처리 진행 화면</div>
+    <div class="mockup-fig">
+      <div class="mockup-frame">
+        <div class="mockup-chrome">
+          <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+          <div class="mockup-url">submit.html — AI 생성 중...</div>
+        </div>
+        <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="200" fill="#f0f2f8"/>
+          <rect width="900" height="40" fill="#05195E"/>
+          <rect y="38" width="900" height="2" fill="#EB0414"/>
+          <text x="28" y="26" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">MIRU <tspan fill="#AEB7D6">SYSTEMS</tspan></text>
+          <rect x="120" y="55" width="660" height="135" rx="12" fill="white" filter="url(#shadow5)"/>
+          <defs><filter id="shadow5"><feDropShadow dx="0" dy="2" stdDeviation="8" flood-color="#05195E" flood-opacity="0.08"/></filter></defs>
+          <!-- Steps -->
+          <circle cx="200" cy="100" r="11" fill="#24A148"/>
+          <text x="200" y="104" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">✓</text>
+          <text x="200" y="122" font-family="sans-serif" font-size="8" fill="#24A148" text-anchor="middle">AI 분석</text>
+          <line x1="214" y1="100" x2="296" y2="100" stroke="#C7CEDC" stroke-width="1.5"/>
+          <circle cx="310" cy="100" r="11" fill="#24A148"/>
+          <text x="310" y="104" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">✓</text>
+          <text x="310" y="122" font-family="sans-serif" font-size="8" fill="#24A148" text-anchor="middle">스크립트</text>
+          <line x1="324" y1="100" x2="406" y2="100" stroke="#C7CEDC" stroke-width="1.5"/>
+          <circle cx="420" cy="100" r="11" fill="#EB0414"/>
+          <text x="420" y="104" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">...</text>
+          <text x="420" y="122" font-family="sans-serif" font-size="8" fill="#EB0414" text-anchor="middle">이미지 생성</text>
+          <line x1="434" y1="100" x2="516" y2="100" stroke="#C7CEDC" stroke-width="1.5"/>
+          <circle cx="530" cy="100" r="11" fill="#E9ECF4"/>
+          <text x="530" y="104" font-family="sans-serif" font-size="9" fill="#8C8C8C" text-anchor="middle">4</text>
+          <text x="530" y="122" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">번역</text>
+          <line x1="544" y1="100" x2="626" y2="100" stroke="#C7CEDC" stroke-width="1.5"/>
+          <circle cx="640" cy="100" r="11" fill="#E9ECF4"/>
+          <text x="640" y="104" font-family="sans-serif" font-size="9" fill="#8C8C8C" text-anchor="middle">5</text>
+          <text x="640" y="122" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">완료</text>
+          <!-- Loading bar -->
+          <rect x="160" y="145" width="580" height="10" rx="5" fill="#E9ECF4"/>
+          <rect x="160" y="145" width="280" height="10" rx="5" fill="#EB0414"/>
+          <text x="450" y="170" font-family="sans-serif" font-size="10" fill="#8C8C8C" text-anchor="middle">PROB-01 이미지 생성 중... (Higgsfield nano_banana_2)</text>
+        </svg>
+      </div>
+      <div class="mockup-caption">AI 파이프라인 실행 중 — 단계별로 진행 상황이 표시됩니다. (약 20~60초)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">AI 결과 화면</div>
+    <div class="mockup-fig">
+      <div class="mockup-frame">
+        <div class="mockup-chrome">
+          <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+          <div class="mockup-url">submit.html — 완료</div>
+        </div>
+        <svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="340" fill="#f0f2f8"/>
+          <rect width="900" height="40" fill="#05195E"/>
+          <rect y="38" width="900" height="2" fill="#EB0414"/>
+          <text x="28" y="26" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">MIRU <tspan fill="#AEB7D6">SYSTEMS</tspan></text>
+          <!-- Section title -->
+          <rect x="60" y="54" width="10" height="2" fill="#EB0414"/>
+          <text x="78" y="57" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#EB0414" letter-spacing="2">AI 생성 이미지</text>
+          <!-- Image card 1 PROB -->
+          <rect x="40" y="66" width="260" height="180" rx="10" fill="white" filter="url(#shadow6)"/>
+          <defs><filter id="shadow6"><feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#05195E" flood-opacity="0.08"/></filter></defs>
+          <rect x="40" y="66" width="260" height="146" rx="10" fill="#d4d8e0"/>
+          <text x="170" y="130" font-family="sans-serif" font-size="11" fill="#8C8C8C" text-anchor="middle">PCOS · Paper Jam</text>
+          <text x="170" y="148" font-family="sans-serif" font-size="9" fill="#aaa" text-anchor="middle">에러 발생 화면</text>
+          <rect x="40" y="206" width="260" height="40" rx="0 0 10 10" fill="white"/>
+          <rect x="52" y="216" width="42" height="14" rx="3" fill="#05195E"/>
+          <text x="73" y="227" font-family="sans-serif" font-size="8" fill="white" text-anchor="middle">PROB-01</text>
+          <text x="102" y="227" font-family="sans-serif" font-size="8" fill="#EB0414" font-weight="bold">PROBLEM</text>
+          <text x="52" y="238" font-family="sans-serif" font-size="9" fill="#161616" font-weight="bold">PAPER JAM ERROR</text>
+          <!-- Image card 2 SOL-01 -->
+          <rect x="320" y="66" width="260" height="180" rx="10" fill="white" filter="url(#shadow6)"/>
+          <rect x="320" y="66" width="260" height="146" rx="10" fill="#c8cdd6"/>
+          <text x="450" y="130" font-family="sans-serif" font-size="11" fill="#8C8C8C" text-anchor="middle">PCOS · 용지 제거 조작</text>
+          <text x="450" y="148" font-family="sans-serif" font-size="9" fill="#aaa" text-anchor="middle">해결 1단계</text>
+          <rect x="320" y="206" width="260" height="40" rx="0 0 10 10" fill="white"/>
+          <rect x="332" y="216" width="42" height="14" rx="3" fill="#05195E"/>
+          <text x="353" y="227" font-family="sans-serif" font-size="8" fill="white" text-anchor="middle">SOL-01</text>
+          <text x="382" y="227" font-family="sans-serif" font-size="8" fill="#EB0414" font-weight="bold">STEP 1</text>
+          <text x="332" y="238" font-family="sans-serif" font-size="9" fill="#161616" font-weight="bold">REMOVE JAMMED PAPER</text>
+          <!-- Image card 3 SOL-02 -->
+          <rect x="600" y="66" width="260" height="180" rx="10" fill="white" filter="url(#shadow6)"/>
+          <rect x="600" y="66" width="260" height="146" rx="10" fill="#dde0e8"/>
+          <text x="730" y="130" font-family="sans-serif" font-size="11" fill="#8C8C8C" text-anchor="middle">PCOS · 정상 대기 상태</text>
+          <text x="730" y="148" font-family="sans-serif" font-size="9" fill="#aaa" text-anchor="middle">정상 복귀</text>
+          <rect x="600" y="206" width="260" height="40" rx="0 0 10 10" fill="white"/>
+          <rect x="612" y="216" width="42" height="14" rx="3" fill="#05195E"/>
+          <text x="633" y="227" font-family="sans-serif" font-size="8" fill="white" text-anchor="middle">SOL-02</text>
+          <text x="662" y="227" font-family="sans-serif" font-size="8" fill="#EB0414" font-weight="bold">STEP 2</text>
+          <text x="612" y="238" font-family="sans-serif" font-size="9" fill="#161616" font-weight="bold">SYSTEM RESTORED</text>
+          <!-- Ticket num -->
+          <text x="450" y="268" font-family="sans-serif" font-size="11" fill="#05195E" font-weight="bold" text-anchor="middle">티켓 번호: #TS-2026-0042</text>
+          <!-- Callout -->
+          <circle cx="36" cy="80" r="9" fill="#EB0414"/>
+          <text x="36" y="84" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">1</text>
+          <circle cx="316" cy="80" r="9" fill="#EB0414"/>
+          <text x="316" y="84" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">2</text>
+          <circle cx="596" cy="80" r="9" fill="#EB0414"/>
+          <text x="596" y="84" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">3</text>
+          <!-- Video req card -->
+          <rect x="40" y="260" width="820" height="68" rx="10" fill="#E9ECF4" filter="url(#shadow6)"/>
+          <text x="450" y="286" font-family="sans-serif" font-size="11" font-weight="bold" fill="#05195E" text-anchor="middle">이 이미지로 영상을 생성하시겠습니까?</text>
+          <rect x="340" y="298" width="100" height="22" rx="6" fill="#05195E"/>
+          <text x="390" y="313" font-family="sans-serif" font-size="9" fill="white" text-anchor="middle">예 — 영상 요청</text>
+          <rect x="460" y="298" width="100" height="22" rx="6" fill="white" stroke="#C7CEDC" stroke-width="1.5"/>
+          <text x="510" y="313" font-family="sans-serif" font-size="9" fill="#525252" text-anchor="middle">이미지로 진행</text>
+          <circle cx="860" cy="286" r="9" fill="#EB0414"/>
+          <text x="860" y="290" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">4</text>
+        </svg>
+      </div>
+      <ul class="callout-list">
+        <li><div class="callout-num">1</div> PROB-01 — 에러 발생 장면 이미지</li>
+        <li><div class="callout-num">2</div> SOL-01 — 해결 1단계 이미지</li>
+        <li><div class="callout-num">3</div> SOL-02 — 정상 복귀 이미지</li>
+        <li><div class="callout-num">4</div> 영상 생성 요청 여부를 선택합니다. "예"를 누르면 관리자(김별하)에게 Slack으로 알림이 발송됩니다.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ ADMIN ═══════════════════ -->
+<div class="section" id="sadmin">
+  <div class="section-header">
+    <div class="section-num red">A</div>
+    <div>
+      <div class="section-title">관리자 페이지 (admin.html)</div>
+      <div class="section-desc">관리자(김별하)만 접근하는 페이지입니다. 신청된 요청 목록을 확인하고, 각 신청의 AI 이미지·영상 프롬프트를 검토합니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">화면 안내</div>
+    <div class="mockup-fig">
+      <div class="mockup-frame">
+        <div class="mockup-chrome">
+          <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
+          <div class="mockup-url">admin.html — 관리자 대시보드</div>
+        </div>
+        <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+          <rect width="900" height="320" fill="#f0f2f8"/>
+          <rect width="900" height="48" fill="#05195E"/>
+          <rect y="46" width="900" height="2" fill="#EB0414"/>
+          <text x="28" y="30" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">MIRU <tspan fill="#AEB7D6">SYSTEMS</tspan></text>
+          <text x="450" y="30" font-family="sans-serif" font-size="11" fill="#AEB7D6" text-anchor="middle">관리자 대시보드 — AI 트러블슈팅</text>
+          <text x="750" y="24" font-family="sans-serif" font-size="9" fill="#AEB7D6">관리자: 김별하</text>
+          <rect x="800" y="14" width="60" height="20" rx="4" fill="none" stroke="#AEB7D6" stroke-width="1" opacity="0.5"/>
+          <text x="830" y="28" font-family="sans-serif" font-size="8" fill="#AEB7D6" text-anchor="middle">새로고침</text>
+          <!-- Left panel -->
+          <rect x="10" y="55" width="250" height="260" rx="0" fill="white" stroke="#E9ECF4" stroke-width="1"/>
+          <rect x="10" y="55" width="250" height="42" fill="#f8f9fc"/>
+          <text x="25" y="73" font-family="sans-serif" font-size="10" font-weight="bold" fill="#05195E">요청 현황</text>
+          <rect x="25" y="82" width="40" height="26" rx="6" fill="rgba(235,4,20,0.08)"/>
+          <text x="45" y="98" font-family="sans-serif" font-size="14" font-weight="bold" fill="#EB0414" text-anchor="middle">3</text>
+          <text x="45" y="108" font-family="sans-serif" font-size="7" fill="#8C8C8C" text-anchor="middle">검토 대기</text>
+          <rect x="100" y="82" width="40" height="26" rx="6" fill="rgba(249,115,22,0.08)"/>
+          <text x="120" y="98" font-family="sans-serif" font-size="14" font-weight="bold" fill="#c2410c" text-anchor="middle">1</text>
+          <text x="120" y="108" font-family="sans-serif" font-size="7" fill="#8C8C8C" text-anchor="middle">생성 중</text>
+          <rect x="175" y="82" width="40" height="26" rx="6" fill="rgba(36,161,72,0.08)"/>
+          <text x="195" y="98" font-family="sans-serif" font-size="14" font-weight="bold" fill="#24A148" text-anchor="middle">7</text>
+          <text x="195" y="108" font-family="sans-serif" font-size="7" fill="#8C8C8C" text-anchor="middle">완료</text>
+          <!-- Request items -->
+          <rect x="10" y="97" width="250" height="60" rx="0" fill="rgba(5,25,94,0.04)" stroke="#E9ECF4" stroke-width="1"/>
+          <text x="22" y="116" font-family="sans-serif" font-size="9" font-weight="bold" fill="#05195E">#TS-2026-0042</text>
+          <rect x="165" y="107" width="58" height="14" rx="3" fill="rgba(235,4,20,0.1)"/>
+          <text x="194" y="118" font-family="sans-serif" font-size="8" fill="#EB0414" text-anchor="middle">검토 필요</text>
+          <text x="22" y="132" font-family="sans-serif" font-size="9" fill="#525252">PCOS — Paper Jam</text>
+          <text x="22" y="148" font-family="sans-serif" font-size="8" fill="#8C8C8C">이라크 · 7/1 14:32</text>
+          <rect x="10" y="157" width="250" height="50" rx="0" fill="white" stroke="#E9ECF4" stroke-width="1"/>
+          <text x="22" y="174" font-family="sans-serif" font-size="9" font-weight="bold" fill="#161616">#TS-2026-0041</text>
+          <rect x="165" y="165" width="58" height="14" rx="3" fill="rgba(36,161,72,0.1)"/>
+          <text x="194" y="176" font-family="sans-serif" font-size="8" fill="#24A148" text-anchor="middle">전송 완료</text>
+          <text x="22" y="190" font-family="sans-serif" font-size="9" fill="#525252">PCOS — UIK Mismatch</text>
+          <text x="22" y="202" font-family="sans-serif" font-size="8" fill="#8C8C8C">이라크 · 6/30 09:15</text>
+          <!-- Callout 1 -->
+          <circle cx="258" cy="127" r="9" fill="#EB0414"/>
+          <text x="258" y="131" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">1</text>
+          <!-- Right panel -->
+          <rect x="265" y="55" width="630" height="260" rx="0" fill="white" stroke="#E9ECF4" stroke-width="1"/>
+          <text x="285" y="80" font-family="sans-serif" font-size="11" font-weight="bold" fill="#05195E">#TS-2026-0042 — PCOS</text>
+          <text x="285" y="96" font-family="sans-serif" font-size="9" fill="#EB0414">Paper Jam · 이라크 · 긴급</text>
+          <!-- AI Images in detail -->
+          <rect x="285" y="108" width="10" height="2" fill="#EB0414"/>
+          <text x="302" y="111" font-family="sans-serif" font-size="8" fill="#EB0414" font-weight="bold" letter-spacing="1.5">AI 생성 이미지</text>
+          <rect x="285" y="120" width="175" height="90" rx="6" fill="#d4d8e0"/>
+          <text x="372" y="169" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">PROB-01</text>
+          <rect x="470" y="120" width="175" height="90" rx="6" fill="#c8cdd6"/>
+          <text x="557" y="169" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">SOL-01</text>
+          <rect x="655" y="120" width="175" height="90" rx="6" fill="#dde0e8"/>
+          <text x="742" y="169" font-family="sans-serif" font-size="8" fill="#8C8C8C" text-anchor="middle">SOL-02</text>
+          <!-- Prompt section -->
+          <rect x="285" y="218" width="10" height="2" fill="#EB0414"/>
+          <text x="302" y="221" font-family="sans-serif" font-size="8" fill="#EB0414" font-weight="bold" letter-spacing="1.5">영상 생성 프롬프트</text>
+          <rect x="285" y="230" width="590" height="72" rx="6" fill="#1a1d21"/>
+          <text x="300" y="248" font-family="monospace" font-size="8" fill="#86efac">PROB-01 — PROBLEM (Kling)</text>
+          <text x="300" y="262" font-family="monospace" font-size="7.5" fill="#AEB7D6">caption: PAPER JAM ERROR</text>
+          <text x="300" y="274" font-family="monospace" font-size="7.5" fill="#AEB7D6">start: PCOS screen shows red Paper Jam alert...</text>
+          <text x="300" y="286" font-family="monospace" font-size="7.5" fill="#AEB7D6">prompt: Ultra-realistic PCOS ballot scanner...</text>
+          <!-- Callout 2 -->
+          <circle cx="876" cy="120" r="9" fill="#EB0414"/>
+          <text x="876" y="124" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">2</text>
+          <circle cx="876" cy="218" r="9" fill="#EB0414"/>
+          <text x="876" y="222" font-family="sans-serif" font-size="9" fill="white" font-weight="bold" text-anchor="middle">3</text>
+        </svg>
+      </div>
+      <ul class="callout-list">
+        <li><div class="callout-num">1</div> 왼쪽 패널에서 신청 항목을 클릭하면 오른쪽에 상세가 표시됩니다.</li>
+        <li><div class="callout-num">2</div> 생성된 AI 이미지 3장 (PROB-01 / SOL-01 / SOL-02)을 확인합니다.</li>
+        <li><div class="callout-num">3</div> 클립별 Kling/Seedance 영상 생성 프롬프트 전문을 확인합니다.</li>
+      </ul>
+    </div>
+
+    <div class="card-label" style="margin-top:1.2rem;">관리자 주요 기능</div>
+    <ul class="step-list">
+      <li>
+        <div class="step-dot">1</div>
+        <div class="step-content">
+          <strong>새로고침 버튼</strong>
+          <span>상단 nav의 "새로고침" 버튼을 누르면 submit.html에서 새로 들어온 신청을 불러옵니다. 신청은 브라우저 localStorage에 저장되므로 같은 기기에서만 공유됩니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot">2</div>
+        <div class="step-content">
+          <strong>영상 프롬프트 확인</strong>
+          <span>신청을 클릭하면 오른쪽 패널에 PROB-01 / SOL-01 / SOL-02 각 클립의 Kling 영상 생성 프롬프트가 표시됩니다. 이 프롬프트를 Higgsfield Kling에 직접 입력하여 영상을 제작합니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot">3</div>
+        <div class="step-content">
+          <strong>승인 &amp; 이메일 전송</strong>
+          <span>영상 제작 완료 후 Canva URL을 등록하고 "승인 &amp; 전송" 버튼을 누르면 신청인 이메일로 결과가 발송됩니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot">4</div>
+        <div class="step-content">
+          <strong>API 키 설정 (초기 1회)</strong>
+          <span>우측 상단 "PCOS 마스터 설정"에서 Groq API Key를 입력·저장합니다. 저장된 키는 localStorage에 보관되며 서버로 전송되지 않습니다.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ═══════════════════ FAQ ═══════════════════ -->
+<div class="section" id="sfaq">
+  <div class="section-header">
+    <div class="section-num red">?</div>
+    <div>
+      <div class="section-title">자주 묻는 질문 (FAQ)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <ul class="step-list">
+      <li>
+        <div class="step-dot" style="background:var(--navy2);">Q</div>
+        <div class="step-content">
+          <strong>AI 이미지가 생성되지 않으면 어떻게 하나요?</strong>
+          <span>Groq API 키가 설정되지 않았을 가능성이 높습니다. admin.html → PCOS 마스터 설정에서 Groq API Key(gsk_...) 를 입력하세요. 그래도 안 되면 관리자(김별하)에게 문의하세요.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--navy2);">Q</div>
+        <div class="step-content">
+          <strong>11개 PCOS 에러 이외의 에러를 입력해도 되나요?</strong>
+          <span>네. 에러 칩 목록 하단의 "직접 입력"으로 어떤 에러명이든 입력 가능합니다. 단, 11개 프리셋 에러(Paper Jam, UIK Mismatch 등)는 미리 생성된 고품질 이미지를 즉시 사용하고, 그 외는 실시간 AI 생성됩니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--navy2);">Q</div>
+        <div class="step-content">
+          <strong>관리자 페이지에 신청이 안 뜨면?</strong>
+          <span>submit.html에서 신청 완료 후 admin.html의 "새로고침" 버튼을 누르세요. submit.html과 admin.html이 같은 브라우저(같은 기기)에서 열려 있어야 합니다. 브라우저가 다르면 localStorage를 공유하지 않습니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--navy2);">Q</div>
+        <div class="step-content">
+          <strong>사진 첨부가 필수인가요?</strong>
+          <span>아닙니다. 사진 없이도 신청 가능합니다. 단, 사진을 첨부하면 AI가 실제 기기 상태를 참조해 더 정확한 이미지를 생성합니다. 특히 SOL-02(정상 복귀) 사진은 "손이 보이지 않는 정면 대기 상태"로 촬영해야 합니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--navy2);">Q</div>
+        <div class="step-content">
+          <strong>에러 유형 CSV 파일은 어디서 확인하나요?</strong>
+          <span>동일 폴더의 <strong>error_types.csv</strong> 파일을 Excel로 열면 국가·제품별 선택 가능한 전체 에러 유형을 확인할 수 있습니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--navy2);">Q</div>
+        <div class="step-content">
+          <strong>영상은 어떻게 만드나요?</strong>
+          <span>admin.html에서 신청을 클릭 → 오른쪽 패널의 "영상 생성 프롬프트"에서 각 클립의 프롬프트를 복사 → Higgsfield Kling/Seedance에 붙여넣어 영상 생성 → Canva에서 편집 → URL을 admin.html의 Canva URL 등록란에 입력 후 "승인 &amp; 전송".</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  <strong>MIRU SYSTEMS</strong> · AI 트러블슈팅 시스템 사용 매뉴얼<br>
+  버전 2.0 · 2026 · 대외비 — 내부 배포용<br>
+  문의: <strong>김별하</strong> (bhkim@mirusystems.com)
+</footer>
+
+</body>
+</html>

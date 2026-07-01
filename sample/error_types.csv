@@ -1,0 +1,182 @@
+국가,국가코드,제품유형,제품ID,제품명,제품영문명,에러카테고리,에러유형
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Scanner,Ballot Paper Jam
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Scanner,Scanner Cover Open
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Scanner,Ballot Double Feed
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Scanner,Not Found Ballot
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Scanner,Stain In Scanner
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Scanner,QR Not Detected
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Scanner,Stamp Issue
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Printer,Paper Jam
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Printer,Low Ink
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Printer,Print Quality Error
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Printer,Paper Misfeed
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Printer,Cover Open
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Camera,QR Not Recognized
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Camera,Camera Connection Error
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Camera,Focus Error
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,USB,USB Not Detected
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,USB,Too Few USB Detected
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,USB,Too Many USB Connected
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,USB,WORMed USB
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,USB,USB Lost Connection
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Battery,Low Battery Warning
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Battery,Battery Not Charging
+필리핀,PH,HW,acm,ACM,Automated Counting Machine,Battery,Power Adapter Error
+필리핀,PH,HW,ccs_server,CCS 서버,Consolidation & Canvassing Server,일반,Server Boot Error
+필리핀,PH,HW,ccs_server,CCS 서버,Consolidation & Canvassing Server,일반,Network Connection Error
+필리핀,PH,HW,ccs_server,CCS 서버,Consolidation & Canvassing Server,일반,Data Sync Error
+필리핀,PH,HW,ccs_server,CCS 서버,Consolidation & Canvassing Server,일반,Storage Full
+필리핀,PH,HW,ccs_server,CCS 서버,Consolidation & Canvassing Server,일반,Report Generation Error
+필리핀,PH,HW,ccs_printer,CCS 프린터,Consolidation Printer,일반,Paper Jam
+필리핀,PH,HW,ccs_printer,CCS 프린터,Consolidation Printer,일반,Print Error
+필리핀,PH,HW,ccs_printer,CCS 프린터,Consolidation Printer,일반,Network Connection Error
+필리핀,PH,SW,ems,EMS,Election Management System,일반,로그인 / 접근 오류
+필리핀,PH,SW,ems,EMS,Election Management System,일반,기기 등록 오류
+필리핀,PH,SW,ems,EMS,Election Management System,일반,투표지 설정 오류
+필리핀,PH,SW,ems,EMS,Election Management System,일반,데이터 동기화 오류
+필리핀,PH,SW,ems,EMS,Election Management System,일반,내보내기 오류
+필리핀,PH,SW,ems,EMS,Election Management System,일반,시스템 충돌
+필리핀,PH,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,집계 오류
+필리핀,PH,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,서버 연결 오류
+필리핀,PH,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,데이터 통합 오류
+필리핀,PH,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,보고서 생성 오류
+필리핀,PH,SW,edas,EDAS,Election Data Archive System,일반,아카이브 오류
+필리핀,PH,SW,edas,EDAS,Election Data Archive System,일반,데이터 조회 오류
+필리핀,PH,SW,edas,EDAS,Election Data Archive System,일반,저장 공간 부족
+필리핀,PH,SW,edas,EDAS,Election Data Archive System,일반,백업 실패
+필리핀,PH,SW,dts_sw,DTS,Device Tracking System,일반,기기 추적 오류
+필리핀,PH,SW,dts_sw,DTS,Device Tracking System,일반,실시간 동기화 오류
+필리핀,PH,SW,dts_sw,DTS,Device Tracking System,일반,지도 뷰 오류
+필리핀,PH,SW,dts_sw,DTS,Device Tracking System,일반,상태 업데이트 오류
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,UIK Number Mismatch
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Flash Card / SD Card Mismatch
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,ECF NOT FOUND
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Paper Jam
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Scanner Cover Open
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Double Feed
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Stain In Scanner
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Network Connection Error
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Results Not Transmitted
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Battery Low
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Display Error
+이라크,IQ,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,USB / Card Reader Error
+이라크,IQ,HW,ccos,CCOS,Consolidation Count Optical Scanner,일반,Paper Jam
+이라크,IQ,HW,ccos,CCOS,Consolidation Count Optical Scanner,일반,Scanner Error
+이라크,IQ,HW,ccos,CCOS,Consolidation Count Optical Scanner,일반,Count Mismatch
+이라크,IQ,HW,ccos,CCOS,Consolidation Count Optical Scanner,일반,Network Connection Error
+이라크,IQ,HW,ccos,CCOS,Consolidation Count Optical Scanner,일반,Print Error
+이라크,IQ,HW,vvd,VVD,Voter Verification Device,일반,Fingerprint Not Recognized
+이라크,IQ,HW,vvd,VVD,Voter Verification Device,일반,Face Scan Error
+이라크,IQ,HW,vvd,VVD,Voter Verification Device,일반,Network Error
+이라크,IQ,HW,vvd,VVD,Voter Verification Device,일반,Battery Low
+이라크,IQ,HW,vvd,VVD,Voter Verification Device,일반,Display Error
+이라크,IQ,HW,vvd,VVD,Voter Verification Device,일반,Card Reader Error
+이라크,IQ,HW,vsat,VSAT RTS,Result Transmission System,일반,Satellite Connection Lost
+이라크,IQ,HW,vsat,VSAT RTS,Result Transmission System,일반,Data Transmission Error
+이라크,IQ,HW,vsat,VSAT RTS,Result Transmission System,일반,Antenna Alignment Error
+이라크,IQ,HW,vsat,VSAT RTS,Result Transmission System,일반,Power Error
+이라크,IQ,HW,vsat,VSAT RTS,Result Transmission System,일반,Encryption Error
+이라크,IQ,SW,ems,EMS,Election Management System,일반,로그인 / 접근 오류
+이라크,IQ,SW,ems,EMS,Election Management System,일반,기기 등록 오류
+이라크,IQ,SW,ems,EMS,Election Management System,일반,투표지 설정 오류
+이라크,IQ,SW,ems,EMS,Election Management System,일반,데이터 동기화 오류
+이라크,IQ,SW,ems,EMS,Election Management System,일반,내보내기 오류
+이라크,IQ,SW,ems,EMS,Election Management System,일반,시스템 충돌
+이라크,IQ,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,집계 오류
+이라크,IQ,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,서버 연결 오류
+이라크,IQ,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,데이터 통합 오류
+이라크,IQ,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,보고서 생성 오류
+이라크,IQ,SW,edas,EDAS,Election Data Archive System,일반,아카이브 오류
+이라크,IQ,SW,edas,EDAS,Election Data Archive System,일반,데이터 조회 오류
+이라크,IQ,SW,edas,EDAS,Election Data Archive System,일반,저장 공간 부족
+이라크,IQ,SW,edas,EDAS,Election Data Archive System,일반,백업 실패
+이라크,IQ,SW,dts_sw,DTS,Device Tracking System,일반,기기 추적 오류
+이라크,IQ,SW,dts_sw,DTS,Device Tracking System,일반,실시간 동기화 오류
+이라크,IQ,SW,dts_sw,DTS,Device Tracking System,일반,지도 뷰 오류
+이라크,IQ,SW,dts_sw,DTS,Device Tracking System,일반,상태 업데이트 오류
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,UIK Number Mismatch
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Flash Card / SD Card Mismatch
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,ECF NOT FOUND
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Paper Jam
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Scanner Cover Open
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Double Feed
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Stain In Scanner
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Network Connection Error
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Results Not Transmitted
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Battery Low
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,Display Error
+키르기스스탄,KG,HW,pcos,PCOS,Polling Station Count Optical Scanner,일반,USB / Card Reader Error
+키르기스스탄,KG,HW,rts,RTS,Results Transmission System,일반,Connection Error
+키르기스스탄,KG,HW,rts,RTS,Results Transmission System,일반,Data Sync Error
+키르기스스탄,KG,HW,rts,RTS,Results Transmission System,일반,Encryption Error
+키르기스스탄,KG,HW,rts,RTS,Results Transmission System,일반,Power Issue
+키르기스스탄,KG,SW,ems,EMS,Election Management System,일반,로그인 / 접근 오류
+키르기스스탄,KG,SW,ems,EMS,Election Management System,일반,기기 등록 오류
+키르기스스탄,KG,SW,ems,EMS,Election Management System,일반,투표지 설정 오류
+키르기스스탄,KG,SW,ems,EMS,Election Management System,일반,데이터 동기화 오류
+키르기스스탄,KG,SW,ems,EMS,Election Management System,일반,내보내기 오류
+키르기스스탄,KG,SW,ems,EMS,Election Management System,일반,시스템 충돌
+키르기스스탄,KG,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,집계 오류
+키르기스스탄,KG,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,서버 연결 오류
+키르기스스탄,KG,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,데이터 통합 오류
+키르기스스탄,KG,SW,ccs_sw,CCS,Consolidation & Canvassing System,일반,보고서 생성 오류
+DR콩고,CD,HW,bms,BMS,Ballot Marking System,일반,Touchscreen Not Responding
+DR콩고,CD,HW,bms,BMS,Ballot Marking System,일반,Printer Jam
+DR콩고,CD,HW,bms,BMS,Ballot Marking System,일반,Network Connection Error
+DR콩고,CD,HW,bms,BMS,Ballot Marking System,일반,Battery Low
+DR콩고,CD,HW,bms,BMS,Ballot Marking System,일반,Card Reader Error
+DR콩고,CD,HW,bms,BMS,Ballot Marking System,일반,QR Scan Error
+DR콩고,CD,HW,bms,BMS,Ballot Marking System,일반,Voting Record Error
+DR콩고,CD,HW,vsat,VSAT RTS,Result Transmission System,일반,Satellite Connection Lost
+DR콩고,CD,HW,vsat,VSAT RTS,Result Transmission System,일반,Data Transmission Error
+DR콩고,CD,HW,vsat,VSAT RTS,Result Transmission System,일반,Antenna Alignment Error
+DR콩고,CD,HW,vsat,VSAT RTS,Result Transmission System,일반,Power Error
+DR콩고,CD,HW,vsat,VSAT RTS,Result Transmission System,일반,Encryption Error
+DR콩고,CD,HW,bvrd,BVRD,Biometric Voter Registration Device,일반,Fingerprint Scanner Error
+DR콩고,CD,HW,bvrd,BVRD,Biometric Voter Registration Device,일반,Face Camera Error
+DR콩고,CD,HW,bvrd,BVRD,Biometric Voter Registration Device,일반,Printer Error
+DR콩고,CD,HW,bvrd,BVRD,Biometric Voter Registration Device,일반,Network Error
+DR콩고,CD,HW,bvrd,BVRD,Biometric Voter Registration Device,일반,Card Reader Error
+DR콩고,CD,HW,bvrd,BVRD,Biometric Voter Registration Device,일반,Battery Low
+DR콩고,CD,HW,bvrd,BVRD,Biometric Voter Registration Device,일반,Data Sync Error
+DR콩고,CD,HW,bvvd,BVVD,Biometric Voter Verification Device,일반,Fingerprint Not Recognized
+DR콩고,CD,HW,bvvd,BVVD,Biometric Voter Verification Device,일반,Face Scan Error
+DR콩고,CD,HW,bvvd,BVVD,Biometric Voter Verification Device,일반,Printer Error
+DR콩고,CD,HW,bvvd,BVVD,Biometric Voter Verification Device,일반,Network Error
+DR콩고,CD,HW,bvvd,BVVD,Biometric Voter Verification Device,일반,Display Error
+DR콩고,CD,HW,bvvd,BVVD,Biometric Voter Verification Device,일반,Battery Low
+DR콩고,CD,SW,ems,EMS,Election Management System,일반,로그인 / 접근 오류
+DR콩고,CD,SW,ems,EMS,Election Management System,일반,기기 등록 오류
+DR콩고,CD,SW,ems,EMS,Election Management System,일반,투표지 설정 오류
+DR콩고,CD,SW,ems,EMS,Election Management System,일반,데이터 동기화 오류
+DR콩고,CD,SW,ems,EMS,Election Management System,일반,내보내기 오류
+DR콩고,CD,SW,ems,EMS,Election Management System,일반,시스템 충돌
+대한민국,KR,HW,ballot_printer,사전투표 발급기,Early Voting Ballot Printer,일반,용지 걸림 (Paper Jam)
+대한민국,KR,HW,ballot_printer,사전투표 발급기,Early Voting Ballot Printer,일반,용지 부족
+대한민국,KR,HW,ballot_printer,사전투표 발급기,Early Voting Ballot Printer,일반,인쇄 품질 오류
+대한민국,KR,HW,ballot_printer,사전투표 발급기,Early Voting Ballot Printer,일반,네트워크 연결 오류
+대한민국,KR,HW,ballot_printer,사전투표 발급기,Early Voting Ballot Printer,일반,선거인 인증 오류
+대한민국,KR,HW,ballot_printer,사전투표 발급기,Early Voting Ballot Printer,일반,바코드 인식 오류
+대한민국,KR,HW,ballot_printer,사전투표 발급기,Early Voting Ballot Printer,일반,시스템 부팅 오류
+대한민국,KR,HW,ballot_sorter,개표분류기,Ballot Counting & Sorting System,일반,용지 걸림
+대한민국,KR,HW,ballot_sorter,개표분류기,Ballot Counting & Sorting System,일반,분류 오류
+대한민국,KR,HW,ballot_sorter,개표분류기,Ballot Counting & Sorting System,일반,카운트 불일치
+대한민국,KR,HW,ballot_sorter,개표분류기,Ballot Counting & Sorting System,일반,네트워크 오류
+대한민국,KR,HW,ballot_sorter,개표분류기,Ballot Counting & Sorting System,일반,재시작 필요
+대한민국,KR,HW,ballot_sorter,개표분류기,Ballot Counting & Sorting System,일반,센서 감지 오류
+대한민국,KR,HW,voter_terminal,선거인 확인 단말기,Voter Verification Terminal,일반,지문 인식 오류
+대한민국,KR,HW,voter_terminal,선거인 확인 단말기,Voter Verification Terminal,일반,안면 인식 오류
+대한민국,KR,HW,voter_terminal,선거인 확인 단말기,Voter Verification Terminal,일반,네트워크 연결 오류
+대한민국,KR,HW,voter_terminal,선거인 확인 단말기,Voter Verification Terminal,일반,선거인 정보 조회 오류
+대한민국,KR,HW,voter_terminal,선거인 확인 단말기,Voter Verification Terminal,일반,배터리 방전
+대한민국,KR,HW,voter_terminal,선거인 확인 단말기,Voter Verification Terminal,일반,카드 리더 오류
+대한민국,KR,SW,ems,EMS,Election Management System,일반,로그인 / 접근 오류
+대한민국,KR,SW,ems,EMS,Election Management System,일반,기기 등록 오류
+대한민국,KR,SW,ems,EMS,Election Management System,일반,투표지 설정 오류
+대한민국,KR,SW,ems,EMS,Election Management System,일반,데이터 동기화 오류
+대한민국,KR,SW,ems,EMS,Election Management System,일반,내보내기 오류
+대한민국,KR,SW,ems,EMS,Election Management System,일반,시스템 충돌
+대한민국,KR,SW,voter_mgmt,선거인 확인 시스템,Voter Verification & Management System,일반,선거인 조회 오류
+대한민국,KR,SW,voter_mgmt,선거인 확인 시스템,Voter Verification & Management System,일반,데이터 동기화 오류
+대한민국,KR,SW,voter_mgmt,선거인 확인 시스템,Voter Verification & Management System,일반,서버 연결 오류
+대한민국,KR,SW,voter_mgmt,선거인 확인 시스템,Voter Verification & Management System,일반,인증 오류
