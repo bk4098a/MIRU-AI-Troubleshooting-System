@@ -219,7 +219,7 @@ textarea { resize:vertical; min-height:80px; }
 /* IMAGE PANEL */
 .img-panel-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:0.9rem; margin-bottom:1rem; }
 @media(max-width:700px){ .img-panel-grid { grid-template-columns:1fr; } }
-.img-card { border:1.5px solid var(--line); border-radius:12px; overflow:hidden; background:var(--charcoal); }
+.img-card { border:1.5px solid var(--line); border-radius:12px; overflow:hidden; background:var(--white); }
 .img-card img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
 .img-card-skeleton { width:100%; aspect-ratio:16/9; background:linear-gradient(90deg,#1a1d21 25%,#2d333b 50%,#1a1d21 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
@@ -869,6 +869,28 @@ async function submitForm() {
   const images = result?.images || {};
   renderImagePanel(clips, images);
 
+  // Save submission to admin log
+  try {
+    const adminLog = JSON.parse(localStorage.getItem('miru_admin_log') || '[]');
+    adminLog.unshift({
+      id: ticketNum,
+      timestamp: new Date().toISOString(),
+      status: 'review',
+      name: formData.name,
+      email: formData.email,
+      country: formData.country,
+      product: formData.product,
+      errorTypes: formData.errorTypes,
+      priority: formData.priority,
+      situation: formData.situation,
+      priorActions: formData.priorActions,
+      solution: formData.solution,
+      clips: clips,
+      images: images,
+    });
+    localStorage.setItem('miru_admin_log', JSON.stringify(adminLog.slice(0, 50)));
+  } catch(e) { console.warn('Admin log save failed:', e); }
+
   // Translation
   const trans = result?.translation;
   if (trans) {
@@ -905,7 +927,7 @@ function renderImagePanel(clips, images) {
     const imgUrl = images[c.clip_id];
     // skeleton stays visible until image loads — pollinations.ai takes 5-30s
     const imgHtml = imgUrl
-      ? `<div style="position:relative;aspect-ratio:16/9;background:#1a1d21;overflow:hidden;">
+      ? `<div style="position:relative;aspect-ratio:16/9;background:#e9ecf4;overflow:hidden;">
            <div class="img-card-skeleton" style="position:absolute;inset:0;"></div>
            <img src="${imgUrl}" alt="${c.clip_id}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.4s;"
                 onload="this.style.opacity='1';this.previousElementSibling&&this.previousElementSibling.remove();"
@@ -919,13 +941,9 @@ function renderImagePanel(clips, images) {
           <div class="img-card-head">
             <span class="img-clip-id">${c.clip_id}</span>
             <span class="img-clip-label">${c.label}</span>
-            <span class="img-clip-model">${c.model}</span>
           </div>
           <div class="img-caption-main">${c.caption_main}</div>
           <div class="img-caption-sub">${c.caption_sub}</div>
-          ${c.description ? `<div class="img-description">${c.description}</div>` : ''}
-          <div class="img-prompt-toggle" onclick="toggleImgPrompt(this)">프롬프트 보기 ▼</div>
-          <div class="img-prompt-box">${c.prompt}</div>
         </div>
       </div>`;
   }).join('');
