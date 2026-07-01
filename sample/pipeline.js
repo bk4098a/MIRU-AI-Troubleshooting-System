@@ -545,7 +545,7 @@ function buildDemoResult(formData) {
         photo_ref: 'photo_error_screen'
       },
       {
-        clip_id: 'SOL-01', label: 'SOLUTION STEP 1', model: 'Kling',
+        clip_id: 'SOL-01', label: 'STEP 1', model: 'Kling',
         title: 'Press OK to Acknowledge',
         start_frame: `Front view, PCOS display showing error, operator hand near screen.`,
         end_frame: `Hand presses OK button, display transitions to next state.`,
@@ -556,7 +556,7 @@ function buildDemoResult(formData) {
         photo_ref: 'photo_error_state'
       },
       {
-        clip_id: 'SOL-02', label: 'SOLUTION STEP 2', model: 'Seedance',
+        clip_id: 'SOL-02', label: 'STEP 2', model: 'Seedance',
         title: 'Resolve and Restore Normal',
         start_frame: `PCOS machine, error condition visible, operator hand approaching problem area.`,
         end_frame: `Error cleared. PCOS display returns to normal green ready state.`,
