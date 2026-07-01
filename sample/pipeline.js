@@ -1,5 +1,5 @@
 // MIRU AI Troubleshooting Pipeline
-// Flow: Korean input → Groq (translate + Kling prompts) → Higgsfield images (w/ reference) → Slack
+// Flow: Korean input → Groq (translate + script) → OpenAI (gpt-4o + PCOS ref images) → Slack
 
 // ─── Fixed visual standard ────────────────────────────────────────────────────
 const BG_STANDARD = `BACKGROUND: Replace the entire background with a seamless, uniform neutral light-grey studio backdrop. Remove all clutter — cables, plastic bags/wrap, beige walls, wooden desks, other equipment. Keep ONLY the PCOS machine, the relevant parts, and the hand. Soft even studio light, subtle soft shadow under the machine. Horizontal, 16:9.`;
@@ -148,29 +148,6 @@ async function callGeminiFlash(prompt) {
   return JSON.parse(clean);
 }
 
-// ─── Higgsfield media upload (browser side) ───────────────────────────────────
-// Uploads base64 image to Higgsfield, returns media_id for use as reference_elements
-async function uploadPhotoToHiggsfield(base64DataUrl, apiKey) {
-  if (!apiKey || !base64DataUrl) return null;
-
-  // Strip data:image/... prefix if present
-  const base64 = base64DataUrl.includes(',') ? base64DataUrl.split(',')[1] : base64DataUrl;
-
-  try {
-    const res = await fetch('https://api.higgsfield.ai/v1/media/upload', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-      body: JSON.stringify({ data: base64, type: 'image' })
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.media_id || data.id || null;
-  } catch (e) {
-    console.warn('Photo upload to Higgsfield failed:', e.message);
-    return null;
-  }
-}
-
 // ─── OpenAI image generation (gpt-image-1 → dall-e-3 fallback) ───────────────
 async function generateOpenAIImage(prompt, apiKey) {
   // gpt-image-1 먼저 시도 (비즈니스 계정), 실패 시 dall-e-3 fallback
@@ -294,8 +271,7 @@ async function generateOpenAIImageWithRefs(prompt, refImageUrls, apiKey) {
   throw new Error('No image_generation_call result in Responses API output');
 }
 
-// ─── Pollinations.ai image generation (free, no API key, CORS OK) ────────────
-// Used when no Higgsfield API key is configured — generates error-specific images
+// ─── Pollinations.ai image generation (free fallback, no API key needed) ──────
 async function generatePollinationsImage(prompt) {
   const enriched = `${prompt} Professional studio product photography, clean neutral light-grey background, sharp focus, 16:9`;
   const seed = Math.floor(Math.random() * 999999);
@@ -303,75 +279,29 @@ async function generatePollinationsImage(prompt) {
   return `https://image.pollinations.ai/prompt/${encodeURIComponent(enriched)}?width=1280&height=720&nologo=true&model=flux&seed=${seed}`;
 }
 
-// ─── Image generation orchestrator ────────────────────────────────────────────
-// Priority: Higgsfield (reference_elements) > OpenAI (Responses API + master refs) > pollinations.ai
+// ─── Image generation orchestrator ───────────────────────────────────────────
+// Priority: OpenAI Responses API (gpt-4o + master ref images) → gpt-image-1 → pollinations.ai
 async function generateHiggsImages(clips, photos, onProgress, errorTypes) {
-  const higgsfieldKey = window.MIRU_CONFIG?.HIGGSFIELD_API_KEY;
   const openaiKey = (() => {
     try { return localStorage.getItem('OPENAI_API_KEY') || window.MIRU_CONFIG?.OPENAI_API_KEY || ''; }
     catch(e) { return ''; }
   })();
-  const apiKey = higgsfieldKey; // Higgsfield path uses this variable below
 
-  // Load admin master media IDs — localStorage first, fallback to config.js hardcoded list
-  let masterMediaIds = [];
-  try {
-    const stored = localStorage.getItem('PCOS_MASTER_MEDIA_IDS');
-    masterMediaIds = stored ? JSON.parse(stored) : (window.MIRU_CONFIG?.PCOS_MASTER_MEDIA_IDS || []);
-  } catch(e) {
-    masterMediaIds = window.MIRU_CONFIG?.PCOS_MASTER_MEDIA_IDS || [];
-  }
-
-  // Map clip photo_ref to user-uploaded base64
-  const photoMap = {
-    photo_error_screen: photos?.error_screen || null,
-    photo_error_state:  photos?.error_state  || null,
-    photo_resolution:   photos?.resolution   || null,
-  };
-
-  // Upload user photos to Higgsfield if API key available
-  const uploadedPhotoIds = {};
-  if (apiKey && Object.values(photoMap).some(Boolean)) {
-    for (const [key, base64] of Object.entries(photoMap)) {
-      if (base64) {
-        const mediaId = await uploadPhotoToHiggsfield(base64, apiKey);
-        if (mediaId) uploadedPhotoIds[key] = mediaId;
-      }
-    }
-  }
-
+  const masterUrls = pickMasterImages(errorTypes);
   const images = {};
 
   for (let i = 0; i < clips.length; i++) {
     const clip = clips[i];
-    if (onProgress) onProgress(i, `${clip.clip_id} 이미지 생성 중...`);
 
-    if (apiKey) {
-      try {
-        // Build reference_elements: master photos + user photo for this clip
-        const referenceElements = [...masterMediaIds];
-        const userPhotoId = uploadedPhotoIds[clip.photo_ref];
-        if (userPhotoId) referenceElements.push(userPhotoId);
-
-        const imagePrompt = `${clip.start_frame} ${BG_STANDARD} Fixed camera, 16:9, studio lighting.`;
-        const jobId = await callHiggsfieldGenerateImage(imagePrompt, referenceElements, apiKey);
-        const url = await pollHiggsfieldJob(jobId, apiKey);
-        images[clip.clip_id] = url;
-      } catch (e) {
-        console.warn(`Higgsfield API failed for ${clip.clip_id}:`, e.message);
-        images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
-      }
-    } else if (openaiKey) {
-      // OpenAI: Responses API (gpt-4o + reference images) → gpt-image-1 → pollinations.ai
+    if (openaiKey) {
       if (onProgress) onProgress(i, `${clip.clip_id} GPT 이미지 생성 중...`);
-      const masterUrls = pickMasterImages(errorTypes);
       const imagePrompt = `You are generating a technical troubleshooting image for MIRU Systems' PCOS (Polling Station Count Optical Scanner) product manual. Use the reference images above as the exact visual style and machine appearance guide.\n\n${clip.start_frame}\n\n${BG_STANDARD}\n\nMatch the machine's exact appearance, color, and proportions from the reference images. Technical product photography, 16:9.`;
       try {
         images[clip.clip_id] = await generateOpenAIImageWithRefs(imagePrompt, masterUrls, openaiKey);
       } catch(e) {
         console.warn(`OpenAI Responses API failed for ${clip.clip_id}:`, e.message);
         try {
-          const fallbackPrompt = `PCOS polling station optical scanner (ballot counting machine). ${clip.start_frame} ${BG_STANDARD} Technical product photography, 16:9.`;
+          const fallbackPrompt = `PCOS polling station optical scanner. ${clip.start_frame} ${BG_STANDARD} Technical product photography, 16:9.`;
           images[clip.clip_id] = await generateOpenAIImage(fallbackPrompt, openaiKey);
         } catch(e2) {
           console.warn(`OpenAI gpt-image-1 also failed for ${clip.clip_id}:`, e2.message);
@@ -379,10 +309,9 @@ async function generateHiggsImages(clips, photos, onProgress, errorTypes) {
         }
       }
     } else {
-      // No API key: pollinations.ai (free, dynamic)
+      if (onProgress) onProgress(i, `${clip.clip_id} 이미지 생성 중...`);
       try {
-        const imagePrompt = `PCOS polling station optical scanner, ${clip.start_frame}`;
-        images[clip.clip_id] = await generatePollinationsImage(imagePrompt);
+        images[clip.clip_id] = await generatePollinationsImage(`PCOS polling station optical scanner, ${clip.start_frame}`);
         await sleep(200);
       } catch(e) {
         console.warn(`pollinations.ai failed for ${clip.clip_id}:`, e.message);
@@ -392,40 +321,6 @@ async function generateHiggsImages(clips, photos, onProgress, errorTypes) {
   }
 
   return images;
-}
-
-async function callHiggsfieldGenerateImage(prompt, referenceElements, apiKey) {
-  const body = {
-    model: 'nano_banana',
-    prompt,
-    aspect_ratio: '16:9',
-  };
-  if (referenceElements && referenceElements.length > 0) {
-    body.reference_elements = referenceElements;
-  }
-
-  const res = await fetch('https://api.higgsfield.ai/v1/generate/image', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-    body: JSON.stringify(body)
-  });
-  if (!res.ok) throw new Error(`Higgsfield ${res.status}`);
-  const data = await res.json();
-  return data.results?.[0]?.id || data.id;
-}
-
-async function pollHiggsfieldJob(jobId, apiKey, maxMs = 120000) {
-  const deadline = Date.now() + maxMs;
-  while (Date.now() < deadline) {
-    await sleep(4000);
-    const res = await fetch(`https://api.higgsfield.ai/v1/jobs/${jobId}`, {
-      headers: { 'Authorization': `Bearer ${apiKey}` }
-    });
-    const data = await res.json();
-    if (data.status === 'completed') return data.results?.rawUrl || data.url;
-    if (data.status === 'failed') throw new Error('Higgsfield job failed');
-  }
-  throw new Error('Higgsfield timeout');
 }
 
 // ─── Slack notification ───────────────────────────────────────────────────────
