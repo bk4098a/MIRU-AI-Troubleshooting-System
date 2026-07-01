@@ -66,7 +66,7 @@ ${data.priorActions}
 
 [Section 3 - Solution Attempted]:
 ${data.solution}
----
+${data.userFeedback ? `\n[REGENERATION FEEDBACK - please address these specific issues in your output]:\n${data.userFeedback}\n` : ''}---
 
 Respond ONLY with valid JSON, no markdown:
 {

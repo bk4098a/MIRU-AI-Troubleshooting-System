@@ -47,7 +47,7 @@ nav {
 .panel-title { font-size: 0.95rem; font-weight: 900; color: var(--navy); margin-bottom: 0.8rem; }
 
 /* Stats row */
-.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.6rem; margin-bottom: 0.8rem; }
+.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.6rem; margin-bottom: 0.8rem; }
 .stat-box { background: var(--fog); border-radius: 8px; padding: 0.6rem 0.5rem; text-align: center; }
 .stat-val { font-size: 1.4rem; font-weight: 900; color: var(--navy); }
 .stat-val.red { color: var(--red); }
@@ -251,6 +251,10 @@ nav {
           <div class="stat-val green" id="cntDone">0</div>
           <div class="stat-lab">완료</div>
         </div>
+        <div class="stat-box">
+          <div class="stat-val" id="cntSatisfied" style="color:var(--navy);">—</div>
+          <div class="stat-lab">만족률</div>
+        </div>
       </div>
     </div>
 
@@ -258,6 +262,7 @@ nav {
       <div class="filter-tab active" onclick="filterReqs(this,'all')">전체</div>
       <div class="filter-tab" onclick="filterReqs(this,'pending')">대기</div>
       <div class="filter-tab" onclick="filterReqs(this,'done')">완료</div>
+      <div class="filter-tab" onclick="filterReqs(this,'feedback')">피드백</div>
     </div>
 
     <div class="request-list" id="requestList"></div>
@@ -413,6 +418,13 @@ function updateStats() {
   document.getElementById('cntPending').textContent = REQUESTS.filter(x => x.status === 'review').length;
   document.getElementById('cntProcessing').textContent = REQUESTS.filter(x => x.status === 'processing').length;
   document.getElementById('cntDone').textContent = REQUESTS.filter(x => x.status === 'done').length;
+  try {
+    const fb = JSON.parse(localStorage.getItem('miru_feedback_log') || '[]');
+    if (fb.length > 0) {
+      const sat = fb.filter(f => f.rating === 'satisfied').length;
+      document.getElementById('cntSatisfied').textContent = Math.round(sat / fb.length * 100) + '%';
+    }
+  } catch(e) {}
 }
 
 function renderList() {
@@ -444,7 +456,73 @@ function filterReqs(el, filter) {
   document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   activeFilter = filter;
-  renderList();
+  if (filter === 'feedback') {
+    renderFeedbackList();
+  } else {
+    renderList();
+  }
+}
+
+function renderFeedbackList() {
+  const list = document.getElementById('requestList');
+  let fb = [];
+  try { fb = JSON.parse(localStorage.getItem('miru_feedback_log') || '[]'); } catch(e) {}
+  if (!fb.length) {
+    list.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--steel);font-size:0.8rem;">피드백 데이터가 없습니다.</div>';
+    return;
+  }
+  list.innerHTML = fb.map((f, i) => {
+    const t = new Date(f.timestamp);
+    const ts = `${t.getMonth()+1}/${t.getDate()} ${t.getHours().toString().padStart(2,'0')}:${t.getMinutes().toString().padStart(2,'0')}`;
+    const badge = f.rating === 'satisfied'
+      ? `<span style="background:#e8f5e9;color:#2e7d32;border-radius:99px;padding:2px 8px;font-size:0.68rem;font-weight:700;">만족</span>`
+      : `<span style="background:#fce4ec;color:#c62828;border-radius:99px;padding:2px 8px;font-size:0.68rem;font-weight:700;">불만족</span>`;
+    return `<div class="req-item" style="cursor:default;" onclick="showFeedbackDetail(${i})">
+      <div class="req-header">
+        ${badge}
+        <span style="font-size:0.7rem;color:var(--steel);margin-left:auto;">${ts}</span>
+      </div>
+      <div style="font-size:0.76rem;color:var(--navy);margin:0.25rem 0;">${(f.errorTypes||[]).join(', ') || '—'}</div>
+      <div style="font-size:0.73rem;color:var(--slate);">${f.country || ''} ${f.feedback ? '· ' + f.feedback.slice(0,40) + (f.feedback.length>40?'…':'') : ''}</div>
+      <div class="req-time">${f.ticketNum || ''}</div>
+    </div>`;
+  }).join('') +
+  `<div style="padding:0.75rem 1rem;text-align:right;">
+    <button onclick="exportFeedback()" style="font-size:0.72rem;padding:4px 10px;border-radius:6px;border:1px solid var(--steel);background:transparent;color:var(--slate);cursor:pointer;">CSV 내보내기</button>
+  </div>`;
+}
+
+function showFeedbackDetail(idx) {
+  let fb = [];
+  try { fb = JSON.parse(localStorage.getItem('miru_feedback_log') || '[]'); } catch(e) {}
+  const f = fb[idx];
+  if (!f) return;
+  const panel = document.getElementById('rightPanel');
+  panel.innerHTML = `<div style="padding:1.5rem;">
+    <div style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1rem;">피드백 상세</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.8rem;margin-bottom:1rem;">
+      <div><span style="color:var(--steel);">티켓</span><br><strong>${f.ticketNum || '—'}</strong></div>
+      <div><span style="color:var(--steel);">평가</span><br><strong style="color:${f.rating==='satisfied'?'#2e7d32':'#c62828'}">${f.rating==='satisfied'?'만족':'불만족'}</strong></div>
+      <div><span style="color:var(--steel);">국가</span><br>${f.country || '—'}</div>
+      <div><span style="color:var(--steel);">에러</span><br>${(f.errorTypes||[]).join(', ') || '—'}</div>
+    </div>
+    ${f.feedback ? `<div style="background:var(--fog);border-radius:8px;padding:0.75rem;font-size:0.82rem;color:var(--slate);line-height:1.6;"><strong style="color:var(--navy);">불만족 사유:</strong><br>${f.feedback}</div>` : ''}
+    <div style="font-size:0.7rem;color:var(--steel);margin-top:1rem;">${new Date(f.timestamp).toLocaleString('ko-KR')}</div>
+  </div>`;
+}
+
+function exportFeedback() {
+  let fb = [];
+  try { fb = JSON.parse(localStorage.getItem('miru_feedback_log') || '[]'); } catch(e) {}
+  if (!fb.length) return;
+  const rows = [['ticketNum','timestamp','rating','feedback','errorTypes','country']].concat(
+    fb.map(f => [f.ticketNum||'', f.timestamp||'', f.rating||'', (f.feedback||'').replace(/,/g,'·'), (f.errorTypes||[]).join('|'), f.country||''])
+  );
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,﻿' + encodeURIComponent(csv);
+  a.download = 'miru_feedback_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
 }
 
 function selectRequest(id) {
