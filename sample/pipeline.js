@@ -11,6 +11,13 @@ const VERCEL_PROXY_URL = (() => {
 // ─── Fixed visual standard ────────────────────────────────────────────────────
 const BG_STANDARD = `BACKGROUND: Replace the entire background with a seamless, uniform neutral light-grey studio backdrop. Remove all clutter — cables, plastic bags/wrap, beige walls, wooden desks, other equipment. Keep ONLY the PCOS machine, the relevant parts, and the hand. Soft even studio light, subtle soft shadow under the machine. Horizontal, 16:9.`;
 
+// ─── Kling master prompt structure (IMPORTANT / MOTION / NEGATIVE) ────────────
+const KLING_IMPORTANT = `IMPORTANT: Keep the machine, screen, ports, buttons, cables, and ALL text, logos, labels, and UI elements exactly as in the source frames. Do NOT change, morph, melt, warp, redraw, or re-letter any structure or text. The on-screen text is a flat, frozen UI graphic — keep every character pixel-for-pixel as in the start and end frames; never re-render, animate, or invent screen text. Only the specified motion occurs; everything else stays perfectly still and stable.`;
+const KLING_NEGATIVE = `NEGATIVE: warping, morphing, melting, distorted text, changing letters, garbled text, gibberish text, deformed logo, altered UI, re-rendered screen content, shifting ports, moving buttons, wrong button, structure deformation, extra fingers, deformed hand, mutated fingers, extra hands, extra objects, flickering, wobbling background, background change, camera shake, jitter`;
+function buildKlingPrompt(motion) {
+  return `${KLING_IMPORTANT}\nMOTION: ${motion}\n${KLING_NEGATIVE}`;
+}
+
 // ─── Demo images: Higgsfield nano_banana_2, PCOS Paper Jam scenario ───────────
 const DEMO_IMAGES = {
   'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260630_022730_362a2f3e-3c2a-4195-a323-d49c178b9210.png',
@@ -31,7 +38,7 @@ function buildGeminiPrompt(data) {
 
   return `You are a professional technical video script generator for MIRU Systems' PCOS (Polling Station Count Optical Scanner) troubleshooting guide videos.
 
-PCOS (АСУ): Optical paper-ballot scanner/counter used at polling stations. Scans and counts ballots, transmits results via network. Uses smart card, flash card (USB), SD card (x2: primary/backup), and ECF configuration file. Key errors: UIK number mismatch (voter station ID error), flash card/SD card data mismatch (mixed paired storage), ECF NOT FOUND (config file missing or wrong UIK in DB), paper jam, scanner cover open, double feed, stain on scanner glass, network disconnect, battery low.
+PCOS (АСУ): Optical paper-ballot scanner/counter used at polling stations. Scans and counts ballots, transmits results via network. Uses smart card, flash card (USB), SD card (x2: primary/backup), and ECF configuration file. Key errors: UIK number mismatch (voter station ID error), flash card/SD card data mismatch (mixed paired storage), ECF NOT FOUND (config file missing or wrong UIK in DB), paper jam (visible paper stuck in scanner slot — open cover, remove paper), scanner cover open, double feed, stain on scanner glass, network disconnect, battery low, ballot stacker jam (MOST COMMON hardware error on aged machines — machine fails to classify ballot due to worn rollers, ballot exits to rear stacker uncounted; NO on-screen error; fix: open front transparent cover, gently remove jammed ballot from paper path, close cover, re-insert ballot).
 ${manualContext ? `\nPCOS TROUBLESHOOTING MANUAL REFERENCE:\n${manualContext.slice(0, 8000)}\n` : ''}
 VISUAL STANDARD (all clips):
 - Format: 16:9, 720p, silent, 4-5 seconds per clip, fixed camera
@@ -80,12 +87,12 @@ Respond ONLY with valid JSON, no markdown:
       "label": "PROBLEM",
       "model": "Kling",
       "title": "<3-5 word English title>",
-      "start_frame": "<describe exact visual state of PCOS machine>",
+      "start_frame": "<describe exact visual state of PCOS machine at start>",
       "end_frame": "<describe end frame — slight change, e.g. hand approaching OK button>",
-      "prompt": "<full Kling prompt: start + -> + end + BG_STANDARD + fixed camera 16:9>",
+      "motion": "<MOTION section ONLY — fixed locked-off angle of PCOS, describe exactly what hand/machine does, camera dead still. E.g.: Fixed front view. PCOS display shows Paper Jam error in red. No motion yet — static error state.>",
       "caption_main": "<3-5 WORD UPPERCASE>",
       "caption_sub": "<one sentence, what operator sees>",
-      "description": "<2-3 sentences in English. Describe exactly what is shown in this image: the PCOS machine state, what part is highlighted, what the operator should observe. Written for a technical troubleshooting manual.>",
+      "description": "<2-3 sentences English. Describe exactly what is shown: machine state, which part is highlighted, what operator observes. Technical manual style.>",
       "photo_ref": "photo_error_screen"
     },
     {
@@ -95,10 +102,10 @@ Respond ONLY with valid JSON, no markdown:
       "title": "<3-5 word English title>",
       "start_frame": "<..>",
       "end_frame": "<..>",
-      "prompt": "<full prompt>",
+      "motion": "<MOTION only: Fixed [angle] view. A hand enters from [direction] and [action]. E.g.: Fixed front-right view. A hand's index finger enters from the right and presses the OK button on the touchscreen. Screen transitions from error state to confirmation. Camera dead still.>",
       "caption_main": "<..>",
       "caption_sub": "<..>",
-      "description": "<2-3 sentences English. Describe what the operator is doing in this step: which button, which part, what motion. Clear and precise for the manual.>",
+      "description": "<2-3 sentences English. Describe what operator is doing: which button/part, what motion, what changes on screen. Manual style.>",
       "photo_ref": "photo_error_state"
     },
     {
@@ -108,10 +115,10 @@ Respond ONLY with valid JSON, no markdown:
       "title": "<..>",
       "start_frame": "<..>",
       "end_frame": "<..>",
-      "prompt": "<full prompt including BG_STANDARD>",
+      "motion": "<MOTION only: Fixed [angle] view. [Describe the resolution action — e.g. hand removes jammed paper, opens/closes cover, inserts card]. E.g.: Fixed top-down view. A hand carefully lifts the jammed ballot from the scanner slot. PCOS display transitions to green ready state. Camera dead still.>",
       "caption_main": "<..>",
       "caption_sub": "<..>",
-      "description": "<2-3 sentences English. Describe the resolution shown: what was fixed, what the PCOS displays after the fix, confirmation that system is restored.>",
+      "description": "<2-3 sentences English. Describe resolution: what was fixed, what PCOS displays after fix, confirmation system restored.>",
       "photo_ref": "photo_resolution"
     }
   ],
@@ -228,6 +235,7 @@ async function generateOpenAIImage(prompt, apiKey) {
 const PCOS_MASTER_BASE = 'https://bk4098a.github.io/MIRU-AI-Troubleshooting-System/sample/pcos_ref';
 
 const ERROR_MASTER_MAP = {
+  'Ballot Stacker Jam':  ['IMG_9850', 'IMG_9856'],  // cover open + mechanism — most common
   'UIK Mismatch':        ['IMG_9849', 'IMG_9850'],
   'Flash Card Mismatch': ['IMG_9849', 'IMG_9852'],
   'ECF NOT FOUND':       ['IMG_9849', 'IMG_9851'],
@@ -399,6 +407,50 @@ async function generateHiggsImages(clips, photos, onProgress, errorTypes) {
   return images;
 }
 
+// ─── Russian translation — dual LLM (Kyrgyzstan / КР) ────────────────────────
+async function callGroqRaw(messages, model, temperature) {
+  const apiKey = (() => {
+    try { return localStorage.getItem('GROQ_API_KEY') || window.MIRU_CONFIG?.GROQ_API_KEY || ''; }
+    catch(e) { return window.MIRU_CONFIG?.GROQ_API_KEY || ''; }
+  })();
+  if (!apiKey) throw new Error('No GROQ_API_KEY');
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify({ model, messages, temperature, max_tokens: 2048, response_format: { type: 'json_object' } }),
+  });
+  if (!res.ok) throw new Error(`Groq ${res.status}`);
+  const data = await res.json();
+  const text = data.choices?.[0]?.message?.content;
+  return JSON.parse(text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim());
+}
+
+async function callRussianTranslation(englishResult) {
+  const trans = englishResult.translation || {};
+  const clipDesc = (englishResult.kling_clips || []).map(c => `[${c.clip_id}] ${c.description || ''}`).join(' | ');
+
+  const sysMsg = `You are a technical translator for CIS election documentation. Translate to formal Russian (Русский). This is for election officials in Kyrgyzstan operating a PCOS optical ballot scanner (АСУ). Use accurate election administration terminology.`;
+  const userMsg = `Translate these fields to Russian. Respond ONLY with valid JSON, no markdown.
+{"situation":"${(trans.situation||'').replace(/"/g,"'")}","prior_actions":"${(trans.prior_actions||'').replace(/"/g,"'")}","solution":"${(trans.solution||'').replace(/"/g,"'")}","summary":"${(trans.summary||'').replace(/"/g,"'")}","clip_captions":"${clipDesc.replace(/"/g,"'")}"}
+Output format: {"situation":"<RU>","prior_actions":"<RU>","solution":"<RU>","summary":"<RU>","clip_captions":"<RU>"}`;
+
+  const msgs = [{ role: 'system', content: sysMsg }, { role: 'user', content: userMsg }];
+
+  // Two independent LLM calls — compare results for validation
+  const [r1, r2] = await Promise.allSettled([
+    callGroqRaw(msgs, 'llama-3.3-70b-versatile', 0.1),
+    callGroqRaw(msgs, 'llama-3.1-8b-instant',    0.15),
+  ]);
+  const v1 = r1.status === 'fulfilled' ? r1.value : null;
+  const v2 = r2.status === 'fulfilled' ? r2.value : null;
+
+  if (v1 && v2) {
+    console.log('[RU 번역 검증] LLM-1 (llama-70b):', v1.summary);
+    console.log('[RU 번역 검증] LLM-2 (llama-8b):', v2.summary);
+  }
+  return { primary: v1, secondary: v2, validated: !!(v1 && v2) };
+}
+
 // ─── Slack notification ───────────────────────────────────────────────────────
 async function sendSlackNotification(payload) {
   const webhookUrl = window.MIRU_CONFIG?.SLACK_WEBHOOK_URL;
@@ -470,6 +522,10 @@ async function runPipeline(formData, onProgress) {
     console.warn('Groq fallback (demo mode):', e.message);
     result = buildDemoResult(formData);
   }
+  // Assemble full Kling prompts from motion descriptions (IMPORTANT + MOTION + NEGATIVE)
+  (result.kling_clips || []).forEach(clip => {
+    clip.prompt = buildKlingPrompt(clip.motion || `${clip.start_frame} -> ${clip.end_frame}`);
+  });
   onProgress(1, 'Kling 프롬프트 생성 완료');
   await sleep(300);
 
@@ -486,6 +542,20 @@ async function runPipeline(formData, onProgress) {
   const slackPayload = buildSlackPayload(formData, ticketNum, result, false);
   await sendSlackNotification(slackPayload);
   await sleep(400);
+
+  // Russian translation for Kyrgyzstan (КР / KG)
+  const needsRu = /kg|키르기|kyrgyz/i.test(formData.country || '');
+  if (needsRu) {
+    try {
+      onProgress(slackStep + 1, '러시아어 번역 중 (듀얼 LLM 검증)...');
+      const ruResult = await callRussianTranslation(result);
+      result.russian          = ruResult.primary;
+      result.russian_secondary = ruResult.secondary;
+      result.russian_validated = ruResult.validated;
+    } catch(e) {
+      console.warn('Russian translation failed:', e.message);
+    }
+  }
 
   return { ticketNum, result, formData };
 }

@@ -516,8 +516,20 @@ textarea { resize:vertical; min-height:80px; }
 
   <!-- Translation -->
   <div class="card" id="translationCard" style="display:none;">
-    <div class="card-title">영문 번역 결과</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;">
+      <div class="card-title" style="margin-bottom:0">번역 결과</div>
+      <div id="langToggle" style="display:flex;gap:0.4rem;">
+        <button onclick="switchLang('en')" id="btn-lang-en" style="font-size:0.75rem;padding:4px 12px;border-radius:99px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer;font-family:inherit;">English</button>
+        <button onclick="switchLang('ru')" id="btn-lang-ru" style="font-size:0.75rem;padding:4px 12px;border-radius:99px;border:1px solid var(--steel);background:transparent;color:var(--slate);cursor:pointer;font-family:inherit;" id="btn-lang-ru">Русский</button>
+      </div>
+    </div>
     <div id="translationSection" style="font-size:0.82rem;color:var(--slate);font-weight:300;line-height:1.75;"></div>
+    <div id="translationRu" style="display:none;font-size:0.82rem;color:var(--slate);font-weight:300;line-height:1.75;">
+      <div style="font-size:0.75rem;color:var(--steel);margin-bottom:0.5rem;display:flex;align-items:center;gap:6px;">
+        <span id="ruValidBadge" style="display:none;background:#e8f5e9;color:#2e7d32;border-radius:99px;padding:2px 8px;font-size:0.7rem;">듀얼 LLM 검증 완료</span>
+      </div>
+      <div id="ruContent"></div>
+    </div>
   </div>
 
   <!-- Slack preview -->
@@ -565,7 +577,7 @@ const COUNTRIES = [
 ];
 
 const ERROR_TYPES = {
-  pcos:['UIK Number Mismatch','Flash Card / SD Card Mismatch','ECF NOT FOUND','Paper Jam','Scanner Cover Open','Double Feed','Stain In Scanner','Network Connection Error','Results Not Transmitted','Battery Low','Display Error','USB / Card Reader Error'],
+  pcos:['Ballot Stacker Jam (투표지 후방 배출)','UIK Number Mismatch','Flash Card / SD Card Mismatch','ECF NOT FOUND','Paper Jam','Scanner Cover Open','Double Feed','Stain In Scanner','Network Connection Error','Results Not Transmitted','Battery Low','Display Error','USB / Card Reader Error'],
   ccos:['Paper Jam','Scanner Error','Count Mismatch','Network Connection Error','Print Error'],
   vvd:['Fingerprint Not Recognized','Face Scan Error','Network Error','Battery Low','Display Error','Card Reader Error'],
   bvrd:['Fingerprint Scanner Error','Face Camera Error','Printer Error','Network Error','Card Reader Error','Battery Low','Data Sync Error'],
@@ -891,7 +903,7 @@ async function submitForm() {
     localStorage.setItem('miru_admin_log', JSON.stringify(adminLog.slice(0, 50)));
   } catch(e) { console.warn('Admin log save failed:', e); }
 
-  // Translation
+  // Translation (English)
   const trans = result?.translation;
   if (trans) {
     document.getElementById('translationCard').style.display = 'block';
@@ -899,6 +911,21 @@ async function submitForm() {
       `<div style="margin-bottom:0.5rem;"><strong style="color:var(--navy);">Error Situation:</strong> ${trans.situation}</div>` +
       `<div style="margin-bottom:0.5rem;"><strong style="color:var(--navy);">Prior Actions:</strong> ${trans.prior_actions}</div>` +
       `<div><strong style="color:var(--navy);">Solution:</strong> ${trans.solution}</div>`;
+  }
+
+  // Russian translation (Kyrgyzstan)
+  const ru = result?.russian;
+  if (ru) {
+    const badge = document.getElementById('ruValidBadge');
+    if (result.russian_validated && badge) badge.style.display = 'inline';
+    document.getElementById('ruContent').innerHTML =
+      `<div style="margin-bottom:0.5rem;"><strong style="color:var(--navy);">Ситуация:</strong> ${ru.situation || ''}</div>` +
+      `<div style="margin-bottom:0.5rem;"><strong style="color:var(--navy);">Предпринятые действия:</strong> ${ru.prior_actions || ''}</div>` +
+      `<div><strong style="color:var(--navy);">Решение:</strong> ${ru.solution || ''}</div>`;
+  } else {
+    // Hide Russian button if no Russian translation
+    const btn = document.getElementById('btn-lang-ru');
+    if (btn) btn.style.display = 'none';
   }
 
   // Slack preview
@@ -1007,6 +1034,24 @@ function togglePrompt(el) {
   const open = box.style.display === 'block';
   box.style.display = open ? 'none' : 'block';
   el.textContent = open ? '프롬프트 전문 보기 ▼' : '접기 ▲';
+}
+
+function switchLang(lang) {
+  const enBtn = document.getElementById('btn-lang-en');
+  const ruBtn = document.getElementById('btn-lang-ru');
+  const enDiv = document.getElementById('translationSection');
+  const ruDiv = document.getElementById('translationRu');
+  const activeStyle = 'background:var(--navy);color:#fff;border-color:var(--navy);';
+  const inactiveStyle = 'background:transparent;color:var(--slate);border-color:var(--steel);';
+  if (lang === 'ru') {
+    enDiv.style.display = 'none'; ruDiv.style.display = 'block';
+    if (enBtn) enBtn.style.cssText = inactiveStyle + 'font-size:0.75rem;padding:4px 12px;border-radius:99px;cursor:pointer;font-family:inherit;border-style:solid;';
+    if (ruBtn) ruBtn.style.cssText = activeStyle + 'font-size:0.75rem;padding:4px 12px;border-radius:99px;cursor:pointer;font-family:inherit;border-style:solid;';
+  } else {
+    enDiv.style.display = 'block'; ruDiv.style.display = 'none';
+    if (enBtn) enBtn.style.cssText = activeStyle + 'font-size:0.75rem;padding:4px 12px;border-radius:99px;cursor:pointer;font-family:inherit;border-style:solid;';
+    if (ruBtn) ruBtn.style.cssText = inactiveStyle + 'font-size:0.75rem;padding:4px 12px;border-radius:99px;cursor:pointer;font-family:inherit;border-style:solid;';
+  }
 }
 
 function resetForm() {
