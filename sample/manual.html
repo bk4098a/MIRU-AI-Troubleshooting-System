@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MIRU AI 트러블슈팅 시스템 — 사용 매뉴얼</title>
+<!-- Noto Sans KR: Confluence CDN fallback (GmarketSans 대체) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
+/* 로컬 환경: GmarketSans / Confluence·외부: Noto Sans KR / 오프라인: 시스템 폰트 */
 @font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; }
 @font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; }
 @font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; }
@@ -16,7 +21,7 @@
   --slate:#525252; --steel:#8C8C8C; --line:#C7CEDC;
 }
 html { scroll-behavior:smooth; }
-body { font-family:'GmarketSans','Malgun Gothic',sans-serif; font-weight:500; background:#f0f2f8; color:var(--charcoal); font-size:15px; }
+body { font-family:'GmarketSans','Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo','맑은 고딕',sans-serif; font-weight:500; background:#f0f2f8; color:var(--charcoal); font-size:15px; }
 
 /* NAV */
 nav { position:fixed; top:0; left:0; right:0; z-index:100; background:rgba(5,25,94,0.97); height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 2rem; border-bottom:2px solid var(--red); }
