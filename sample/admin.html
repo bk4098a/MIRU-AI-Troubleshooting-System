@@ -435,12 +435,23 @@ function renderList() {
     list.innerHTML = '<div style="padding:2rem 1rem;text-align:center;color:var(--steel);font-size:0.8rem;font-weight:300;">접수된 요청이 없습니다.</div>';
     return;
   }
+  // Load raw admin log to access verification field
+  let rawLog = [];
+  try { rawLog = JSON.parse(localStorage.getItem('miru_admin_log') || '[]'); } catch(e) {}
   list.innerHTML = filtered.map(r => {
     const [lbl, cls] = statusLabel(r.status);
+    const raw = rawLog.find(e => e.id === r.id);
+    const veri = raw?.verification;
+    const veriBadge = veri
+      ? (veri.pass && veri.confidence >= 75
+          ? `<span style="background:#e8f5e9;color:#2e7d32;border-radius:99px;padding:1px 7px;font-size:0.62rem;font-weight:700;">검증 완료</span>`
+          : `<span style="background:rgba(249,115,22,0.12);color:#c2410c;border-radius:99px;padding:1px 7px;font-size:0.62rem;font-weight:700;">검토 권장</span>`)
+      : '';
     return `<div class="request-item${r.id === activeId ? ' active' : ''}" onclick="selectRequest('${r.id}')">
       <div class="req-top">
         <span class="req-id">${r.id}</span>
         <span class="req-status ${cls}">${lbl}</span>
+        ${veriBadge}
       </div>
       <div class="req-machine">${r.machine} <span style="color:var(--steel);font-weight:400">— ${r.error}</span></div>
       <div class="req-meta">
@@ -477,9 +488,11 @@ function renderFeedbackList() {
     const badge = f.rating === 'satisfied'
       ? `<span style="background:#e8f5e9;color:#2e7d32;border-radius:99px;padding:2px 8px;font-size:0.68rem;font-weight:700;">만족</span>`
       : `<span style="background:#fce4ec;color:#c62828;border-radius:99px;padding:2px 8px;font-size:0.68rem;font-weight:700;">불만족</span>`;
-    return `<div class="req-item" style="cursor:default;" onclick="showFeedbackDetail(${i})">
+    const categoryBadge = f.analysis?.label
+      ? `<span style="background:var(--fog);color:var(--slate);border-radius:99px;padding:2px 8px;font-size:0.65rem;margin-left:4px;">${f.analysis.label}</span>` : '';
+    return `<div class="req-item" style="cursor:pointer;" onclick="showFeedbackDetail(${i})">
       <div class="req-header">
-        ${badge}
+        ${badge}${categoryBadge}
         <span style="font-size:0.7rem;color:var(--steel);margin-left:auto;">${ts}</span>
       </div>
       <div style="font-size:0.76rem;color:var(--navy);margin:0.25rem 0;">${(f.errorTypes||[]).join(', ') || '—'}</div>
@@ -506,8 +519,12 @@ function showFeedbackDetail(idx) {
       <div><span style="color:var(--steel);">국가</span><br>${f.country || '—'}</div>
       <div><span style="color:var(--steel);">에러</span><br>${(f.errorTypes||[]).join(', ') || '—'}</div>
     </div>
-    ${f.feedback ? `<div style="background:var(--fog);border-radius:8px;padding:0.75rem;font-size:0.82rem;color:var(--slate);line-height:1.6;"><strong style="color:var(--navy);">불만족 사유:</strong><br>${f.feedback}</div>` : ''}
-    <div style="font-size:0.7rem;color:var(--steel);margin-top:1rem;">${new Date(f.timestamp).toLocaleString('ko-KR')}</div>
+    ${f.feedback ? `<div style="background:var(--fog);border-radius:8px;padding:0.75rem;font-size:0.82rem;color:var(--slate);line-height:1.6;margin-bottom:0.75rem;"><strong style="color:var(--navy);">불만족 사유:</strong><br>${f.feedback}</div>` : ''}
+    ${f.analysis ? `<div style="background:#fff8e1;border-radius:8px;padding:0.65rem 0.75rem;font-size:0.78rem;color:#6d4c00;margin-bottom:0.75rem;">
+      <strong>AI 분석 (llama-8b):</strong> <span style="background:#fff3cd;border-radius:99px;padding:1px 7px;">${f.analysis.label || '기타'}</span><br>
+      <span style="font-size:0.72rem;color:#8d6e00;margin-top:0.25rem;display:block;">${f.analysis.reason || ''}</span>
+    </div>` : ''}
+    <div style="font-size:0.7rem;color:var(--steel);">${new Date(f.timestamp).toLocaleString('ko-KR')}</div>
   </div>`;
 }
 
@@ -515,8 +532,13 @@ function exportFeedback() {
   let fb = [];
   try { fb = JSON.parse(localStorage.getItem('miru_feedback_log') || '[]'); } catch(e) {}
   if (!fb.length) return;
-  const rows = [['ticketNum','timestamp','rating','feedback','errorTypes','country']].concat(
-    fb.map(f => [f.ticketNum||'', f.timestamp||'', f.rating||'', (f.feedback||'').replace(/,/g,'·'), (f.errorTypes||[]).join('|'), f.country||''])
+  const rows = [['ticketNum','timestamp','rating','feedback','category','category_reason','errorTypes','country']].concat(
+    fb.map(f => [
+      f.ticketNum||'', f.timestamp||'', f.rating||'',
+      (f.feedback||'').replace(/,/g,'·'),
+      f.analysis?.label||'', (f.analysis?.reason||'').replace(/,/g,'·'),
+      (f.errorTypes||[]).join('|'), f.country||''
+    ])
   );
   const csv = rows.map(r => r.join(',')).join('\n');
   const a = document.createElement('a');

@@ -494,7 +494,10 @@ textarea { resize:vertical; min-height:80px; }
 
   <!-- AI Image Panel -->
   <div class="card">
-    <div class="card-title">AI 생성 이미지</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.9rem;">
+      <div class="card-title" style="margin-bottom:0;">AI 생성 이미지</div>
+      <div id="verificationBadge" style="min-height:22px;"></div>
+    </div>
     <div class="img-panel-grid" id="imgPanelGrid"></div>
     <div style="text-align:center;margin-top:0.3rem;">
       <button class="btn-admin-call" id="btnAdminCall" onclick="handleAdminCall()">관리자 호출 — 이미지가 잘못 생성되었나요?</button>
@@ -901,6 +904,7 @@ async function submitForm() {
   const images = result?.images || {};
   renderImagePanel(clips, images);
   document.getElementById('feedbackCard').style.display = 'block';
+  runVerification(result, formData);
 
   // Save submission to admin log
   try {
@@ -1049,6 +1053,35 @@ function handleVideoNo() {
     생성된 이미지 3장이 <strong>${_pipelineFormData?.email || ''}</strong>로 발송됩니다.`;
 }
 
+// ─── Hallucination Verification ──────────────────────────────────────────────
+async function runVerification(result, formData) {
+  const badge = document.getElementById('verificationBadge');
+  if (!badge) return;
+  badge.innerHTML = '<span style="color:var(--steel);font-size:0.72rem;animation:pulse 1.5s infinite;">AI 검증 중...</span>';
+  let check;
+  try {
+    check = await callHallucinationCheck(result, formData);
+  } catch(e) {
+    badge.innerHTML = '';
+    return;
+  }
+  const conf = check.confidence || 0;
+  if (check.pass && conf >= 75) {
+    badge.innerHTML = `<span style="background:#e8f5e9;color:#2e7d32;border-radius:99px;padding:3px 10px;font-size:0.72rem;font-weight:700;">AI 검증 완료 · 신뢰도 ${conf}%</span>`;
+  } else {
+    const issuesHtml = (check.issues || []).length
+      ? `<div style="font-size:0.7rem;color:#c2410c;margin-top:0.3rem;">${check.issues.join(' · ')}</div>` : '';
+    badge.innerHTML = `<span style="background:rgba(249,115,22,0.12);color:#c2410c;border-radius:99px;padding:3px 10px;font-size:0.72rem;font-weight:700;">검토 권장 · 신뢰도 ${conf}%</span>${issuesHtml}`;
+  }
+  // Save verification result to admin log
+  try {
+    const adminLog = JSON.parse(localStorage.getItem('miru_admin_log') || '[]');
+    const entry = adminLog.find(e => e.id === _pipelineTicket);
+    if (entry) { entry.verification = check; localStorage.setItem('miru_admin_log', JSON.stringify(adminLog)); }
+  } catch(e) {}
+  console.log('[MIRU Hallucination Check]', check);
+}
+
 // ─── Feedback / Rating ────────────────────────────────────────────────────
 function rateFeedback(rating) {
   document.getElementById('feedbackBtnRow').style.display = 'none';
@@ -1064,6 +1097,16 @@ function submitFeedback(regenerate) {
   const feedback = document.getElementById('feedbackText').value.trim();
   saveFeedbackData('unsatisfied', feedback);
   document.getElementById('feedbackUnsatisfiedBox').style.display = 'none';
+  // Background feedback analysis via llama-8b
+  if (feedback) {
+    callFeedbackAnalysis(feedback, _pipelineFormData?.errorTypes || []).then(analysis => {
+      try {
+        const log = JSON.parse(localStorage.getItem('miru_feedback_log') || '[]');
+        if (log[0]) { log[0].analysis = analysis; localStorage.setItem('miru_feedback_log', JSON.stringify(log)); }
+      } catch(e) {}
+      console.log('[MIRU Feedback Analysis]', analysis);
+    });
+  }
   if (regenerate && _pipelineFormData) {
     document.getElementById('feedbackRegenStatus').style.display = 'block';
     const regenData = Object.assign({}, _pipelineFormData, { userFeedback: feedback });
@@ -1109,6 +1152,7 @@ async function handleRegenerate(formData) {
     _pipelineFormData = formData;
     if (newOut.ticketNum) _pipelineTicket = newOut.ticketNum;
     renderImagePanel(newOut.result.kling_clips || [], newOut.result.images || {});
+    runVerification(newOut.result, formData);
   }
   document.getElementById('feedbackRegenStatus').style.display = 'none';
   const thanks = document.getElementById('feedbackThanks');
@@ -1170,6 +1214,7 @@ function resetForm() {
     const dec = document.getElementById('videoDecisionBox'); if (dec) { dec.style.display='none'; dec.innerHTML=''; }
   }
   const tc = document.getElementById('translationCard'); if (tc) tc.style.display='none';
+  const vb = document.getElementById('verificationBadge'); if (vb) vb.innerHTML = '';
   const ac = document.getElementById('btnAdminCall'); if (ac) { ac.disabled=false; ac.classList.remove('sent'); ac.textContent='관리자 호출 — 이미지가 잘못 생성되었나요?'; }
   // Reset feedback card
   const fb = document.getElementById('feedbackCard');

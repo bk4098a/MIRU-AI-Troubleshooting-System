@@ -425,6 +425,64 @@ async function callGroqRaw(messages, model, temperature) {
   return JSON.parse(text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim());
 }
 
+// ─── Feedback Analysis — llama-8b (lightweight classifier) ───────────────────
+const FEEDBACK_CATEGORY_KO = {
+  image_quality:      '이미지 품질',
+  caption_error:      '캡션 오류',
+  situation_mismatch: '상황 불일치',
+  step_order_error:   '단계 순서 오류',
+  other:              '기타',
+};
+async function callFeedbackAnalysis(feedbackText, errorTypes) {
+  const prompt = `You are a feedback classifier for a PCOS troubleshooting AI video system.
+Error types reported: ${(errorTypes || []).join(', ')}
+User unsatisfied feedback: "${feedbackText}"
+
+Classify into exactly ONE category:
+- image_quality: Image is wrong, blurry, wrong machine, wrong aspect ratio
+- caption_error: Caption text inaccurate, wrong language, wrong description
+- situation_mismatch: Clips don't match the reported error type or situation
+- step_order_error: Solution steps missing, wrong order, or incomplete
+- other: Anything else
+
+Respond ONLY with valid JSON: {"category":"<key>","reason":"<one sentence in Korean>"}`;
+  try {
+    const r = await callGroqRaw([{ role: 'user', content: prompt }], 'llama-3.1-8b-instant', 0.1);
+    return { category: r.category || 'other', label: FEEDBACK_CATEGORY_KO[r.category] || '기타', reason: r.reason || '' };
+  } catch(e) {
+    return { category: 'other', label: '기타', reason: '분석 불가' };
+  }
+}
+
+// ─── Hallucination Verification — llama-70b (accuracy check) ─────────────────
+async function callHallucinationCheck(result, formData) {
+  const clips = (result.kling_clips || []).map(c =>
+    `${c.clip_id} [${c.label}]: ${c.caption_main} — ${(c.description || '').slice(0, 150)}`
+  ).join('\n');
+  const prompt = `You are a technical accuracy verifier for PCOS (Polling Station Count Optical Scanner) troubleshooting guides.
+
+Error types reported: ${(formData.errorTypes || []).join(', ')}
+Situation (Korean, may be informal): ${(formData.situation || '').slice(0, 400)}
+Solution attempted: ${(formData.solution || '').slice(0, 200)}
+
+Generated clip sequence:
+${clips}
+
+Verify these three things:
+1. Does the PROBLEM clip (PROB-01) correctly represent the stated error type?
+2. Do SOLUTION clips (SOL-01, SOL-02) provide correct, actionable steps for THIS specific PCOS error?
+3. Are any descriptions factually wrong about PCOS hardware/software?
+
+Be strict but fair. If the clips are plausible and relevant, pass them.
+Respond ONLY with valid JSON: {"pass":true,"confidence":85,"issues":[],"verdict":"<one sentence in Korean>"}
+On failure: {"pass":false,"confidence":40,"issues":["<specific issue>"],"verdict":"<one sentence>"}`;
+  try {
+    return await callGroqRaw([{ role: 'user', content: prompt }], 'llama-3.3-70b-versatile', 0.1);
+  } catch(e) {
+    return { pass: true, confidence: 0, issues: [], verdict: '검증 불가 (API 오류)' };
+  }
+}
+
 async function callRussianTranslation(englishResult) {
   const trans = englishResult.translation || {};
   const clipDesc = (englishResult.kling_clips || []).map(c => `[${c.clip_id}] ${c.description || ''}`).join(' | ');
