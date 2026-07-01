@@ -320,6 +320,12 @@ nav {
         <input type="password" id="inputGroqKey" placeholder="gsk_..." autocomplete="off"
           style="width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.8rem;font-family:monospace;background:var(--fog);">
       </div>
+      <div style="margin-bottom:0.7rem;">
+        <label style="font-size:0.72rem;color:var(--steel);display:block;margin-bottom:0.3rem;font-weight:500;">Vercel Proxy URL <span style="background:#fff3e0;color:#e65100;font-size:0.6rem;padding:1px 6px;border-radius:10px;margin-left:4px;">Higgsfield 이미지</span></label>
+        <input type="text" id="inputVercelUrl" placeholder="https://xxx.vercel.app" autocomplete="off"
+          style="width:100%;box-sizing:border-box;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.8rem;font-family:monospace;background:var(--fog);">
+        <div style="font-size:0.68rem;color:var(--steel);margin-top:0.3rem;">Vercel 배포 후 앱 URL 입력. 설정 시 Higgsfield가 최우선으로 사용됩니다.</div>
+      </div>
       <button class="btn-setup-save" id="btnSaveKeys" onclick="saveApiKeys()">API 키 저장</button>
     </div>
 
@@ -586,13 +592,16 @@ function showToast(msg, cls) {
 
 // ─── Setup Modal (PCOS Master + Manual) ────────────────────────────────
 function saveApiKeys() {
-  const openaiKey = document.getElementById('inputOpenAIKey').value.trim();
-  const groqKey   = document.getElementById('inputGroqKey').value.trim();
+  const openaiKey  = document.getElementById('inputOpenAIKey').value.trim();
+  const groqKey    = document.getElementById('inputGroqKey').value.trim();
+  const vercelUrl  = document.getElementById('inputVercelUrl').value.trim().replace(/\/$/, '');
   try {
     if (openaiKey) localStorage.setItem('OPENAI_API_KEY', openaiKey);
     else localStorage.removeItem('OPENAI_API_KEY');
     if (groqKey) localStorage.setItem('GROQ_API_KEY', groqKey);
     else localStorage.removeItem('GROQ_API_KEY');
+    if (vercelUrl) localStorage.setItem('VERCEL_PROXY_URL', vercelUrl);
+    else localStorage.removeItem('VERCEL_PROXY_URL');
   } catch(e) {}
   const btn = document.getElementById('btnSaveKeys');
   btn.classList.add('saved');
@@ -607,6 +616,8 @@ function openSetupModal() {
     if (openaiKey) document.getElementById('inputOpenAIKey').value = openaiKey;
     const groqKey = localStorage.getItem('GROQ_API_KEY');
     if (groqKey) document.getElementById('inputGroqKey').value = groqKey;
+    const vercelUrl = localStorage.getItem('VERCEL_PROXY_URL');
+    if (vercelUrl) document.getElementById('inputVercelUrl').value = vercelUrl;
   } catch(e) {}
   // Load saved manual
   try {

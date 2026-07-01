@@ -1,5 +1,12 @@
 // MIRU AI Troubleshooting Pipeline
-// Flow: Korean input → Groq (translate + script) → OpenAI (gpt-4o + PCOS ref images) → Slack
+// Flow: Korean input → Groq (translate + script) → Higgsfield via Vercel proxy → Slack
+// Image fallback: Vercel proxy → OpenAI gpt-image-1 → pollinations.ai
+
+// ─── Vercel proxy URL (set after deployment) ──────────────────────────────────
+const VERCEL_PROXY_URL = (() => {
+  try { return localStorage.getItem('VERCEL_PROXY_URL') || window.MIRU_CONFIG?.VERCEL_PROXY_URL || ''; }
+  catch(e) { return window.MIRU_CONFIG?.VERCEL_PROXY_URL || ''; }
+})();
 
 // ─── Fixed visual standard ────────────────────────────────────────────────────
 const BG_STANDARD = `BACKGROUND: Replace the entire background with a seamless, uniform neutral light-grey studio backdrop. Remove all clutter — cables, plastic bags/wrap, beige walls, wooden desks, other equipment. Keep ONLY the PCOS machine, the relevant parts, and the hand. Soft even studio light, subtle soft shadow under the machine. Horizontal, 16:9.`;
@@ -148,6 +155,33 @@ async function callGeminiFlash(prompt) {
   return JSON.parse(clean);
 }
 
+// ─── Higgsfield via Vercel proxy ─────────────────────────────────────────────
+async function generateViaProxy(prompt, referenceElements, proxyUrl) {
+  // 1. Submit job
+  const genRes = await fetch(`${proxyUrl}/api/higgsfield`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'generate', prompt, reference_elements: referenceElements }),
+  });
+  if (!genRes.ok) {
+    const err = await genRes.json().catch(() => ({}));
+    throw new Error(`Proxy generate failed ${genRes.status}: ${err.error || err.detail || ''}`);
+  }
+  const { job_id } = await genRes.json();
+  if (!job_id) throw new Error('No job_id from proxy');
+
+  // 2. Poll until done (max 2 min)
+  for (let i = 0; i < 30; i++) {
+    await sleep(4000);
+    const pollRes = await fetch(`${proxyUrl}/api/higgsfield?action=poll&job_id=${job_id}`);
+    if (!pollRes.ok) continue;
+    const data = await pollRes.json();
+    if (data.status === 'completed') return data.results?.rawUrl || data.url;
+    if (data.status === 'failed') throw new Error('Higgsfield job failed');
+  }
+  throw new Error('Higgsfield proxy timeout');
+}
+
 // ─── OpenAI image generation (gpt-image-1 → dall-e-3 fallback) ───────────────
 async function generateOpenAIImage(prompt, apiKey) {
   // gpt-image-1 먼저 시도 (비즈니스 계정), 실패 시 dall-e-3 fallback
@@ -280,43 +314,64 @@ async function generatePollinationsImage(prompt) {
 }
 
 // ─── Image generation orchestrator ───────────────────────────────────────────
-// Priority: OpenAI Responses API (gpt-4o + master ref images) → gpt-image-1 → pollinations.ai
+// Priority: Vercel proxy (Higgsfield) → OpenAI gpt-image-1 → pollinations.ai
 async function generateHiggsImages(clips, photos, onProgress, errorTypes) {
+  const proxyUrl = (() => {
+    try { return localStorage.getItem('VERCEL_PROXY_URL') || window.MIRU_CONFIG?.VERCEL_PROXY_URL || ''; }
+    catch(e) { return window.MIRU_CONFIG?.VERCEL_PROXY_URL || ''; }
+  })();
   const openaiKey = (() => {
     try { return localStorage.getItem('OPENAI_API_KEY') || window.MIRU_CONFIG?.OPENAI_API_KEY || ''; }
     catch(e) { return ''; }
   })();
 
   const masterUrls = pickMasterImages(errorTypes);
+  const masterMediaIds = (() => {
+    try {
+      const stored = localStorage.getItem('PCOS_MASTER_MEDIA_IDS');
+      return stored ? JSON.parse(stored) : (window.MIRU_CONFIG?.PCOS_MASTER_MEDIA_IDS || []);
+    } catch(e) { return window.MIRU_CONFIG?.PCOS_MASTER_MEDIA_IDS || []; }
+  })();
+
   const images = {};
 
   for (let i = 0; i < clips.length; i++) {
     const clip = clips[i];
+    const imagePrompt = `${clip.start_frame} ${BG_STANDARD} Fixed camera, 16:9, studio lighting.`;
+
+    if (proxyUrl) {
+      if (onProgress) onProgress(i, `${clip.clip_id} Higgsfield 생성 중...`);
+      try {
+        images[clip.clip_id] = await generateViaProxy(imagePrompt, masterMediaIds, proxyUrl);
+        continue;
+      } catch(e) {
+        console.warn(`Vercel proxy failed for ${clip.clip_id}:`, e.message);
+      }
+    }
 
     if (openaiKey) {
       if (onProgress) onProgress(i, `${clip.clip_id} GPT 이미지 생성 중...`);
-      const imagePrompt = `You are generating a technical troubleshooting image for MIRU Systems' PCOS (Polling Station Count Optical Scanner) product manual. Use the reference images above as the exact visual style and machine appearance guide.\n\n${clip.start_frame}\n\n${BG_STANDARD}\n\nMatch the machine's exact appearance, color, and proportions from the reference images. Technical product photography, 16:9.`;
+      const refPrompt = `You are generating a technical troubleshooting image for MIRU Systems' PCOS (Polling Station Count Optical Scanner) product manual. Use the reference images as the exact visual style guide.\n\n${clip.start_frame}\n\n${BG_STANDARD}\n\nMatch the machine's exact appearance from the reference images. Technical product photography, 16:9.`;
       try {
-        images[clip.clip_id] = await generateOpenAIImageWithRefs(imagePrompt, masterUrls, openaiKey);
+        images[clip.clip_id] = await generateOpenAIImageWithRefs(refPrompt, masterUrls, openaiKey);
+        continue;
       } catch(e) {
         console.warn(`OpenAI Responses API failed for ${clip.clip_id}:`, e.message);
         try {
-          const fallbackPrompt = `PCOS polling station optical scanner. ${clip.start_frame} ${BG_STANDARD} Technical product photography, 16:9.`;
-          images[clip.clip_id] = await generateOpenAIImage(fallbackPrompt, openaiKey);
+          images[clip.clip_id] = await generateOpenAIImage(imagePrompt, openaiKey);
+          continue;
         } catch(e2) {
           console.warn(`OpenAI gpt-image-1 also failed for ${clip.clip_id}:`, e2.message);
-          images[clip.clip_id] = await generatePollinationsImage(`PCOS scanner ${clip.start_frame}`).catch(() => DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01']);
         }
       }
-    } else {
-      if (onProgress) onProgress(i, `${clip.clip_id} 이미지 생성 중...`);
-      try {
-        images[clip.clip_id] = await generatePollinationsImage(`PCOS polling station optical scanner, ${clip.start_frame}`);
-        await sleep(200);
-      } catch(e) {
-        console.warn(`pollinations.ai failed for ${clip.clip_id}:`, e.message);
-        images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
-      }
+    }
+
+    if (onProgress) onProgress(i, `${clip.clip_id} 이미지 생성 중...`);
+    try {
+      images[clip.clip_id] = await generatePollinationsImage(`PCOS polling station optical scanner, ${clip.start_frame}`);
+      await sleep(200);
+    } catch(e) {
+      images[clip.clip_id] = DEMO_IMAGES[clip.clip_id] || DEMO_IMAGES['PROB-01'];
     }
   }
 
