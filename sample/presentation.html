@@ -71,7 +71,7 @@
     transition: background 0.2s;
     backdrop-filter: blur(8px);
   }
-  #nav-prev:hover, #nav-next:hover { background: rgba(235,4,20,0.5); }
+  #nav-prev:hover, #nav-next:hover { background: rgba(18,58,158,0.6); }
   #nav-prev { left: 20px; }
   #nav-next { right: 20px; }
 
@@ -109,7 +109,7 @@
     border: none;
   }
   .dot.active {
-    background: var(--red);
+    background: var(--ltblue);
     transform: scale(1.4);
   }
 
@@ -135,7 +135,7 @@
 
   .red-line {
     width: 60px; height: 4px;
-    background: var(--red);
+    background: var(--ltblue);
     border-radius: 2px;
     margin: 16px 0 24px;
   }
@@ -143,7 +143,7 @@
   .big-num {
     font-size: clamp(48px, 6vw, 80px);
     font-weight: 900;
-    color: var(--red);
+    color: var(--ltblue);
     line-height: 1;
   }
   .big-label {
@@ -175,7 +175,7 @@
     content: '';
     position: absolute;
     width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(235,4,20,0.12) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(18,58,158,0.18) 0%, transparent 70%);
     top: -100px; right: -100px;
     border-radius: 50%;
     animation: pulse 4s ease-in-out infinite;
@@ -196,7 +196,7 @@
   .cover-tag {
     font-size: 12px;
     letter-spacing: 4px;
-    color: var(--red);
+    color: var(--ltblue);
     text-transform: uppercase;
     font-weight: 700;
     margin-bottom: 20px;
@@ -207,7 +207,7 @@
     line-height: 1.15;
     letter-spacing: -1px;
   }
-  .cover-title span { color: var(--red); }
+  .cover-title span { color: var(--ltblue); }
   .cover-sub {
     font-size: clamp(16px, 2vw, 22px);
     color: var(--ltblue);
@@ -249,13 +249,13 @@
   .bullet-list li::before {
     content: '';
     width: 6px; height: 6px;
-    background: var(--red);
+    background: var(--ltblue);
     border-radius: 50%;
     flex-shrink: 0;
   }
   .highlight-box {
-    background: linear-gradient(135deg, rgba(235,4,20,0.15), rgba(235,4,20,0.05));
-    border: 1px solid rgba(235,4,20,0.3);
+    background: linear-gradient(135deg, rgba(18,58,158,0.18), rgba(10,42,110,0.08));
+    border: 1px solid rgba(174,183,214,0.25);
     border-radius: 12px;
     padding: 24px 32px;
     text-align: center;
@@ -301,7 +301,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 20px;
     flex-shrink: 0;
-    background: rgba(235,4,20,0.15);
+    background: rgba(18,58,158,0.15);
   }
   .pain-title { font-size: 17px; font-weight: 700; }
   .pain-desc { font-size: 13px; color: var(--ltblue); margin-top: 4px; }
@@ -353,8 +353,8 @@
     position: relative;
   }
   .pipe-node.highlight {
-    border-color: rgba(235,4,20,0.5);
-    background: rgba(235,4,20,0.1);
+    border-color: rgba(174,183,214,0.45);
+    background: rgba(18,58,158,0.12);
   }
   .pipe-node.accent {
     border-color: rgba(36,161,72,0.5);
@@ -444,7 +444,7 @@
   .insight-num {
     font-size: 28px;
     font-weight: 900;
-    color: var(--red);
+    color: var(--ltblue);
     flex-shrink: 0;
     width: 40px;
   }
@@ -476,7 +476,7 @@
     height: 4px;
   }
   .phase-card.done::before { background: var(--green); }
-  .phase-card.wip::before  { background: var(--red); }
+  .phase-card.wip::before  { background: #F59E0B; }
   .phase-card.plan::before { background: var(--ltblue); }
 
   .phase-badge {
@@ -490,8 +490,8 @@
     margin-bottom: 12px;
     letter-spacing: 0.5px;
   }
-  .phase-badge.done { background: rgba(36,161,72,0.2); color: var(--green); }
-  .phase-badge.wip  { background: rgba(235,4,20,0.2);  color: var(--red); }
+  .phase-badge.done { background: rgba(36,161,72,0.2);  color: var(--green); }
+  .phase-badge.wip  { background: rgba(245,158,11,0.2); color: #F59E0B; }
   .phase-badge.plan { background: rgba(174,183,214,0.15); color: var(--ltblue); }
 
   .phase-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
@@ -513,7 +513,7 @@
     flex-shrink: 0;
   }
   .phase-card.done .phase-list li::before { background: var(--green); }
-  .phase-card.wip  .phase-list li::before { background: var(--red); }
+  .phase-card.wip  .phase-list li::before { background: #F59E0B; }
   .phase-card.plan .phase-list li::before { background: var(--ltblue); }
 
   .phase-connector {
@@ -550,7 +550,7 @@
     position: absolute;
     bottom: 0; left: 0; right: 0;
     height: 3px;
-    background: var(--red);
+    background: var(--ltblue);
   }
   .effect-box .big-num { font-size: clamp(32px, 3.5vw, 52px); }
   .score-badges {
@@ -623,7 +623,7 @@
     <div class="cover-sub">Troubleshooting Video Auto-Generation</div>
     <div class="cover-meta">
       <div>발표자 <span>김별하</span></div>
-      <div>팀 <span>MIRU Systems</span></div>
+      <div>제출처 <span>AI 경진대회</span></div>
       <div>연도 <span>2026</span></div>
     </div>
     <!-- decorative grid lines -->
@@ -652,9 +652,9 @@
           <li>매 버전마다 반복 작업 발생</li>
         </ul>
         <div class="highlight-box" style="margin-top:28px">
-          <div style="font-size:13px;color:var(--ltblue);margin-bottom:6px;letter-spacing:1px">TOTAL PRODUCTION TIME</div>
-          <div class="big-num">10.5시간 <span style="font-size:0.5em;color:var(--ltblue)">→</span> <span style="color:var(--green)">60초</span></div>
-          <div class="big-label">에러 유형 1건 기준</div>
+          <div style="font-size:13px;color:var(--ltblue);margin-bottom:6px;letter-spacing:1px">PRODUCTION TIME / 영상 1건</div>
+          <div class="big-num">2시간 <span style="font-size:0.5em;color:var(--ltblue)">→</span> <span style="color:var(--green)">60초</span></div>
+          <div class="big-label">1분 30초 영상 기준 (수동 → AI)</div>
         </div>
       </div>
       <div>
@@ -694,27 +694,27 @@
           <div class="pain-icon">⏱</div>
           <div>
             <div class="pain-title">시간 소요</div>
-            <div class="pain-desc">1건당 10시간 이상 소요</div>
+            <div class="pain-desc">영상 1건당 약 2시간 수작업 소요</div>
           </div>
         </div>
         <div class="pain-item">
-          <div class="pain-icon">⚖</div>
+          <div class="pain-icon">📹</div>
           <div>
-            <div class="pain-title">일관성 부재</div>
-            <div class="pain-desc">담당자별 품질 편차 발생</div>
+            <div class="pain-title">트러블슈팅 영상 미도입</div>
+            <div class="pain-desc">고장 대응 영상 가이드 아직 없음</div>
           </div>
         </div>
         <div class="pain-item">
           <div class="pain-icon">📐</div>
           <div>
             <div class="pain-title">확장 어려움</div>
-            <div class="pain-desc">제품/언어 추가마다 재작업</div>
+            <div class="pain-desc">제품·언어 추가마다 반복 제작</div>
           </div>
         </div>
         <div class="card" style="margin-top:24px;text-align:center">
-          <div style="font-size:13px;color:var(--ltblue);margin-bottom:4px">현재 제작 완료</div>
-          <div class="big-num" style="font-size:48px">1<span style="font-size:20px;color:var(--ltblue)"> / 11</span></div>
-          <div class="big-label">에러 유형 커버리지</div>
+          <div style="font-size:13px;color:var(--ltblue);margin-bottom:4px">ACM 가이드 영상 현황</div>
+          <div class="big-num" style="font-size:48px">11<span style="font-size:20px;color:var(--ltblue)"> / 14</span></div>
+          <div class="big-label">수동 제작 진행 중</div>
         </div>
       </div>
     </div>
@@ -735,21 +735,37 @@
         <canvas id="chart-radar"></canvas>
       </div>
       <div>
-        <div style="margin-bottom:24px">
-          <div class="legend-item"><div class="legend-dot" style="background:#6B7280"></div> PDF 매뉴얼</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#60A5FA"></div> 정적 영상</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#34D399"></div> AI 챗봇</div>
-          <div class="legend-item"><div class="legend-dot" style="background:#EB0414"></div><strong>MIRU AI 시스템</strong></div>
-        </div>
-        <div class="card" style="background:rgba(235,4,20,0.08);border-color:rgba(235,4,20,0.3)">
-          <div style="font-size:13px;color:var(--ltblue);margin-bottom:8px;letter-spacing:1px">MIRU 경쟁 우위</div>
-          <div style="font-size:16px;font-weight:700;line-height:1.9">
-            자동화 · 속도 · 개인화<br>
-            확장성 · 다국어<br>
-            <span style="color:var(--red)">전 항목 최고점</span>
+        <div style="margin-bottom:16px;font-size:11px;letter-spacing:2px;color:var(--ltblue);opacity:0.7">GLOBAL BENCHMARK</div>
+        <div style="margin-bottom:20px;display:flex;flex-direction:column;gap:10px">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#6B7280"></div>
+            <span style="color:var(--ltblue);min-width:140px;font-size:13px">ES&amp;S · Dominion · Clear Ballot</span>
+            <span style="font-size:13px">PDF 매뉴얼 중심</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#AEB7D6"></div>
+            <span style="color:var(--ltblue);min-width:140px;font-size:13px">일부 기업</span>
+            <span style="font-size:13px">정적 영상 가이드</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#123A9E"></div>
+            <span style="color:var(--ltblue);min-width:140px;font-size:13px">소수 선도 기업</span>
+            <span style="font-size:13px">AI 챗봇 도입</span>
+          </div>
+          <div class="legend-item" style="font-weight:700">
+            <div class="legend-dot" style="background:#EB0414"></div>
+            <span style="color:var(--ltblue);min-width:140px;font-size:13px">MIRU</span>
+            <span style="font-size:13px">AI 영상 자동화</span>
           </div>
         </div>
-        <div style="margin-top:16px;font-size:13px;color:var(--ltblue)">
+        <div class="card" style="background:rgba(18,58,158,0.1);border-color:rgba(174,183,214,0.25)">
+          <div style="font-size:12px;color:var(--ltblue);margin-bottom:8px;letter-spacing:1px">MIRU 경쟁 우위</div>
+          <div style="font-size:15px;font-weight:700;line-height:2">
+            자동화 · 속도 · 다국어<br>
+            <span style="color:var(--ltblue)">AI 영상 자동화 — 업계 최초</span>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--ltblue);opacity:0.7">
           평가 기준: 자동화 / 속도 / 개인화 / 확장성 / 비용효율 / 다국어
         </div>
       </div>
@@ -987,7 +1003,7 @@
     </div>
     <!-- Timeline bar -->
     <div style="width:100%;max-width:1100px;margin-top:28px;position:relative">
-      <div style="height:3px;background:linear-gradient(90deg, var(--green) 0%, var(--red) 50%, rgba(174,183,214,0.3) 100%);border-radius:99px"></div>
+      <div style="height:3px;background:linear-gradient(90deg, var(--green) 0%, #F59E0B 50%, rgba(174,183,214,0.25) 100%);border-radius:99px"></div>
       <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--ltblue)">
         <span>2025 Q4</span>
         <span>2026 Q2</span>
@@ -1009,8 +1025,8 @@
     <div class="effect-grid">
       <div class="effect-box">
         <div style="font-size:13px;color:var(--ltblue);margin-bottom:10px;letter-spacing:0.5px">제작 시간 단축</div>
-        <div class="big-num">92<span style="font-size:0.45em">%</span></div>
-        <div class="big-label">10.5h → 60s</div>
+        <div class="big-num">98<span style="font-size:0.45em">%</span></div>
+        <div class="big-label">2h → 60s / 영상 1건</div>
       </div>
       <div class="effect-box">
         <div style="font-size:13px;color:var(--ltblue);margin-bottom:10px;letter-spacing:0.5px">에러 대응 속도</div>
@@ -1138,19 +1154,19 @@ function initCharts(slideIdx) {
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['스크립트 작성', '촬영', '편집', '검토', '업로드'],
+        labels: ['스크립트 작성', '화면 녹화', '편집', '검토', '업로드'],
         datasets: [
           {
             label: '수동 제작 (시간)',
-            data: [3, 2, 4, 1, 0.5],
-            backgroundColor: 'rgba(235,4,20,0.7)',
-            borderColor: 'rgba(235,4,20,1)',
+            data: [0.5, 0.3, 0.7, 0.3, 0.2],
+            backgroundColor: 'rgba(174,183,214,0.5)',
+            borderColor: 'rgba(174,183,214,0.85)',
             borderWidth: 1.5,
             borderRadius: 6,
           },
           {
             label: 'AI 자동화 (분)',
-            data: [0.1, 0, 0.1, 0.5, 0.3],
+            data: [0.05, 0, 0.05, 0.08, 0.05],
             backgroundColor: 'rgba(36,161,72,0.7)',
             borderColor: 'rgba(36,161,72,1)',
             borderWidth: 1.5,
@@ -1212,19 +1228,19 @@ function initCharts(slideIdx) {
           {
             label: '정적 영상',
             data: [1, 1, 2, 2, 2, 2],
-            backgroundColor: 'rgba(96,165,250,0.1)',
-            borderColor: 'rgba(96,165,250,0.7)',
+            backgroundColor: 'rgba(174,183,214,0.08)',
+            borderColor: 'rgba(174,183,214,0.6)',
             borderWidth: 1.5,
-            pointBackgroundColor: 'rgba(96,165,250,0.7)',
+            pointBackgroundColor: 'rgba(174,183,214,0.7)',
             pointRadius: 3,
           },
           {
             label: 'AI 챗봇',
             data: [4, 4, 3, 4, 3, 4],
-            backgroundColor: 'rgba(52,211,153,0.1)',
-            borderColor: 'rgba(52,211,153,0.7)',
+            backgroundColor: 'rgba(18,58,158,0.08)',
+            borderColor: 'rgba(18,58,158,0.7)',
             borderWidth: 1.5,
-            pointBackgroundColor: 'rgba(52,211,153,0.7)',
+            pointBackgroundColor: 'rgba(18,58,158,0.8)',
             pointRadius: 3,
           },
           {
@@ -1270,16 +1286,16 @@ function initCharts(slideIdx) {
         datasets: [{
           data: [28, 22, 15, 12, 10, 8, 5],
           backgroundColor: [
-            'rgba(235,4,20,0.85)',
-            'rgba(96,165,250,0.85)',
-            'rgba(52,211,153,0.85)',
-            'rgba(251,191,36,0.85)',
-            'rgba(167,139,250,0.85)',
-            'rgba(249,115,22,0.85)',
-            'rgba(174,183,214,0.5)',
+            '#EB0414',               // red — Paper Jam (primary)
+            '#AEB7D6',               // ltblue — UIK Mismatch
+            '#24A148',               // green — Flash Card
+            '#123A9E',               // accent navy — Network
+            'rgba(235,4,20,0.52)',   // light red — ECF NOT FOUND
+            'rgba(174,183,214,0.55)',// light ltblue — Scanner Cover
+            'rgba(36,161,72,0.42)', // light green — Others
           ],
-          borderColor: 'rgba(5,25,94,0.5)',
-          borderWidth: 2,
+          borderColor: '#020D38',
+          borderWidth: 3,
           hoverOffset: 8,
         }]
       },
@@ -1291,20 +1307,27 @@ function initCharts(slideIdx) {
           legend: {
             position: 'bottom',
             labels: {
-              font: { size: 11 },
-              padding: 10,
+              color: '#FFFFFF',
+              font: { size: 11, family: "'GmarketSans','Noto Sans KR',sans-serif" },
+              padding: 12,
               generateLabels: chart => {
                 const data = chart.data;
                 return data.labels.map((label, i) => ({
-                  text: `${label} ${data.datasets[0].data[i]}%`,
+                  text: `${label}  ${data.datasets[0].data[i]}%`,
                   fillStyle: data.datasets[0].backgroundColor[i],
                   strokeStyle: 'transparent',
+                  color: '#FFFFFF',
                   index: i
                 }));
               }
             }
           },
           tooltip: {
+            titleColor: '#FFFFFF',
+            bodyColor: '#FFFFFF',
+            backgroundColor: 'rgba(5,25,94,0.95)',
+            borderColor: 'rgba(174,183,214,0.3)',
+            borderWidth: 1,
             callbacks: {
               label: ctx => ` ${ctx.label}: ${ctx.parsed}%`
             }
@@ -1317,10 +1340,10 @@ function initCharts(slideIdx) {
   // ── SLIDE 9: Gauge doughnuts ────────────
   if (slideIdx === 8) {
     const gaugeData = [
-      { id: 'gauge-1', val: 90, label: '창의성',    color: 'rgba(235,4,20,0.85)' },
-      { id: 'gauge-2', val: 85, label: '기술완성도', color: 'rgba(96,165,250,0.85)' },
-      { id: 'gauge-3', val: 95, label: '실용성',    color: 'rgba(52,211,153,0.85)' },
-      { id: 'gauge-4', val: 88, label: '확장가능성', color: 'rgba(251,191,36,0.85)' },
+      { id: 'gauge-1', val: 90, label: '창의성',    color: 'rgba(174,183,214,0.9)' },
+      { id: 'gauge-2', val: 85, label: '기술완성도', color: 'rgba(18,58,158,0.9)' },
+      { id: 'gauge-3', val: 95, label: '실용성',    color: 'rgba(36,161,72,0.85)' },
+      { id: 'gauge-4', val: 88, label: '확장가능성', color: 'rgba(174,183,214,0.6)' },
     ];
     gaugeData.forEach(g => {
       const ctx = document.getElementById(g.id).getContext('2d');
