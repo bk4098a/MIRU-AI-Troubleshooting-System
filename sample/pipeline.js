@@ -38,13 +38,18 @@ function buildGeminiPrompt(data) {
 
   return `You are a professional technical video script generator for MIRU Systems' PCOS (Polling Station Count Optical Scanner) troubleshooting guide videos.
 
-PCOS (АСУ): Optical paper-ballot scanner/counter used at polling stations. Scans and counts ballots, transmits results via network. Uses smart card, flash card (USB), SD card (x2: primary/backup), and ECF configuration file. Key errors: UIK number mismatch (voter station ID error), flash card/SD card data mismatch (mixed paired storage), ECF NOT FOUND (config file missing or wrong UIK in DB), paper jam (visible paper stuck in scanner slot — open cover, remove paper), scanner cover open, double feed, stain on scanner glass, network disconnect, battery low, ballot stacker jam (MOST COMMON hardware error on aged machines — machine fails to classify ballot due to worn rollers, ballot exits to rear stacker uncounted; NO on-screen error; fix: open front transparent cover, gently remove jammed ballot from paper path, close cover, re-insert ballot).
+PCOS (АСУ): Optical paper-ballot scanner/counter used at polling stations. Scans and counts ballots, transmits results via network. Uses smart card, flash card (USB), SD card (x2: primary/backup), and ECF configuration file. Key errors: UIK number mismatch (voter station ID error), flash card/SD card data mismatch (mixed paired storage), ECF NOT FOUND (config file missing or wrong UIK in DB), paper jam (visible paper stuck in scanner slot — open cover, remove paper), scanner cover open, double feed, stain on scanner glass, network disconnect, battery low, ballot stacker jam (MOST COMMON hardware error on aged machines — machine fails to classify ballot due to worn rollers, ballot exits to rear stacker uncounted; NO on-screen error; fix: open front transparent cover, gently remove jammed ballot from paper path, close cover, re-insert ballot); unclassified ballot (aged machine — worn springs and rubber rollers in internal sorting diverter mechanism fail to route ballot to correct output pocket; ballot exits to wrong compartment instead of sorted tray; machine may show '미분류 투표지' on display; NO self-repair possible in field; fix: STOP scanning immediately, open lower output compartment door, retrieve all misrouted ballots with both hands, manually verify each ballot visually, re-scan retrievable ballots or hand-count damaged ones, request technician for spring/rubber replacement).
 ${manualContext ? `\nPCOS TROUBLESHOOTING MANUAL REFERENCE:\n${manualContext.slice(0, 8000)}\n` : ''}
 VISUAL STANDARD (all clips):
 - Format: 16:9, 720p, silent, 4-5 seconds per clip, fixed camera
 - ${BG_STANDARD}
 - Kling format: [start frame description] -> [end frame description], no camera movement
 - Clip types: PROBLEM clip (error state) -> SOLUTION clips (step-by-step action)
+
+MANDATORY IMAGE BACKGROUND RULE — THIS IS NON-NEGOTIABLE:
+Every image prompt you write (including all image_enhancement fields) MUST end with exactly this sentence:
+"BACKGROUND: Replace the entire background with a seamless, uniform neutral light-grey studio backdrop. Remove all clutter — cables, plastic bags/wrap, beige walls, wooden desks, other equipment. Keep ONLY the PCOS machine, the relevant parts, and the hand. Soft even studio light, subtle soft shadow under the machine. Horizontal, 16:9."
+DO NOT use polling station interiors, election signage, blue-vested officials, or any real-world background. Grey studio only. No people — only the machine and a single disembodied hand where needed.
 
 Reference structure:
 - PROBLEM clip: static error screen on display, or machine in error state
@@ -68,6 +73,12 @@ ${data.priorActions}
 ${data.solution}
 ${data.userFeedback ? `\n[REGENERATION FEEDBACK - please address these specific issues in your output]:\n${data.userFeedback}\n` : ''}---
 
+REASONING PROTOCOL — before writing each clip, think through these three steps internally:
+1. SYMPTOM: What is the operator seeing/hearing right now? (screen message, machine behavior, physical state)
+2. CAUSE: What component is failing and why? (worn part, wrong config, missing file, physical obstruction)
+3. ACTION: What specific hands-on step resolves the root cause — not just clears the screen?
+Your clip descriptions must reflect this causal chain. Generic steps ("press OK, then restart") are not acceptable. Each description must name the specific component and why that action works for this error.
+
 Respond ONLY with valid JSON, no markdown:
 {
   "translation": {
@@ -77,9 +88,9 @@ Respond ONLY with valid JSON, no markdown:
     "summary": "<One English sentence: what happened and what fixed it>"
   },
   "image_enhancement": {
-    "photo_error_screen": "<Higgsfield prompt: PCOS display showing error, grey studio backdrop, match reference image style>",
-    "photo_error_state": "<Higgsfield prompt: PCOS machine with visible error condition, grey studio>",
-    "photo_resolution": "<Higgsfield prompt: PCOS machine normal green ready state, grey studio>"
+    "photo_error_screen": "<Higgsfield prompt describing the PCOS machine showing this specific error on screen. MUST end with the full MANDATORY IMAGE BACKGROUND RULE sentence verbatim. No people, no backgrounds, grey studio only.>",
+    "photo_error_state": "<Higgsfield prompt describing PCOS machine in error state with relevant physical detail (open cover, paper visible, etc.). MUST end with the full MANDATORY IMAGE BACKGROUND RULE sentence verbatim. No people, grey studio only.>",
+    "photo_resolution": "<Higgsfield prompt describing PCOS machine after fix — display green, normal state. MUST end with the full MANDATORY IMAGE BACKGROUND RULE sentence verbatim. No people, grey studio only.>"
   },
   "kling_clips": [
     {
@@ -232,7 +243,7 @@ async function generateOpenAIImage(prompt, apiKey) {
 }
 
 // ─── PCOS master image mapping (error type → 2 reference images) ─────────────
-const PCOS_MASTER_BASE = 'https://bk4098a.github.io/MIRU-AI-Troubleshooting-System/sample/pcos_ref';
+const PCOS_MASTER_BASE = './pcos_ref';
 
 const ERROR_MASTER_MAP = {
   'Ballot Stacker Jam':  ['IMG_9850', 'IMG_9856'],  // cover open + mechanism — most common
@@ -247,6 +258,7 @@ const ERROR_MASTER_MAP = {
   'Battery Low':         ['IMG_9849', 'IMG_9853'],
   'SD Card Error':       ['IMG_9849', 'IMG_9854'],
   'Smart Card Error':    ['IMG_9849', 'IMG_9855'],
+  'Unclassified Ballot': ['IMG_9850', 'IMG_9852'],  // cover open + sorting slot — worn spring/rubber
 };
 
 function pickMasterImages(errorTypes) {

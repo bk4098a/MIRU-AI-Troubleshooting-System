@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -6,9 +6,9 @@
 <title>MIRU · 관리자 — 트러블슈팅 영상 검토</title>
 <script src="config.js" onerror="window.MIRU_CONFIG={}"></script>
 <style>
-@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; }
-@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; }
-@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; }
+@font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; }
+@font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; }
+@font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --navy: #05195E; --navy2: #0A2A6E; --blue: #123A9E;
@@ -219,7 +219,7 @@ nav {
 
 <nav>
   <a href="../MIRU_AI_트러블슈팅_기획안_2026.html" class="nav-logo">
-    <img src="../miru_white_logo_enhanced_transparent.png" alt="MIRU">
+    <img src="./miru_white_logo_enhanced_transparent.png" alt="MIRU">
     <div class="nav-logo-text">MIRU <span>SYSTEMS</span></div>
   </a>
   <div class="nav-center">관리자 대시보드 — AI 트러블슈팅</div>
@@ -255,6 +255,11 @@ nav {
           <div class="stat-val" id="cntSatisfied" style="color:var(--navy);">—</div>
           <div class="stat-lab">만족률</div>
         </div>
+      </div>
+      <div style="display:flex;gap:0.5rem;margin-top:0.6rem;">
+        <button onclick="exportSubmissions()" style="flex:1;font-size:0.7rem;padding:5px 0;border-radius:6px;border:1.5px solid var(--line);background:var(--fog);color:var(--navy);cursor:pointer;font-family:inherit;font-weight:700;">신청 내역 CSV</button>
+        <button onclick="exportFeedback()" style="flex:1;font-size:0.7rem;padding:5px 0;border-radius:6px;border:1.5px solid var(--line);background:var(--fog);color:var(--navy);cursor:pointer;font-family:inherit;font-weight:700;">피드백 CSV</button>
+        <button onclick="exportAll()" style="flex:1;font-size:0.7rem;padding:5px 0;border-radius:6px;border:1.5px solid var(--navy);background:var(--navy);color:var(--white);cursor:pointer;font-family:inherit;font-weight:700;">전체 내보내기</button>
       </div>
     </div>
 
@@ -348,6 +353,43 @@ nav {
   </div>
 </div>
 
+<!-- Regen Modal -->
+<div class="modal-overlay" id="regenModal">
+  <div class="modal" style="max-width:520px;width:94%;">
+    <h3 style="margin-bottom:0.5rem;">이미지 수정 후 전송</h3>
+    <p style="font-size:0.78rem;color:var(--slate);margin-bottom:1rem;line-height:1.6;">수정된 이미지 URL 3장을 입력하면 신청자에게 완료 알림이 전송됩니다.</p>
+    <div style="margin-bottom:0.7rem;">
+      <label style="font-size:0.72rem;font-weight:700;color:var(--navy);display:block;margin-bottom:0.3rem;">PROB-01 — 문제 상황</label>
+      <input type="text" id="regenProb01" placeholder="https://..." style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.78rem;font-family:monospace;background:var(--fog);">
+    </div>
+    <div style="margin-bottom:0.7rem;">
+      <label style="font-size:0.72rem;font-weight:700;color:var(--navy);display:block;margin-bottom:0.3rem;">SOL-01 — 해결 1단계</label>
+      <input type="text" id="regenSol01" placeholder="https://..." style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.78rem;font-family:monospace;background:var(--fog);">
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label style="font-size:0.72rem;font-weight:700;color:var(--navy);display:block;margin-bottom:0.3rem;">SOL-02 — 해결 2단계</label>
+      <input type="text" id="regenSol02" placeholder="https://..." style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.78rem;font-family:monospace;background:var(--fog);">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-cancel" onclick="closeRegenModal()">취소</button>
+      <button class="modal-btn modal-confirm" onclick="confirmRegen()">완료 알림 전송</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal" style="max-width:420px;width:94%;">
+    <h3 style="margin-bottom:0.5rem;">반려 처리</h3>
+    <p style="font-size:0.78rem;color:var(--slate);margin-bottom:0.75rem;">반려 사유를 입력하면 처리 내역에 기록됩니다.</p>
+    <textarea id="rejectReason" placeholder="반려 사유를 입력하세요..." style="width:100%;height:100px;padding:0.6rem 0.75rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.8rem;font-family:'GmarketSans',sans-serif;resize:vertical;background:var(--fog);"></textarea>
+    <div class="modal-actions" style="margin-top:0.75rem;">
+      <button class="modal-btn modal-cancel" onclick="closeRejectModal()">취소</button>
+      <button class="modal-btn" style="background:var(--red);color:var(--white);border:none;" onclick="confirmReject()">반려 처리</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -406,6 +448,7 @@ function statusLabel(s) {
     processing: ['생성 중','status-processing'],
     done: ['전송 완료','status-done'],
     pending: ['대기 중','status-pending'],
+    rejected: ['반려','status-review'],
   };
   return map[s] || [s, ''];
 }
@@ -547,6 +590,35 @@ function exportFeedback() {
   a.click();
 }
 
+function downloadCsv(rows, filename) {
+  const csv = rows.map(r => r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,﻿' + encodeURIComponent(csv);
+  a.download = filename + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function exportSubmissions() {
+  let log = [];
+  try { log = JSON.parse(localStorage.getItem('miru_admin_log') || '[]'); } catch(e) {}
+  if (!log.length) { showToast('신청 데이터가 없습니다.', ''); return; }
+  const header = ['티켓ID','접수일시','이름','이메일','국가','제품','에러유형','우선순위','상태','반려사유','에러상황','사전조작','해결시도','이미지PROB01','이미지SOL01','이미지SOL02'];
+  const rows = log.map(s => [
+    s.id||'', s.timestamp||'', s.name||'', s.email||'', s.country||'', s.product||'',
+    (s.errorTypes||[]).join('|'), s.priority||'', s.status||'', s.rejectReason||'',
+    (s.situation||'').replace(/\n/g,' '), (s.priorActions||'').replace(/\n/g,' '), (s.solution||'').replace(/\n/g,' '),
+    (s.images||{})['PROB-01']||'', (s.images||{})['SOL-01']||'', (s.images||{})['SOL-02']||''
+  ]);
+  downloadCsv([header, ...rows], 'miru_submissions');
+  showToast('신청 내역 CSV 저장됨', 'green');
+}
+
+function exportAll() {
+  exportSubmissions();
+  exportFeedback();
+  showToast('신청 내역 + 피드백 CSV 2개 저장됨', 'green');
+}
+
 function selectRequest(id) {
   activeId = id;
   renderList();
@@ -562,17 +634,17 @@ function renderDetail(r) {
 
   const actionBtns = r.status === 'done'
     ? `<span style="font-size:0.8rem;color:var(--green);font-weight:700">✅ 전송 완료</span>`
+    : r.status === 'rejected'
+    ? `<span style="font-size:0.8rem;color:var(--red);font-weight:700">반려 처리됨</span>`
     : r.status === 'processing'
     ? `<span style="font-size:0.8rem;color:#1d4ed8;font-weight:700">⏳ 생성 중...</span>`
     : `
-      <button class="btn-sm btn-regenerate" onclick="regenerate('${r.id}')">🔄 재생성</button>
-      <button class="btn-sm btn-reject" onclick="showToast('반려 처리되었습니다.','')">반려</button>
+      <button class="btn-sm btn-regenerate" onclick="openRegenModal('${r.id}')">이미지 수정 & 전송</button>
+      <button class="btn-sm btn-reject" onclick="openRejectModal('${r.id}')">반려</button>
       <button class="btn-sm btn-send" onclick="openSendModal('${r.id}')">✉ 승인 & 전송</button>
     `;
 
-  const clipsHtml = r.clips.length
-    ? `<div class="clip-row">${r.clips.map((c,i) => `<div class="clip-thumb${i===0?' active':''}" onclick="selectClip(this)">${c}<div style="font-size:0.55rem;color:rgba(255,255,255,0.5);text-align:center">컷${i+1}</div></div>`).join('')}</div>`
-    : `<div style="background:rgba(249,115,22,0.08);border-radius:8px;padding:0.7rem;font-size:0.8rem;color:#c2410c;margin-bottom:0.8rem;">⏳ 영상 생성 중... (약 30초 소요)</div>`;
+  const clipsHtml = '';
 
   const timelineHtml = r.timeline.map(t =>
     `<li class="tl-item"><div class="tl-dot" style="background:${t.color}"></div><div class="tl-content"><strong>${t.label}</strong><span class="tl-time">${t.time}</span></div></li>`
@@ -664,27 +736,12 @@ function renderDetail(r) {
             <div class="setup-hint" style="margin-top:0.4rem;">Canva → 공유 → 삽입 → HTML 복사 → URL만 추출하여 붙여넣기</div>
           </div>
 
-          <div class="detail-section-title">생성된 영상 클립 (Higgsfield)</div>
-          ${clipsHtml}
-
-          <div class="video-placeholder">
-            <div class="video-frame">
-              <div class="video-inner">
-                <div class="video-play">${r.clips.length ? '▶' : '⏳'}</div>
-                <div class="video-label">${r.clips.length ? r.error + ' — 트러블슈팅 가이드' : 'Higgsfield 영상 생성 중...'}</div>
-                <div class="video-meta">${r.prompt.duration}</div>
-              </div>
-              ${r.clips.length ? '<div class="video-bar"><div class="video-bar-fill"></div></div>' : ''}
-            </div>
+          <div class="detail-section-title">영상 URL 등록</div>
+          <div style="margin-bottom:1rem;">
+            <label style="font-size:0.72rem;color:var(--steel);display:block;margin-bottom:0.3rem;">Higgsfield 또는 외부 영상 URL</label>
+            <input type="text" id="videoUrl_${r.id}" placeholder="https://..." style="width:100%;padding:0.5rem 0.7rem;border:1.5px solid var(--line);border-radius:8px;font-size:0.78rem;font-family:monospace;background:var(--fog);">
+            <div style="font-size:0.68rem;color:var(--steel);margin-top:0.25rem;">Higgsfield에서 완성된 영상 URL을 직접 붙여넣으세요.</div>
           </div>
-
-          ${r.status === 'review' ? `
-          <div style="background:rgba(36,161,72,0.06);border:1.5px solid rgba(36,161,72,0.2);border-radius:10px;padding:1rem;font-size:0.8rem;color:var(--slate);line-height:1.6;">
-            <strong style="color:var(--green);display:block;margin-bottom:0.4rem;">영상 생성 완료</strong>
-            · 품질 확인 후 <strong>승인 & 전송</strong> 버튼을 누르면 신청자에게 이메일 발송<br>
-            · <strong>재생성</strong>을 누르면 프롬프트를 수정해 다시 생성 가능<br>
-            · Canva URL 등록 시 이메일에 영상이 포함됩니다
-          </div>` : ''}
         </div>
       </div>
     </div>
@@ -696,8 +753,67 @@ function selectClip(el) {
   el.classList.add('active');
 }
 
-function regenerate(id) {
-  showToast('🔄 Higgsfield에 재생성 요청을 보냈습니다. 약 30초 후 새 클립이 생성됩니다.', '');
+let regenTargetId = null;
+function openRegenModal(id) {
+  regenTargetId = id;
+  document.getElementById('regenProb01').value = '';
+  document.getElementById('regenSol01').value = '';
+  document.getElementById('regenSol02').value = '';
+  document.getElementById('regenModal').classList.add('show');
+}
+function closeRegenModal() {
+  document.getElementById('regenModal').classList.remove('show');
+}
+function confirmRegen() {
+  const prob01 = document.getElementById('regenProb01').value.trim();
+  const sol01  = document.getElementById('regenSol01').value.trim();
+  const sol02  = document.getElementById('regenSol02').value.trim();
+  if (!prob01 && !sol01 && !sol02) { showToast('이미지 URL을 하나 이상 입력하세요.', ''); return; }
+  const r = REQUESTS.find(x => x.id === regenTargetId);
+  if (r) {
+    const imgMap = {'PROB-01': prob01, 'SOL-01': sol01, 'SOL-02': sol02};
+    r.ai_images.forEach(img => { if (imgMap[img.id]) img.url = imgMap[img.id]; });
+    r.status = 'done';
+    r.timeline.push({ time: '지금', label: '수정 이미지 전송 완료', color: 'var(--green)' });
+    // Persist updated images to admin log
+    try {
+      const log = JSON.parse(localStorage.getItem('miru_admin_log') || '[]');
+      const entry = log.find(e => e.id === r.id);
+      if (entry) { entry.status = 'done'; entry.images = entry.images || {}; Object.assign(entry.images, imgMap); localStorage.setItem('miru_admin_log', JSON.stringify(log)); }
+    } catch(e) {}
+    renderList();
+    selectRequest(r.id);
+    showToast('요청하신 에러에 대한 이미지 및 설명이 완료되었습니다.', 'green');
+  }
+  closeRegenModal();
+}
+
+let rejectTargetId = null;
+function openRejectModal(id) {
+  rejectTargetId = id;
+  document.getElementById('rejectReason').value = '';
+  document.getElementById('rejectModal').classList.add('show');
+}
+function closeRejectModal() {
+  document.getElementById('rejectModal').classList.remove('show');
+}
+function confirmReject() {
+  const reason = document.getElementById('rejectReason').value.trim();
+  if (!reason) { showToast('반려 사유를 입력하세요.', ''); return; }
+  const r = REQUESTS.find(x => x.id === rejectTargetId);
+  if (r) {
+    r.status = 'rejected';
+    r.timeline.push({ time: '지금', label: '반려: ' + reason, color: 'var(--red)' });
+    try {
+      const log = JSON.parse(localStorage.getItem('miru_admin_log') || '[]');
+      const entry = log.find(e => e.id === r.id);
+      if (entry) { entry.status = 'rejected'; entry.rejectReason = reason; localStorage.setItem('miru_admin_log', JSON.stringify(log)); }
+    } catch(e) {}
+    renderList();
+    selectRequest(r.id);
+    showToast('반려 처리되었습니다.', '');
+  }
+  closeRejectModal();
 }
 
 let sendTargetId = null;

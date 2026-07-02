@@ -57,69 +57,74 @@ Resolution:
 - Standby screen top: shows ECF filename (e.g., ecf_11158_...tar.gz) and prompt "Смарт-картаны салыңыз." (Insert smart card.)
 - All error screens show yellow warning box with Kyrgyz text and a Cancel (ЖОККО ЧЫГАРУУ) button.`,
 
-  // Pre-generated 16:9 images for all 11 PCOS error types (33 total, Higgsfield nano_banana)
-  // Generated 2026-07-01. Keys match ERROR_MASTER_MAP in pipeline.js.
-  // Note: 'Ballot Stacker Jam' images pending generation (use Paper Jam preset as fallback)
+  // Pre-generated 16:9 images for all 13 PCOS error types (39 total)
+  // ALL images: gpt_image_2 1k medium, generated 2026-07-02 with exact reference images.
+  // Keys match ERROR_MASTER_MAP in pipeline.js.
   PRESET_IMAGES: {
     'Ballot Stacker Jam': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_063327_d72c4e44-77d0-4d90-b9ed-69314f4c52ca.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_063250_ee2cc82f-e112-4e3c-8ede-46c18d1eafac.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_063253_c4ef95cd-7db8-4d45-ad96-af177012b826.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233151_97408ab2-8d1a-4456-b634-bec9efd84ab3.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233156_3debddeb-bddf-4aa2-a3c3-19f50efacfef.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233200_f6c2bd83-ee30-4683-a81e-e3809793224f.png',
     },
     'Paper Jam': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021013_2fbf190b-8be2-452d-aafe-e7abaa1edd5c.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021924_3e6fec02-5d13-48b3-bab0-9efd1bdb28b7.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021020_416fea42-af1d-4e39-b2d8-d57cbef034f5.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233528_a2afa299-d4c1-49b4-a0cd-3cd53a92d0b7.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233204_4d5912e8-03f2-4739-a1a4-be3dd873c62a.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233207_96fb37f8-cd20-4941-8b27-e3c6da61abdd.png',
     },
     'UIK Mismatch': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021926_07dbee45-1df0-409e-988c-fa91ee1f465d.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021933_c3e850c5-70a9-4daa-8dff-382e970d9d22.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021936_2cc85363-c7b6-43dd-8d93-b6c438a99423.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233524_43c7d60d-9321-48d3-98ec-60a719adb715.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232107_a619be8e-1c2a-480c-909d-701ce75d7112.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232110_1a36aa0a-7876-403e-b01a-46b610aa57b8.png',
     },
     'Flash Card Mismatch': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021946_82b349a9-fc66-4043-80d6-cd608b088b0e.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_021949_f6793847-184d-4c5a-8553-24453c678d2d.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_023144_2e57f049-0603-429c-a61b-b28a37c52c5f.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232114_1d406011-5520-4982-94f0-b4e850834eab.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232120_880995f3-3e46-4cca-9747-74889704542f.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232124_717c44f5-21b4-4bb0-8a6a-696c3343e2a9.png',
     },
     'ECF NOT FOUND': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022015_ab1f284c-0d9e-4a68-9027-ec1a52065c96.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022017_ba7b014f-31a7-42ee-bbd9-c413562eb903.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_023228_14c8bc2f-eaea-4c93-ac18-9940098ab1e0.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232128_dbe6c3e5-8b3f-4904-b483-41237ac9a644.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232131_fc1b218b-d0f1-4b90-aba4-63c96297b557.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232134_d674edb8-5ac7-4e44-b33b-c01956ee3ce3.png',
     },
     'Double Feed': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022047_48222032-b361-478b-a726-d0c9634ebd34.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022050_d05eed39-d294-45f5-a4b8-7c46f9c64461.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_023146_32f6a718-723d-4c8d-b757-d730f5606ae8.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232518_35fe7336-1a3f-4b74-ab1b-5d2594625ec7.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232622_7f2a08b6-e120-4c45-b2a3-b85511d72052.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232525_c1fffaa6-9c54-461a-8ddb-525994c8ea34.png',
     },
     'Scanner Cover Open': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022111_5d5ac6d7-a1a9-4220-8c98-5ac6be73ba39.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022113_fd8d3891-8309-448a-b33f-f75b0c49be2c.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_023135_04f10b44-d98f-4abb-94e0-2fe6d2ebc513.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232626_fecafe53-aa11-4d2c-b50f-63bf6fb9c892.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233534_65130ba9-e85b-4d60-8210-0f24cfffbcc8.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232631_a5432c06-c1b5-4021-b119-0e71f54eba6b.png',
     },
     'Stain on Glass': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022135_aaf41793-ccb9-47b4-a66e-5183366d4a8c.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022138_7907e1ca-57d4-400f-b98f-86968b2a283a.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022259_87c99e7c-9322-44ee-a465-6e2b2b0dec06.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232635_62e80ee3-c34a-4b01-9d73-0bf2e9ffc516.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232640_9142bdb9-f1f9-43a4-8fea-d8c04d97f18c.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232544_5e4392ac-cb8c-405e-b6ce-c00aa7654ac3.png',
     },
     'Network Disconnect': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022145_779538f4-b176-4701-9fe9-bbc4d32570e9.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022148_6589dc2a-d3fe-4fe3-88f9-3a1f11d43ee7.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022151_b9749816-2e9e-45da-882b-02f2bd82670a.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232848_a46ea9b7-32aa-43ed-87c6-926c06a0a210.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232853_1790df67-9030-42fd-aa44-18bafd3d80d5.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232856_e5f13615-96b7-48b1-99e1-9a96af80675d.png',
     },
     'Battery Low': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022211_f1a38300-0b40-4d7d-94ef-8d3404fe8b95.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022215_f1a23321-446a-4a88-9845-2785baac1832.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022218_d826cfb8-e9f6-4cb3-aadb-3593f57508a1.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232900_e8749fb7-6056-4de5-bb45-24fe12e09be5.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232903_3d53fb71-5721-4706-a40f-dd495e60fb77.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_232906_d3c0a13b-7470-4b63-b89c-94e02245891f.png',
     },
     'SD Card Error': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022221_5a01604a-e973-48fc-9faf-ea5105479c7d.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022223_cdd85a40-b5ab-4605-9caf-0932115e4923.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022226_879cc5b4-5b66-4482-a03f-cb893b315ab5.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233025_b1a36bf4-51a3-446e-8fb0-9aab6b3c6335.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233029_d33c692f-b9f5-4d70-a66f-56eda2fff97e.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233034_970d5b0d-3970-44c5-9d78-b017274ed025.png',
     },
     'Smart Card Error': {
-      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022228_967fd81c-e892-4750-b847-932ef7e4acd0.png',
-      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022231_4f1b8c9d-e4d6-478a-873c-f15ea9cf4b67.png',
-      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_022234_ea97ebf0-720a-4723-a0d6-e0da839b5f3a.png',
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233039_d65b6e08-bbe3-4980-9b42-8fca229b4e03.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233042_07d579aa-f8a5-4cbd-ae13-94b7cf5b833a.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260701_233047_e77eae24-f420-4c81-9da8-f985337fe029.png',
+    },
+    'Unclassified Ballot': {
+      'PROB-01': 'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260702_001256_92cac100-4e5c-4769-ba87-716c12724a98.png',
+      'SOL-01':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260702_001300_7a1ff272-0254-413d-a2e3-bebd5044cb9d.png',
+      'SOL-02':  'https://d8j0ntlcm91z4.cloudfront.net/user_3DsNznhr2DWgt5yC0mXipDwfgaa/hf_20260702_001304_981285e0-458a-4f90-838b-a94c1cde2aa8.png',
     },
   },
 

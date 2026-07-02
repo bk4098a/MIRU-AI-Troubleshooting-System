@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
@@ -10,9 +10,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 /* 로컬 환경: GmarketSans / Confluence·외부: Noto Sans KR / 오프라인: 시스템 폰트 */
-@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; }
-@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; }
-@font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; }
+@font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; }
+@font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; }
+@font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; }
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 :root {
   --navy:#05195E; --navy2:#0A2A6E; --blue:#123A9E;
@@ -198,7 +198,7 @@ footer strong { color:var(--ltblue); font-weight:700; }
   <h1>AI 트러블슈팅<br><em>시스템 사용 매뉴얼</em></h1>
   <p class="cover-sub">현장 엔지니어가 에러 상황을 신청하면<br>AI가 즉시 이미지·스크립트를 자동 생성하는 시스템의 전체 사용 가이드입니다.</p>
   <div class="cover-meta">
-    <div class="cover-meta-item"><strong>버전</strong>v2.0 (2026)</div>
+    <div class="cover-meta-item"><strong>버전</strong>v2.1 (2026-07)</div>
     <div class="cover-divider"></div>
     <div class="cover-meta-item"><strong>대상</strong>현장 엔지니어 · 관리자</div>
     <div class="cover-divider"></div>
@@ -222,6 +222,7 @@ footer strong { color:var(--ltblue); font-weight:700; }
       <a href="#s5" class="toc-item"><div class="toc-num">5</div>에러 상세 설명</a>
       <a href="#s6" class="toc-item"><div class="toc-num">6</div>사진 첨부</a>
       <a href="#s7" class="toc-item"><div class="toc-num">7</div>AI 결과 확인</a>
+      <a href="#sfb" class="toc-item"><div class="toc-num">8</div>피드백 평가</a>
       <a href="#sadmin" class="toc-item"><div class="toc-num admin">A</div>관리자 페이지</a>
       <a href="#sfaq" class="toc-item"><div class="toc-num admin">?</div>FAQ</a>
     </div>
@@ -245,18 +246,20 @@ footer strong { color:var(--ltblue); font-weight:700; }
     <div class="flow">
       <div class="flow-step">① 신청서 작성</div>
       <div class="flow-arrow">→</div>
-      <div class="flow-step">② Groq AI 스크립트 생성</div>
+      <div class="flow-step">② Groq AI CoT 분석</div>
       <div class="flow-arrow">→</div>
       <div class="flow-step">③ Higgsfield 이미지 생성</div>
       <div class="flow-arrow">→</div>
       <div class="flow-step result">④ 결과 확인</div>
       <div class="flow-arrow">→</div>
-      <div class="flow-step admin">⑤ 관리자 검토</div>
+      <div class="flow-step admin">⑤ 피드백 / 관리자 검토</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step admin">⑥ CSV 저장</div>
     </div>
     <div class="info-box tip" style="margin-top:1rem;">
-      <div class="info-icon">💡</div>
+      <div class="info-icon">&#9432;</div>
       <div class="info-text">
-        <strong>전체 소요 시간:</strong> 신청 후 AI 생성까지 평균 <strong>20~60초</strong>. Groq LLM이 에러 상황을 분석해 Kling/Seedance용 영상 스크립트를 생성하고, Higgsfield가 PCOS 기기 이미지 3장(에러 상황 · 해결 1단계 · 정상 복귀)을 자동 생성합니다.
+        <strong>전체 소요 시간:</strong> 신청 후 AI 생성까지 평균 <strong>20~60초</strong>. Groq LLM이 <strong>SYMPTOM → CAUSE → ACTION</strong> 사고 과정(Chain-of-Thought)으로 에러를 분석한 후 영상 스크립트를 생성하고, Higgsfield가 PCOS 기기 이미지 3장(에러 상황 · 해결 1단계 · 정상 복귀)을 자동 생성합니다. 결과 화면에서 피드백 점수를 남기면 관리자에게 자동 전달됩니다.
       </div>
     </div>
   </div>
@@ -287,12 +290,12 @@ footer strong { color:var(--ltblue); font-weight:700; }
   </div>
 
   <div class="card">
-    <div class="card-label">접속 URL</div>
+    <div class="card-label">접속 URL (로컬 서버)</div>
     <div class="mockup-fig">
       <div class="mockup-frame">
         <div class="mockup-chrome">
           <div class="mockup-dot r"></div><div class="mockup-dot y"></div><div class="mockup-dot g"></div>
-          <div class="mockup-url">https://bk4098a.github.io/MIRU-AI-Troubleshooting-System/sample/submit.html</div>
+          <div class="mockup-url">http://localhost:8080/submit.html</div>
         </div>
         <svg viewBox="0 0 900 180" xmlns="http://www.w3.org/2000/svg">
           <rect width="900" height="180" fill="#f0f2f8"/>
@@ -319,22 +322,32 @@ footer strong { color:var(--ltblue); font-weight:700; }
       <div class="mockup-caption">신청 폼 메인 화면 — 위 URL로 접속하면 바로 시작할 수 있습니다.</div>
     </div>
 
+    <div class="info-box warn" style="margin-bottom:1rem;">
+      <div class="info-icon">&#9888;</div>
+      <div class="info-text"><strong>현재 개발 단계 — 로컬 실행 전용입니다.</strong> API 키 보안 및 개발 환경 특성상 현재는 로컬 서버에서만 사용 가능합니다.</div>
+    </div>
+
     <table class="field-table">
-      <thead><tr><th>구분</th><th>URL</th><th>대상</th></tr></thead>
+      <thead><tr><th>구분</th><th>URL (로컬 서버)</th><th>대상</th></tr></thead>
       <tbody>
-        <tr><td><strong>신청 폼</strong></td><td style="font-family:monospace;font-size:0.76rem;">/sample/submit.html</td><td>현장 엔지니어</td></tr>
-        <tr><td><strong>관리자</strong></td><td style="font-family:monospace;font-size:0.76rem;">/sample/admin.html</td><td>관리자 (김별하)</td></tr>
-        <tr><td><strong>기획 개요</strong></td><td style="font-family:monospace;font-size:0.76rem;">/MIRU_AI_트러블슈팅_기획안_2026.html</td><td>내부 참고</td></tr>
+        <tr><td><strong>신청 폼</strong></td><td style="font-family:monospace;font-size:0.76rem;">http://localhost:8080/submit.html</td><td>현장 엔지니어</td></tr>
+        <tr><td><strong>관리자</strong></td><td style="font-family:monospace;font-size:0.76rem;">http://localhost:8080/admin.html</td><td>관리자 (김별하)</td></tr>
+        <tr><td><strong>매뉴얼</strong></td><td style="font-family:monospace;font-size:0.76rem;">http://localhost:8080/manual.html</td><td>전체 사용자</td></tr>
+        <tr><td><strong>발표 자료</strong></td><td style="font-family:monospace;font-size:0.76rem;">http://localhost:8080/presentation.html</td><td>발표용</td></tr>
       </tbody>
     </table>
 
     <div class="info-box tip" style="margin-top:0.8rem;">
-      <div class="info-icon">🌐</div>
-      <div class="info-text"><strong>지원 브라우저:</strong> Chrome 100+, Edge 100+, Firefox 100+, Safari 15+ 권장. Internet Explorer는 미지원.</div>
+      <div class="info-icon">&#128187;</div>
+      <div class="info-text"><strong>로컬 서버 실행 방법:</strong> 터미널(PowerShell)에서 sample/ 폴더로 이동 후 <code style="background:#f0f2f8;padding:1px 5px;border-radius:3px;font-family:monospace;font-size:0.85em;">npx serve . -p 8080</code>을 실행하세요. 이후 위 URL로 접속하면 됩니다. <strong>file://</strong> 방식으로 직접 열면 API 호출이 차단됩니다.</div>
     </div>
     <div class="info-box warn">
-      <div class="info-icon">⚠</div>
-      <div class="info-text"><strong>Groq API 키 필요:</strong> 첫 사용 전 관리자 페이지(admin.html) → PCOS 마스터 설정에서 Groq API Key를 입력해야 합니다. 키를 입력하지 않으면 AI 스크립트 생성이 실행되지 않습니다.</div>
+      <div class="info-icon">&#9888;</div>
+      <div class="info-text"><strong>API 키 2종 필요:</strong> 첫 사용 전 admin.html → PCOS 마스터 설정에서 <strong>Groq API Key</strong>(gsk_...)와 <strong>Higgsfield API Key</strong>를 입력해야 합니다. Pollinations.ai는 키 없이 자동 사용됩니다. 키를 입력하지 않으면 AI 생성이 실행되지 않습니다.</div>
+    </div>
+    <div class="info-box tip">
+      <div class="info-icon">&#127760;</div>
+      <div class="info-text"><strong>지원 브라우저:</strong> Chrome 100+, Edge 100+, Firefox 100+, Safari 15+ 권장. Internet Explorer는 미지원.</div>
     </div>
   </div>
 </div>
@@ -625,8 +638,8 @@ footer strong { color:var(--ltblue); font-weight:700; }
     </div>
 
     <div class="info-box warn">
-      <div class="info-icon">⚠</div>
-      <div class="info-text"><strong>AI 프리셋 이미지:</strong> PCOS 제품의 11개 주요 에러(Paper Jam, UIK Mismatch, Flash Card Mismatch 등)는 사전 생성된 고품질 이미지를 즉시 표시합니다. 프리셋 외 에러는 실시간 AI 생성됩니다.</div>
+      <div class="info-icon">&#9888;</div>
+      <div class="info-text"><strong>AI 프리셋 이미지 (13종):</strong> PCOS 제품의 13가지 주요 에러는 사전 생성된 고품질 이미지 39장(에러당 3장)을 즉시 표시합니다. 프리셋 목록: Paper Jam, UIK Mismatch, Flash Card Mismatch, ECF NOT FOUND, Scanner Cover Open, Double Feed, Stain In Scanner, Network Connection Error, Ballot Stacker Jam, <strong>미분류 투표지 (Unclassified Ballot)</strong> 등. 목록 외 에러는 실시간 AI 생성됩니다.</div>
     </div>
   </div>
 </div>
@@ -892,13 +905,57 @@ footer strong { color:var(--ltblue); font-weight:700; }
 
 <hr class="divider">
 
+<!-- ═══════════════════ SECTION 8 — 피드백 ═══════════════════ -->
+<div class="section" id="sfb">
+  <div class="section-header">
+    <div class="section-num">8</div>
+    <div>
+      <div class="section-title">Step 7 — 피드백 평가</div>
+      <div class="section-desc">AI 결과물이 마음에 들지 않을 경우 점수와 피드백을 남길 수 있습니다. 피드백은 관리자에게 자동 전달되어 이미지 재생성 요청으로 이어집니다.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">피드백 흐름</div>
+    <div class="flow">
+      <div class="flow-step">결과 확인</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">불만족 → 별점 입력</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">개선 의견 작성</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step admin">관리자 전달</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step result">이미지 재생성 · 재전송</div>
+    </div>
+
+    <table class="field-table" style="margin-top:1rem;">
+      <thead><tr><th>별점</th><th>의미</th><th>관리자 처리</th></tr></thead>
+      <tbody>
+        <tr><td>&#9733;&#9733;&#9733;&#9733;&#9733; (5)</td><td>매우 만족</td><td>완료 처리</td></tr>
+        <tr><td>&#9733;&#9733;&#9733;&#9733; (4)</td><td>만족</td><td>완료 처리</td></tr>
+        <tr><td>&#9733;&#9733;&#9733; (3)</td><td>보통</td><td>관리자 검토 후 결정</td></tr>
+        <tr><td>&#9733;&#9733; (2)</td><td>불만족</td><td>이미지 수정 & 재전송 권장</td></tr>
+        <tr><td>&#9733; (1)</td><td>매우 불만족</td><td>이미지 수정 & 재전송 필수</td></tr>
+      </tbody>
+    </table>
+
+    <div class="info-box tip" style="margin-top:0.8rem;">
+      <div class="info-icon">&#9432;</div>
+      <div class="info-text"><strong>피드백 데이터 저장:</strong> 모든 피드백은 브라우저 localStorage에 자동 저장됩니다. 관리자는 admin.html에서 "피드백 CSV 내보내기" 버튼으로 전체 피드백 데이터를 엑셀 파일로 다운로드할 수 있습니다.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
 <!-- ═══════════════════ ADMIN ═══════════════════ -->
 <div class="section" id="sadmin">
   <div class="section-header">
     <div class="section-num red">A</div>
     <div>
       <div class="section-title">관리자 페이지 (admin.html)</div>
-      <div class="section-desc">관리자(김별하)만 접근하는 페이지입니다. 신청된 요청 목록을 확인하고, 각 신청의 AI 이미지·영상 프롬프트를 검토합니다.</div>
+      <div class="section-desc">관리자(김별하)만 접근하는 페이지입니다. 신청 목록 확인, 이미지 수정·재전송, 반려 처리, 영상 URL 등록, CSV 데이터 내보내기 기능을 모두 제공합니다.</div>
     </div>
   </div>
 
@@ -979,7 +1036,7 @@ footer strong { color:var(--ltblue); font-weight:700; }
       <ul class="callout-list">
         <li><div class="callout-num">1</div> 왼쪽 패널에서 신청 항목을 클릭하면 오른쪽에 상세가 표시됩니다.</li>
         <li><div class="callout-num">2</div> 생성된 AI 이미지 3장 (PROB-01 / SOL-01 / SOL-02)을 확인합니다.</li>
-        <li><div class="callout-num">3</div> 클립별 Kling/Seedance 영상 생성 프롬프트 전문을 확인합니다.</li>
+        <li><div class="callout-num">3</div> 영상 생성 프롬프트 전문을 확인하고 Higgsfield에서 영상을 제작합니다.</li>
       </ul>
     </div>
 
@@ -988,32 +1045,69 @@ footer strong { color:var(--ltblue); font-weight:700; }
       <li>
         <div class="step-dot">1</div>
         <div class="step-content">
-          <strong>새로고침 버튼</strong>
-          <span>상단 nav의 "새로고침" 버튼을 누르면 submit.html에서 새로 들어온 신청을 불러옵니다. 신청은 브라우저 localStorage에 저장되므로 같은 기기에서만 공유됩니다.</span>
+          <strong>신청 목록 확인 &amp; 새로고침</strong>
+          <span>상단의 "새로고침" 버튼을 누르면 submit.html에서 들어온 신청을 불러옵니다. 신청은 브라우저 localStorage에 저장되므로 같은 기기에서 submit.html과 admin.html을 모두 열어야 합니다.</span>
         </div>
       </li>
       <li>
         <div class="step-dot">2</div>
         <div class="step-content">
-          <strong>영상 프롬프트 확인</strong>
-          <span>신청을 클릭하면 오른쪽 패널에 PROB-01 / SOL-01 / SOL-02 각 클립의 Kling 영상 생성 프롬프트가 표시됩니다. 이 프롬프트를 Higgsfield Kling에 직접 입력하여 영상을 제작합니다.</span>
+          <strong>이미지 수정 &amp; 완료 알림 전송</strong>
+          <span>"이미지 수정 &amp; 전송" 버튼을 누르면 수정 모달이 열립니다. Higgsfield에서 새로 생성한 이미지 URL 3개(PROB-01 / SOL-01 / SOL-02)를 각 칸에 입력하고 "완료 알림 전송" 버튼을 누르면 신청인에게 <strong>"요청하신 에러에 대한 이미지 및 설명이 완료되었습니다."</strong> 알림이 전달됩니다.</span>
         </div>
       </li>
       <li>
         <div class="step-dot">3</div>
         <div class="step-content">
-          <strong>승인 &amp; 이메일 전송</strong>
-          <span>영상 제작 완료 후 Canva URL을 등록하고 "승인 &amp; 전송" 버튼을 누르면 신청인 이메일로 결과가 발송됩니다.</span>
+          <strong>반려 처리</strong>
+          <span>"반려" 버튼을 누르면 반려 사유 입력 모달이 열립니다. 사유를 입력하고 "반려 처리" 버튼을 누르면 해당 신청이 반려 상태로 변경되고 사유가 저장됩니다.</span>
         </div>
       </li>
       <li>
         <div class="step-dot">4</div>
         <div class="step-content">
+          <strong>영상 URL 등록</strong>
+          <span>Higgsfield에서 영상을 제작한 후 해당 영상 URL을 상세 패널의 "영상 URL 등록" 칸에 입력하고 저장합니다. 영상 클립은 자동 생성되지 않으며 수동 등록 방식을 사용합니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot">5</div>
+        <div class="step-content">
+          <strong>CSV 데이터 내보내기</strong>
+          <span>상단 패널의 "신청 내역 CSV", "피드백 CSV", "전체 내보내기" 버튼을 클릭하면 해당 데이터를 엑셀 호환 CSV 파일로 즉시 다운로드합니다. 신청 내역 CSV에는 16개 컬럼(티켓 번호·일시·신청인·에러 유형·이미지 URL 등)이 포함됩니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot">6</div>
+        <div class="step-content">
           <strong>API 키 설정 (초기 1회)</strong>
-          <span>우측 상단 "PCOS 마스터 설정"에서 Groq API Key를 입력·저장합니다. 저장된 키는 localStorage에 보관되며 서버로 전송되지 않습니다.</span>
+          <span>우측 상단 "PCOS 마스터 설정"에서 <strong>Groq API Key</strong>(gsk_...)와 <strong>Higgsfield API Key</strong>를 입력·저장합니다. 저장된 키는 localStorage에 보관되며 서버로 전송되지 않습니다. Pollinations.ai는 별도 키 없이 자동 사용됩니다.</span>
         </div>
       </li>
     </ul>
+  </div>
+
+  <!-- Admin status flow -->
+  <div class="card" style="margin-top:1.2rem;">
+    <div class="card-label">신청 상태 흐름</div>
+    <div class="flow">
+      <div class="flow-step" style="background:#525252">대기</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:#c2410c">처리중</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step result">완료</div>
+      <div class="flow-arrow"> / </div>
+      <div class="flow-step admin">반려</div>
+    </div>
+    <table class="field-table" style="margin-top:0.8rem;">
+      <thead><tr><th>상태</th><th>표시 색상</th><th>설명</th></tr></thead>
+      <tbody>
+        <tr><td>대기</td><td>회색</td><td>신청 완료 · 관리자 미확인</td></tr>
+        <tr><td>처리중</td><td>주황</td><td>관리자 검토 중 · AI 생성 진행</td></tr>
+        <tr><td>완료</td><td>녹색</td><td>이미지 수정 &amp; 전송 완료</td></tr>
+        <tr><td>반려</td><td>빨강</td><td>반려 사유 입력 후 반려 처리됨</td></tr>
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -1040,15 +1134,22 @@ footer strong { color:var(--ltblue); font-weight:700; }
       <li>
         <div class="step-dot" style="background:var(--navy2);">Q</div>
         <div class="step-content">
-          <strong>11개 PCOS 에러 이외의 에러를 입력해도 되나요?</strong>
-          <span>네. 에러 칩 목록 하단의 "직접 입력"으로 어떤 에러명이든 입력 가능합니다. 단, 11개 프리셋 에러(Paper Jam, UIK Mismatch 등)는 미리 생성된 고품질 이미지를 즉시 사용하고, 그 외는 실시간 AI 생성됩니다.</span>
+          <strong>13종 프리셋 에러 이외의 에러를 입력해도 되나요?</strong>
+          <span>네. 에러 칩 목록 하단의 "직접 입력"으로 어떤 에러명이든 입력 가능합니다. 13종 프리셋 에러(Paper Jam, UIK Mismatch, 미분류 투표지 등)는 사전 생성된 고품질 이미지 39장을 즉시 사용하고, 그 외 에러는 실시간 AI 생성됩니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--navy2);">Q</div>
+        <div class="step-content">
+          <strong>미분류 투표지(Unclassified Ballot)는 어떤 에러인가요?</strong>
+          <span>기계 노화로 인해 내부 분류 다이버터의 스프링·고무가 마모되어 투표지가 잘못된 출력 포켓으로 넘어가는 에러입니다. 현장 수리 불가 — 즉시 스캔 중단 후 투표지를 꺼내 수동 검증해야 합니다. 기술자에게 스프링/고무 교체를 요청하세요.</span>
         </div>
       </li>
       <li>
         <div class="step-dot" style="background:var(--navy2);">Q</div>
         <div class="step-content">
           <strong>관리자 페이지에 신청이 안 뜨면?</strong>
-          <span>submit.html에서 신청 완료 후 admin.html의 "새로고침" 버튼을 누르세요. submit.html과 admin.html이 같은 브라우저(같은 기기)에서 열려 있어야 합니다. 브라우저가 다르면 localStorage를 공유하지 않습니다.</span>
+          <span>submit.html에서 신청 완료 후 admin.html의 "새로고침" 버튼을 누르세요. submit.html과 admin.html이 같은 브라우저(같은 기기)에서 열려 있어야 합니다. 브라우저가 다르거나 다른 기기이면 localStorage를 공유하지 않습니다.</span>
         </div>
       </li>
       <li>
@@ -1061,15 +1162,22 @@ footer strong { color:var(--ltblue); font-weight:700; }
       <li>
         <div class="step-dot" style="background:var(--navy2);">Q</div>
         <div class="step-content">
-          <strong>에러 유형 CSV 파일은 어디서 확인하나요?</strong>
-          <span>동일 폴더의 <strong>error_types.csv</strong> 파일을 Excel로 열면 국가·제품별 선택 가능한 전체 에러 유형을 확인할 수 있습니다.</span>
+          <strong>신청 데이터와 피드백은 어디에 저장되나요?</strong>
+          <span>모두 브라우저의 localStorage에 저장됩니다. admin.html 상단의 <strong>"신청 내역 CSV"</strong> 또는 <strong>"전체 내보내기"</strong> 버튼으로 언제든지 엑셀 파일로 다운로드할 수 있습니다. 브라우저 캐시를 지우면 데이터가 삭제되므로 주기적으로 CSV 내보내기를 권장합니다.</span>
         </div>
       </li>
       <li>
         <div class="step-dot" style="background:var(--navy2);">Q</div>
         <div class="step-content">
           <strong>영상은 어떻게 만드나요?</strong>
-          <span>admin.html에서 신청을 클릭 → 오른쪽 패널의 "영상 생성 프롬프트"에서 각 클립의 프롬프트를 복사 → Higgsfield Kling/Seedance에 붙여넣어 영상 생성 → Canva에서 편집 → URL을 admin.html의 Canva URL 등록란에 입력 후 "승인 &amp; 전송".</span>
+          <span>admin.html에서 신청 클릭 → 오른쪽 패널의 "영상 생성 프롬프트" 복사 → Higgsfield Kling/Seedance에 붙여넣기 → 영상 생성 후 URL 복사 → admin.html "영상 URL 등록"에 입력 저장. 영상 URL 등록 후 "이미지 수정 &amp; 전송"으로 신청인에게 완료 알림을 전송합니다.</span>
+        </div>
+      </li>
+      <li>
+        <div class="step-dot" style="background:var(--navy2);">Q</div>
+        <div class="step-content">
+          <strong>CoT(Chain-of-Thought) 추론이란 무엇인가요?</strong>
+          <span>Groq LLM이 스크립트를 생성할 때 <strong>SYMPTOM(증상) → CAUSE(원인) → ACTION(조치)</strong> 단계로 순서대로 사고한 후 결과물을 작성하는 방식입니다. 단순히 답을 출력하는 것보다 논리적으로 정확한 트러블슈팅 안내를 생성할 수 있습니다.</span>
         </div>
       </li>
     </ul>
@@ -1080,7 +1188,7 @@ footer strong { color:var(--ltblue); font-weight:700; }
 
 <footer>
   <strong>MIRU SYSTEMS</strong> · AI 트러블슈팅 시스템 사용 매뉴얼<br>
-  버전 2.0 · 2026 · 대외비 — 내부 배포용<br>
+  버전 2.1 · 2026-07 · 대외비 — 내부 배포용<br>
   문의: <strong>김별하</strong> (bhkim@mirusystems.com)
 </footer>
 

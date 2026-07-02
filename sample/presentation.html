@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-  @font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; }
-  @font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; }
-  @font-face { font-family:'GmarketSans'; src:url('../fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; }
+  @font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFLight.ttf') format('truetype'); font-weight:300; }
+  @font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFMedium.ttf') format('truetype'); font-weight:500; }
+  @font-face { font-family:'GmarketSans'; src:url('./fonts/GmarketSansTTFBold.ttf') format('truetype'); font-weight:700; }
 
   :root {
     --navy: #05195E;
@@ -32,7 +32,6 @@
     color: var(--white);
   }
 
-  /* ─── SLIDE CONTAINER ─── */
   #deck {
     display: flex;
     flex-direction: column;
@@ -54,7 +53,6 @@
     flex-shrink: 0;
   }
 
-  /* ─── NAV ─── */
   #nav-prev, #nav-next {
     position: fixed;
     top: 50%;
@@ -75,7 +73,6 @@
   #nav-prev { left: 20px; }
   #nav-next { right: 20px; }
 
-  /* ─── COUNTER ─── */
   #counter {
     position: fixed;
     bottom: 24px;
@@ -88,7 +85,6 @@
     font-weight: 500;
   }
 
-  /* ─── DOT NAV ─── */
   #dots {
     position: fixed;
     right: 20px;
@@ -108,12 +104,8 @@
     transition: all 0.3s;
     border: none;
   }
-  .dot.active {
-    background: var(--ltblue);
-    transform: scale(1.4);
-  }
+  .dot.active { background: var(--ltblue); transform: scale(1.4); }
 
-  /* ─── SHARED COMPONENTS ─── */
   .slide-label {
     position: absolute;
     top: 32px; left: 60px;
@@ -161,15 +153,27 @@
     backdrop-filter: blur(12px);
   }
 
+  .slide-title-area {
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 36px;
+  }
+  .slide-heading {
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-weight: 900;
+    line-height: 1.2;
+  }
+
+  .chart-wrap { position: relative; width: 100%; }
+  .chart-wrap canvas { max-width: 100%; }
+
+  .slide { opacity: 0.4; transition: opacity 0.4s; }
+  .slide.active { opacity: 1; }
+
   /* ─── SLIDE 1: COVER ─── */
   #slide-1 {
     background: linear-gradient(135deg, #020D38 0%, #05195E 40%, #0A2880 60%, #020D38 100%);
     text-align: center;
-    animation: gradShift 8s ease infinite alternate;
-  }
-  @keyframes gradShift {
-    0%   { background-position: 0% 50%; }
-    100% { background-position: 100% 50%; }
   }
   #slide-1::before {
     content: '';
@@ -225,46 +229,8 @@
   }
   .cover-meta span { font-weight: 700; color: var(--white); }
 
-  /* ─── SLIDE 2: 배경 ─── */
-  #slide-2 { background: var(--dark); }
-  .two-col {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    width: 100%;
-    max-width: 1200px;
-    align-items: center;
-  }
-  .bullet-list { list-style: none; }
-  .bullet-list li {
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: clamp(15px, 1.4vw, 19px);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-  .bullet-list li:last-child { border-bottom: none; }
-  .bullet-list li::before {
-    content: '';
-    width: 6px; height: 6px;
-    background: var(--ltblue);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .highlight-box {
-    background: linear-gradient(135deg, rgba(18,58,158,0.18), rgba(10,42,110,0.08));
-    border: 1px solid rgba(174,183,214,0.25);
-    border-radius: 12px;
-    padding: 24px 32px;
-    text-align: center;
-    margin-top: 24px;
-  }
-  .highlight-box .big-num { font-size: clamp(32px, 4vw, 56px); }
-
-  /* ─── SLIDE 3: 현재 방식 ─── */
-  #slide-3 { background: #06102A; }
+  /* ─── SLIDE 2: 현재 방식 ─── */
+  #slide-2 { background: #06102A; }
   .video-layout {
     display: grid;
     grid-template-columns: 1.4fr 1fr;
@@ -306,8 +272,178 @@
   .pain-title { font-size: 17px; font-weight: 700; }
   .pain-desc { font-size: 13px; color: var(--ltblue); margin-top: 4px; }
 
-  /* ─── SLIDE 4: 업계 비교 ─── */
-  #slide-4 { background: var(--dark); }
+  /* ─── SLIDE 3: 왜 만들었나 ─── */
+  #slide-3 { background: var(--dark); }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    width: 100%;
+    max-width: 1200px;
+    align-items: center;
+  }
+  .bullet-list { list-style: none; }
+  .bullet-list li {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: clamp(15px, 1.4vw, 19px);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .bullet-list li:last-child { border-bottom: none; }
+  .bullet-list li::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--ltblue);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(18,58,158,0.18), rgba(10,42,110,0.08));
+    border: 1px solid rgba(174,183,214,0.25);
+    border-radius: 12px;
+    padding: 24px 32px;
+    text-align: center;
+    margin-top: 24px;
+  }
+  .highlight-box .big-num { font-size: clamp(32px, 4vw, 56px); }
+
+  /* ─── SLIDE 4: ES&S 시장 지배 ─── */
+  #slide-4 { background: #030E2E; }
+  .ess-layout {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 36px;
+    width: 100%;
+    max-width: 1240px;
+    align-items: start;
+  }
+
+  .us-map-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .map-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .map-counter {
+    font-size: 13px;
+    color: var(--ltblue);
+    letter-spacing: 1px;
+  }
+  .map-counter span {
+    font-size: 20px;
+    font-weight: 900;
+    color: #4F9EF4;
+  }
+
+  /* US block grid */
+  .us-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(8, 32px);
+    gap: 2px;
+    width: 100%;
+    max-width: 560px;
+  }
+  .sq {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 700;
+    border-radius: 3px;
+    color: rgba(255,255,255,0.85);
+    transition: background 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease;
+    cursor: default;
+    letter-spacing: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .sq.ess   { background: rgba(4,24,95,0.25); opacity:0.4; }
+  .sq.mix   { background: rgba(138,148,166,0.5); opacity:0.55; }
+  .sq.dom   { background: rgba(235,5,19,0.5); opacity:0.6; }
+  .sq.hart  { background: rgba(10,102,180,0.5); opacity:0.6; }
+  .sq.clr   { background: rgba(7,55,125,0.45); opacity:0.55; }
+  .sq.ess.lit {
+    background: #04185F;
+    opacity: 1;
+    box-shadow: 0 0 8px rgba(79,158,244,0.55), inset 0 0 0 1px rgba(79,158,244,0.35);
+  }
+  .sq.ess.lit::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(79,158,244,0.2) 0%, transparent 60%);
+  }
+
+  .map-legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .legend-chip {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 10px; color: var(--ltblue);
+  }
+  .legend-chip-dot {
+    width: 10px; height: 10px; border-radius: 2px;
+  }
+
+  /* right panel */
+  .ess-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ess-stat-card {
+    background: rgba(4,24,95,0.3);
+    border: 1px solid rgba(79,158,244,0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+  .ess-stat-card .stat-label {
+    font-size: 11px;
+    color: rgba(79,158,244,0.9);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .ess-stat-card .stat-val {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.1;
+  }
+  .ess-stat-card .stat-sub {
+    font-size: 12px;
+    color: var(--ltblue);
+    margin-top: 3px;
+  }
+
+  .ess-dispute {
+    background: rgba(235,4,20,0.08);
+    border: 1px solid rgba(235,4,20,0.25);
+    border-radius: 12px;
+    padding: 14px 18px;
+  }
+  .ess-dispute .dispute-tag {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; color: #FF6B7A;
+    margin-bottom: 6px;
+  }
+  .ess-dispute .dispute-title {
+    font-size: 14px; font-weight: 700; color: var(--white);
+    margin-bottom: 4px;
+  }
+  .ess-dispute .dispute-desc {
+    font-size: 12px; color: var(--ltblue); line-height: 1.5;
+  }
+
+  /* ─── SLIDE 5: 업계 비교 (radar) ─── */
+  #slide-5 { background: var(--dark); }
   .radar-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -317,24 +453,29 @@
     align-items: center;
   }
   .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-    font-size: 15px;
+    display: flex; align-items: center;
+    gap: 10px; margin-bottom: 12px; font-size: 15px;
   }
-  .legend-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    flex-shrink: 0;
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+
+  .unprecedented-banner {
+    background: linear-gradient(135deg, rgba(235,4,20,0.15), rgba(4,24,95,0.2));
+    border: 1px solid rgba(235,4,20,0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    text-align: center;
+  }
+  .unprecedented-banner .up-label {
+    font-size: 11px; letter-spacing: 2px; color: #FF6B7A; margin-bottom: 6px;
+  }
+  .unprecedented-banner .up-text {
+    font-size: 16px; font-weight: 700; line-height: 1.6;
   }
 
-  /* ─── SLIDE 5: 파이프라인 ─── */
-  #slide-5 { background: #03103A; }
-  .pipeline-wrapper {
-    width: 100%;
-    max-width: 1100px;
-  }
+  /* ─── SLIDE 6: 파이프라인 ─── */
+  #slide-6 { background: #03103A; }
+  .pipeline-wrapper { width: 100%; max-width: 1100px; }
   .pipeline-flow {
     display: flex;
     align-items: center;
@@ -352,26 +493,15 @@
     min-width: 130px;
     position: relative;
   }
-  .pipe-node.highlight {
-    border-color: rgba(174,183,214,0.45);
-    background: rgba(18,58,158,0.12);
-  }
-  .pipe-node.accent {
-    border-color: rgba(36,161,72,0.5);
-    background: rgba(36,161,72,0.1);
-  }
+  .pipe-node.highlight { border-color: rgba(174,183,214,0.45); background: rgba(18,58,158,0.12); }
+  .pipe-node.accent { border-color: rgba(36,161,72,0.5); background: rgba(36,161,72,0.1); }
   .pipe-icon { font-size: 28px; margin-bottom: 8px; }
   .pipe-title { font-size: 13px; font-weight: 700; color: var(--white); }
   .pipe-sub { font-size: 11px; color: var(--ltblue); margin-top: 3px; }
-  .pipe-arrow {
-    font-size: 22px;
-    color: var(--ltblue);
-    margin: 0 8px;
-    flex-shrink: 0;
-  }
+  .pipe-arrow { font-size: 22px; color: var(--ltblue); margin: 0 8px; flex-shrink: 0; }
   .metrics-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
     margin-top: 16px;
   }
@@ -379,13 +509,13 @@
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 24px;
+    padding: 20px;
     text-align: center;
   }
-  .metric-box .big-num { font-size: clamp(28px, 3.5vw, 48px); }
+  .metric-box .big-num { font-size: clamp(24px, 3vw, 44px); }
 
-  /* ─── SLIDE 6: 구현 현황 ─── */
-  #slide-6 { background: var(--dark); }
+  /* ─── SLIDE 7: 구현 현황 ─── */
+  #slide-7 { background: var(--dark); }
   .progress-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -394,35 +524,27 @@
     max-width: 1200px;
     align-items: center;
   }
-  .progress-item { margin-bottom: 22px; }
+  .progress-item { margin-bottom: 18px; }
   .progress-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 15px;
-    font-weight: 500;
+    display: flex; justify-content: space-between;
+    margin-bottom: 8px; font-size: 14px; font-weight: 500;
   }
   .progress-pct { color: var(--green); font-weight: 700; }
   .progress-bar-bg {
-    height: 8px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 99px;
-    overflow: hidden;
+    height: 8px; background: rgba(255,255,255,0.1);
+    border-radius: 99px; overflow: hidden;
   }
   .progress-bar-fill {
-    height: 100%;
-    border-radius: 99px;
+    height: 100%; border-radius: 99px;
     background: linear-gradient(90deg, var(--green), #4AE87A);
     width: 0%;
     transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
   }
-  .progress-bar-fill.partial {
-    background: linear-gradient(90deg, #F59E0B, #FCD34D);
-  }
+  .progress-bar-fill.partial { background: linear-gradient(90deg, #F59E0B, #FCD34D); }
   .mockup-svg { width: 100%; height: auto; }
 
-  /* ─── SLIDE 7: 에러 분석 ─── */
-  #slide-7 { background: #06102A; }
+  /* ─── SLIDE 8: 에러 분석 ─── */
+  #slide-8 { background: #06102A; }
   .data-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -437,22 +559,14 @@
     border-radius: 12px;
     padding: 20px 24px;
     margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    display: flex; align-items: center; gap: 16px;
   }
-  .insight-num {
-    font-size: 28px;
-    font-weight: 900;
-    color: var(--ltblue);
-    flex-shrink: 0;
-    width: 40px;
-  }
+  .insight-num { font-size: 28px; font-weight: 900; color: var(--ltblue); flex-shrink: 0; width: 40px; }
   .insight-text { font-size: 15px; font-weight: 500; }
   .insight-sub { font-size: 12px; color: var(--ltblue); margin-top: 3px; }
 
-  /* ─── SLIDE 8: 로드맵 ─── */
-  #slide-8 { background: var(--dark); }
+  /* ─── SLIDE 9: 로드맵 ─── */
+  #slide-9 { background: var(--dark); }
   .roadmap-phases {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -465,151 +579,86 @@
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 28px;
-    position: relative;
-    overflow: hidden;
+    padding: 24px;
+    position: relative; overflow: hidden;
   }
   .phase-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
   }
   .phase-card.done::before { background: var(--green); }
   .phase-card.wip::before  { background: #F59E0B; }
   .phase-card.plan::before { background: var(--ltblue); }
-
   .phase-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 5px 12px;
-    border-radius: 99px;
-    margin-bottom: 12px;
-    letter-spacing: 0.5px;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 700;
+    padding: 5px 12px; border-radius: 99px;
+    margin-bottom: 10px; letter-spacing: 0.5px;
   }
-  .phase-badge.done { background: rgba(36,161,72,0.2);  color: var(--green); }
+  .phase-badge.done { background: rgba(36,161,72,0.2); color: var(--green); }
   .phase-badge.wip  { background: rgba(245,158,11,0.2); color: #F59E0B; }
   .phase-badge.plan { background: rgba(174,183,214,0.15); color: var(--ltblue); }
-
-  .phase-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+  .phase-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
   .phase-list { list-style: none; }
   .phase-list li {
-    font-size: 14px;
-    color: var(--ltblue);
-    padding: 7px 0;
+    font-size: 13px; color: var(--ltblue);
+    padding: 6px 0;
     border-bottom: 1px solid rgba(255,255,255,0.06);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: flex; align-items: center; gap: 8px;
   }
   .phase-list li:last-child { border-bottom: none; }
   .phase-list li::before {
-    content: '';
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    flex-shrink: 0;
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; flex-shrink: 0;
   }
   .phase-card.done .phase-list li::before { background: var(--green); }
   .phase-card.wip  .phase-list li::before { background: #F59E0B; }
   .phase-card.plan .phase-list li::before { background: var(--ltblue); }
 
-  .phase-connector {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding-top: 48px;
-    color: var(--ltblue);
-    font-size: 28px;
-    opacity: 0.4;
-  }
-
-  /* ─── SLIDE 9: 마무리 ─── */
-  #slide-9 { background: linear-gradient(135deg, #020D38 0%, #05195E 50%, #020D38 100%); }
+  /* ─── SLIDE 10: 마무리 ─── */
+  #slide-10 { background: linear-gradient(135deg, #020D38 0%, #05195E 50%, #020D38 100%); }
   .effect-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     width: 100%;
     max-width: 1200px;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
   }
   .effect-box {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 28px 20px;
+    padding: 24px 16px;
     text-align: center;
-    position: relative;
-    overflow: hidden;
+    position: relative; overflow: hidden;
   }
   .effect-box::after {
-    content: '';
-    position: absolute;
+    content: ''; position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--ltblue);
+    height: 3px; background: var(--ltblue);
   }
-  .effect-box .big-num { font-size: clamp(32px, 3.5vw, 52px); }
+  .effect-box .big-num { font-size: clamp(30px, 3.5vw, 50px); }
   .score-badges {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
   }
   .score-badge {
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 99px;
-    padding: 10px 24px;
-    font-size: 14px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--white);
+    padding: 10px 24px; font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px; color: var(--white);
   }
   .score-badge .check { color: var(--green); font-size: 16px; }
-
-  /* ─── TITLE SECTION ─── */
-  .slide-title-area {
-    width: 100%;
-    max-width: 1200px;
-    margin-bottom: 36px;
-  }
-  .slide-heading {
-    font-size: clamp(28px, 3.5vw, 48px);
-    font-weight: 900;
-    line-height: 1.2;
-  }
-
-  /* ─── CHART CONTAINERS ─── */
-  .chart-wrap {
-    position: relative;
-    width: 100%;
-  }
-  .chart-wrap canvas { max-width: 100%; }
-
-  /* ─── TRANSITIONS (active slide) ─── */
-  .slide { opacity: 0.4; transition: opacity 0.4s; }
-  .slide.active { opacity: 1; }
 </style>
 </head>
 <body>
 
-<!-- NAV BUTTONS -->
 <button id="nav-prev" onclick="changeSlide(-1)" aria-label="이전 슬라이드">&#8592;</button>
 <button id="nav-next" onclick="changeSlide(1)"  aria-label="다음 슬라이드">&#8594;</button>
-
-<!-- SLIDE COUNTER -->
-<div id="counter">1 / 9</div>
-
-<!-- DOT NAV -->
+<div id="counter">1 / 10</div>
 <div id="dots"></div>
 
-<!-- DECK -->
 <div id="deck">
 
   <!-- ══════════════════════════════════════
@@ -623,10 +672,9 @@
     <div class="cover-sub">Troubleshooting Video Auto-Generation</div>
     <div class="cover-meta">
       <div>발표자 <span>김별하</span></div>
-      <div>제출처 <span>AI 경진대회</span></div>
+      <div>소속 <span>MIRU Systems</span></div>
       <div>연도 <span>2026</span></div>
     </div>
-    <!-- decorative grid lines -->
     <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.04;pointer-events:none" xmlns="http://www.w3.org/2000/svg">
       <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" stroke-width="1"/></pattern></defs>
       <rect width="100%" height="100%" fill="url(#grid)"/>
@@ -634,43 +682,11 @@
   </section>
 
   <!-- ══════════════════════════════════════
-       SLIDE 2 — 배경
+       SLIDE 2 — 현재 방식
   ══════════════════════════════════════ -->
   <section class="slide" id="slide-2">
-    <div class="slide-label">Background</div>
-    <div class="slide-num">02</div>
-    <div class="slide-title-area">
-      <div class="slide-heading">왜 만들었나</div>
-      <div class="red-line"></div>
-    </div>
-    <div class="two-col">
-      <div>
-        <ul class="bullet-list">
-          <li>ACM 가이드 영상 직접 제작 중</li>
-          <li>Troubleshooting 영상 별도 필요</li>
-          <li>에러 유형 11종 × 수동 제작</li>
-          <li>매 버전마다 반복 작업 발생</li>
-        </ul>
-        <div class="highlight-box" style="margin-top:28px">
-          <div style="font-size:13px;color:var(--ltblue);margin-bottom:6px;letter-spacing:1px">PRODUCTION TIME / 영상 1건</div>
-          <div class="big-num">2시간 <span style="font-size:0.5em;color:var(--ltblue)">→</span> <span style="color:var(--green)">60초</span></div>
-          <div class="big-label">1분 30초 영상 기준 (수동 → AI)</div>
-        </div>
-      </div>
-      <div>
-        <div class="chart-wrap" style="height:320px">
-          <canvas id="chart-bar"></canvas>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════
-       SLIDE 3 — 현재 방식
-  ══════════════════════════════════════ -->
-  <section class="slide" id="slide-3">
     <div class="slide-label">Current State</div>
-    <div class="slide-num">03</div>
+    <div class="slide-num">02</div>
     <div class="slide-title-area">
       <div class="slide-heading">현재 방식</div>
       <div class="red-line"></div>
@@ -686,26 +702,26 @@
           </iframe>
         </div>
         <div style="margin-top:14px;font-size:13px;color:var(--ltblue);letter-spacing:0.5px;text-align:center">
-          현재 Canva 수동 제작 — Scanner Error Handling
+          현재 Canva 수동 제작 — Scanner Error Handling 예시
         </div>
       </div>
       <div>
         <div class="pain-item">
-          <div class="pain-icon">⏱</div>
+          <div class="pain-icon">&#9200;</div>
           <div>
             <div class="pain-title">시간 소요</div>
             <div class="pain-desc">영상 1건당 약 2시간 수작업 소요</div>
           </div>
         </div>
         <div class="pain-item">
-          <div class="pain-icon">📹</div>
+          <div class="pain-icon">&#128249;</div>
           <div>
             <div class="pain-title">트러블슈팅 영상 미도입</div>
             <div class="pain-desc">고장 대응 영상 가이드 아직 없음</div>
           </div>
         </div>
         <div class="pain-item">
-          <div class="pain-icon">📐</div>
+          <div class="pain-icon">&#128208;</div>
           <div>
             <div class="pain-title">확장 어려움</div>
             <div class="pain-desc">제품·언어 추가마다 반복 제작</div>
@@ -721,13 +737,163 @@
   </section>
 
   <!-- ══════════════════════════════════════
-       SLIDE 4 — 업계 현황 비교
+       SLIDE 3 — 왜 만들었나
+  ══════════════════════════════════════ -->
+  <section class="slide" id="slide-3">
+    <div class="slide-label">Background</div>
+    <div class="slide-num">03</div>
+    <div class="slide-title-area">
+      <div class="slide-heading">왜 만들었나</div>
+      <div class="red-line"></div>
+    </div>
+    <div class="two-col">
+      <div>
+        <ul class="bullet-list">
+          <li>ACM 가이드 영상 직접 제작 중</li>
+          <li>Troubleshooting 영상 별도 필요</li>
+          <li>에러 유형 13종 × 수동 제작</li>
+          <li>매 버전마다 반복 작업 발생</li>
+          <li>다국어 지원 시 제작량 5배 증가</li>
+        </ul>
+        <div class="highlight-box" style="margin-top:28px">
+          <div style="font-size:13px;color:var(--ltblue);margin-bottom:6px;letter-spacing:1px">PRODUCTION TIME / 영상 1건</div>
+          <div class="big-num">2시간 <span style="font-size:0.5em;color:var(--ltblue)">&#8594;</span> <span style="color:var(--green)">60초</span></div>
+          <div class="big-label">1분 30초 영상 기준 (수동 &#8594; AI)</div>
+        </div>
+      </div>
+      <div>
+        <div class="chart-wrap" style="height:320px">
+          <canvas id="chart-bar"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 4 — ES&S 시장 지배력
   ══════════════════════════════════════ -->
   <section class="slide" id="slide-4">
-    <div class="slide-label">Market Comparison</div>
+    <div class="slide-label">Market Dominance</div>
     <div class="slide-num">04</div>
     <div class="slide-title-area">
-      <div class="slide-heading">다른 회사들은?</div>
+      <div class="slide-heading">다른 회사들은? — ES&amp;S의 시장 지배</div>
+      <div class="red-line"></div>
+    </div>
+    <div class="ess-layout">
+      <!-- LEFT: animated US map -->
+      <div class="us-map-wrap">
+        <div class="map-title-row">
+          <div style="font-size:12px;letter-spacing:2px;color:var(--ltblue);opacity:0.8">미국 내 선거장비 공급사 현황</div>
+          <div class="map-counter">ES&amp;S 사용 주 <span id="ess-count">0</span> / 29</div>
+        </div>
+
+        <div class="us-grid" id="us-map-grid">
+          <!-- Row 1 (grid-row:1) -->
+          <div class="sq dom" style="grid-column:1;grid-row:1" title="AK - Dominion">AK</div>
+
+          <!-- Row 2 (grid-row:2) -->
+          <div class="sq mix" style="grid-column:1;grid-row:2" title="WA - Mixed">WA</div>
+          <div class="sq ess" style="grid-column:2;grid-row:2" title="MT - ES&amp;S" data-ess="1">MT</div>
+          <div class="sq ess" style="grid-column:3;grid-row:2" title="ND - ES&amp;S" data-ess="1">ND</div>
+          <div class="sq ess" style="grid-column:4;grid-row:2" title="MN - ES&amp;S" data-ess="1">MN</div>
+          <div class="sq ess" style="grid-column:12;grid-row:2" title="ME - ES&amp;S" data-ess="1">ME</div>
+
+          <!-- Row 3 (grid-row:3) -->
+          <div class="sq mix" style="grid-column:1;grid-row:3" title="OR - Mixed">OR</div>
+          <div class="sq ess" style="grid-column:2;grid-row:3" title="ID - ES&amp;S" data-ess="1">ID</div>
+          <div class="sq ess" style="grid-column:3;grid-row:3" title="WY - ES&amp;S" data-ess="1">WY</div>
+          <div class="sq ess" style="grid-column:4;grid-row:3" title="SD - ES&amp;S" data-ess="1">SD</div>
+          <div class="sq ess" style="grid-column:5;grid-row:3" title="IA - ES&amp;S" data-ess="1">IA</div>
+          <div class="sq mix" style="grid-column:6;grid-row:3" title="IL - Mixed">IL</div>
+          <div class="sq ess" style="grid-column:7;grid-row:3" title="IN - ES&amp;S" data-ess="1">IN</div>
+          <div class="sq mix" style="grid-column:8;grid-row:3" title="OH - Mixed">OH</div>
+          <div class="sq mix" style="grid-column:9;grid-row:3" title="PA - Mixed">PA</div>
+          <div class="sq ess" style="grid-column:10;grid-row:3" title="NJ - ES&amp;S" data-ess="1">NJ</div>
+          <div class="sq ess" style="grid-column:11;grid-row:3" title="MA - ES&amp;S" data-ess="1">MA</div>
+          <div class="sq ess" style="grid-column:12;grid-row:3" title="RI - ES&amp;S" data-ess="1">RI</div>
+
+          <!-- Row 4 (grid-row:4) -->
+          <div class="sq mix" style="grid-column:1;grid-row:4" title="CA - Mixed">CA</div>
+          <div class="sq mix" style="grid-column:2;grid-row:4" title="NV - Mixed">NV</div>
+          <div class="sq mix" style="grid-column:3;grid-row:4" title="CO - Mixed">CO</div>
+          <div class="sq ess" style="grid-column:4;grid-row:4" title="NE - ES&amp;S" data-ess="1">NE</div>
+          <div class="sq ess" style="grid-column:5;grid-row:4" title="MO - ES&amp;S" data-ess="1">MO</div>
+          <div class="sq mix" style="grid-column:6;grid-row:4" title="KY - Mixed">KY</div>
+          <div class="sq ess" style="grid-column:7;grid-row:4" title="WV - ES&amp;S" data-ess="1">WV</div>
+          <div class="sq ess" style="grid-column:8;grid-row:4" title="VA - ES&amp;S" data-ess="1">VA</div>
+          <div class="sq ess" style="grid-column:9;grid-row:4" title="MD - ES&amp;S" data-ess="1">MD</div>
+          <div class="sq ess" style="grid-column:10;grid-row:4" title="DC - ES&amp;S" data-ess="1">DC</div>
+          <div class="sq ess" style="grid-column:11;grid-row:4" title="CT - ES&amp;S" data-ess="1">CT</div>
+          <div class="sq ess" style="grid-column:12;grid-row:4" title="DE - ES&amp;S" data-ess="1">DE</div>
+
+          <!-- Row 5 (grid-row:5) -->
+          <div class="sq mix" style="grid-column:2;grid-row:5" title="AZ - Mixed">AZ</div>
+          <div class="sq dom" style="grid-column:3;grid-row:5" title="UT - Dominion">UT</div>
+          <div class="sq clr" style="grid-column:4;grid-row:5" title="KS - Clear Ballot">KS</div>
+          <div class="sq ess" style="grid-column:5;grid-row:5" title="AR - ES&amp;S" data-ess="1">AR</div>
+          <div class="sq ess" style="grid-column:6;grid-row:5" title="TN - ES&amp;S" data-ess="1">TN</div>
+          <div class="sq ess" style="grid-column:7;grid-row:5" title="NC - ES&amp;S" data-ess="1">NC</div>
+          <div class="sq ess" style="grid-column:8;grid-row:5" title="SC - ES&amp;S" data-ess="1">SC</div>
+
+          <!-- Row 6 (grid-row:6) -->
+          <div class="sq ess" style="grid-column:3;grid-row:6" title="NM - ES&amp;S" data-ess="1">NM</div>
+          <div class="sq hart" style="grid-column:4;grid-row:6" title="OK - Hart">OK</div>
+          <div class="sq ess" style="grid-column:5;grid-row:6" title="MS - ES&amp;S" data-ess="1">MS</div>
+          <div class="sq ess" style="grid-column:6;grid-row:6" title="AL - ES&amp;S" data-ess="1">AL</div>
+          <div class="sq dom" style="grid-column:7;grid-row:6" title="GA - Dominion">GA</div>
+
+          <!-- Row 7 (grid-row:7) -->
+          <div class="sq hart" style="grid-column:4;grid-row:7" title="TX - Hart">TX</div>
+          <div class="sq ess" style="grid-column:5;grid-row:7" title="LA - ES&amp;S" data-ess="1">LA</div>
+          <div class="sq ess" style="grid-column:6;grid-row:7" title="FL - ES&amp;S" data-ess="1">FL</div>
+
+          <!-- Row 8 (grid-row:8) -->
+          <div class="sq hart" style="grid-column:1;grid-row:8" title="HI - Hart">HI</div>
+        </div>
+
+        <div class="map-legend">
+          <div class="legend-chip"><div class="legend-chip-dot" style="background:#04185F;box-shadow:0 0 5px rgba(79,158,244,0.5)"></div>ES&amp;S (29주)</div>
+          <div class="legend-chip"><div class="legend-chip-dot" style="background:rgba(138,148,166,0.7)"></div>복수공급</div>
+          <div class="legend-chip"><div class="legend-chip-dot" style="background:#EB0513"></div>Dominion</div>
+          <div class="legend-chip"><div class="legend-chip-dot" style="background:#0A66B4"></div>Hart</div>
+          <div class="legend-chip"><div class="legend-chip-dot" style="background:#07377D"></div>Clear Ballot</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: stats + disputes -->
+      <div class="ess-stats">
+        <div class="ess-stat-card">
+          <div class="stat-label">ES&amp;S 미국 점유율</div>
+          <div class="stat-val">29개 주 (州)</div>
+          <div class="stat-sub">미국 최대 선거장비 공급사 · 전국 카운티 2,000곳+ 공급</div>
+        </div>
+        <div class="ess-stat-card">
+          <div class="stat-label">매출 구조</div>
+          <div class="stat-val">65%+</div>
+          <div class="stat-sub">매출이 장기 유지보수 계약(LTMA)에서 창출 — 기기 판매보다 사후관리가 주수익</div>
+        </div>
+        <div class="ess-dispute">
+          <div class="dispute-tag">CASE — COOK COUNTY, IL</div>
+          <div class="dispute-title">지원 계약 분쟁 · 경쟁사에 빼앗김</div>
+          <div class="dispute-desc">장기 유지보수 계약 갱신 과정에서 카운티가 ES&amp;S 지원에 불만 → 경쟁사로 전환. 고가의 공급사 종속(vendor lock-in)이 역풍으로 작용한 대표 사례.</div>
+        </div>
+        <div class="ess-dispute">
+          <div class="dispute-tag">CASE — JOHNSON COUNTY, KS</div>
+          <div class="dispute-title">전량 교체 비용 $1.5M</div>
+          <div class="dispute-desc">ES&amp;S 장비 전량 교체에 약 150만 달러 소요. 장비 노후화 → 유지보수 비용 급증 → 결국 교체 선택. 지속 유지보수 비용이 교체 비용을 초과하는 구조.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SLIDE 5 — 업계 비교 (radar)
+  ══════════════════════════════════════ -->
+  <section class="slide" id="slide-5">
+    <div class="slide-label">Market Comparison</div>
+    <div class="slide-num">05</div>
+    <div class="slide-title-area">
+      <div class="slide-heading">다른 회사들은? — 기술 수준 비교</div>
       <div class="red-line"></div>
     </div>
     <div class="radar-layout">
@@ -736,28 +902,25 @@
       </div>
       <div>
         <div style="margin-bottom:14px;font-size:11px;letter-spacing:2px;color:var(--ltblue);opacity:0.7">INDUSTRY BENCHMARK — 선거장비 업계</div>
-        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px">
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px">
-            <div style="font-size:12px;color:var(--ltblue);margin-bottom:4px">PDF 매뉴얼</div>
-            <div style="font-size:14px;font-weight:600">ES&amp;S · Dominion · Hart InterCivic</div>
-            <div style="font-size:12px;color:var(--ltblue);margin-top:3px">업계 표준 — 기술 사양서 / 운영 매뉴얼 PDF</div>
-          </div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px">
-            <div style="font-size:12px;color:var(--ltblue);margin-bottom:4px">정적 영상 가이드</div>
-            <div style="font-size:14px;font-weight:600">ES&amp;S · Clear Ballot</div>
-            <div style="font-size:12px;color:var(--ltblue);margin-top:3px">제품별 How-to 영상 일부 제공 (YouTube)</div>
-          </div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px">
-            <div style="font-size:12px;color:var(--ltblue);margin-bottom:4px">AI 챗봇 기술지원</div>
-            <div style="font-size:14px;font-weight:600">제조업 일반 (Zendesk AI 등)</div>
-            <div style="font-size:12px;color:var(--ltblue);margin-top:3px">선거장비 전문 AI 지원 사례 — 아직 없음</div>
+
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(107,114,128,0.8)"></div><span>PDF 매뉴얼 — ES&amp;S · Dominion · Hart</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(174,183,214,0.8)"></div><span>정적 영상 — ES&amp;S · Clear Ballot</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:rgba(18,58,158,0.9)"></div><span>AI 챗봇 — 제조업 일반 (Zendesk AI 등)</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:#EB0414"></div><span style="font-weight:700;color:var(--white)">MIRU AI — 선거장비 전용 AI 트러블슈팅</span></div>
+
+        <div style="margin:20px 0;padding:16px 20px;background:var(--card);border:1px solid var(--border);border-radius:12px">
+          <div style="font-size:12px;color:var(--ltblue);margin-bottom:8px;letter-spacing:1px">업계 현황</div>
+          <div style="font-size:14px;line-height:1.8">
+            <span style="color:#FF6B7A;font-weight:700">&#9679;</span> ES&amp;S·Dominion·Hart — PDF 매뉴얼 방식<br>
+            <span style="color:#FF6B7A;font-weight:700">&#9679;</span> AI 트러블슈팅 영상 — <span style="font-weight:700">업계 적용 사례 전무</span>
           </div>
         </div>
-        <div class="card" style="background:rgba(18,58,158,0.12);border-color:rgba(174,183,214,0.3)">
-          <div style="font-size:12px;color:var(--ltblue);margin-bottom:6px;letter-spacing:1px">MIRU 제안 방향</div>
-          <div style="font-size:14px;font-weight:700;line-height:1.9">
-            AI 트러블슈팅 영상 자동화<br>
-            <span style="color:var(--ltblue);font-size:13px;font-weight:500">선거장비 업계 최초 도입 가능성</span>
+
+        <div class="unprecedented-banner">
+          <div class="up-label">MIRU SYSTEMS PROPOSITION</div>
+          <div class="up-text">
+            선거장비 AI 트러블슈팅 자동화<br>
+            <span style="color:#4F9EF4;font-size:14px;font-weight:500">전무후무한 업계 최초 도입 가능성</span>
           </div>
         </div>
       </div>
@@ -765,11 +928,11 @@
   </section>
 
   <!-- ══════════════════════════════════════
-       SLIDE 5 — 솔루션: AI 파이프라인
+       SLIDE 6 — AI 파이프라인
   ══════════════════════════════════════ -->
-  <section class="slide" id="slide-5">
+  <section class="slide" id="slide-6">
     <div class="slide-label">Solution</div>
-    <div class="slide-num">05</div>
+    <div class="slide-num">06</div>
     <div class="slide-title-area">
       <div class="slide-heading">AI 파이프라인</div>
       <div class="red-line"></div>
@@ -777,33 +940,33 @@
     <div class="pipeline-wrapper">
       <div class="pipeline-flow">
         <div class="pipe-node">
-          <div class="pipe-icon">📋</div>
+          <div class="pipe-icon">&#128203;</div>
           <div class="pipe-title">신청서 입력</div>
           <div class="pipe-sub">제품 / 에러 / 언어</div>
         </div>
-        <div class="pipe-arrow">→</div>
+        <div class="pipe-arrow">&#8594;</div>
         <div class="pipe-node highlight">
-          <div class="pipe-icon">🤖</div>
+          <div class="pipe-icon">&#129302;</div>
           <div class="pipe-title">Groq LLM</div>
-          <div class="pipe-sub">스크립트 + 프롬프트 생성</div>
+          <div class="pipe-sub">CoT 추론 + 스크립트</div>
         </div>
-        <div class="pipe-arrow">→</div>
+        <div class="pipe-arrow">&#8594;</div>
         <div class="pipe-node highlight">
-          <div class="pipe-icon">🎨</div>
+          <div class="pipe-icon">&#127912;</div>
           <div class="pipe-title">Higgsfield AI</div>
           <div class="pipe-sub">이미지 생성</div>
         </div>
-        <div class="pipe-arrow">→</div>
+        <div class="pipe-arrow">&#8594;</div>
         <div class="pipe-node accent">
-          <div class="pipe-icon">🖼</div>
+          <div class="pipe-icon">&#128444;</div>
           <div class="pipe-title">이미지 3장</div>
           <div class="pipe-sub">자동 출력</div>
         </div>
-        <div class="pipe-arrow">→</div>
+        <div class="pipe-arrow">&#8594;</div>
         <div class="pipe-node" style="border-color:rgba(174,183,214,0.4)">
-          <div class="pipe-icon">📊</div>
+          <div class="pipe-icon">&#128202;</div>
           <div class="pipe-title">관리자 대시보드</div>
-          <div class="pipe-sub">로그 / 검토</div>
+          <div class="pipe-sub">로그 / 검토 / CSV</div>
         </div>
       </div>
       <div class="metrics-row">
@@ -812,8 +975,12 @@
           <div class="big-label">전체 처리 시간</div>
         </div>
         <div class="metric-box">
-          <div class="big-num">3장</div>
-          <div class="big-label">이미지 자동 생성</div>
+          <div class="big-num">13종</div>
+          <div class="big-label">에러 프리셋</div>
+        </div>
+        <div class="metric-box">
+          <div class="big-num">39장</div>
+          <div class="big-label">사전 생성 이미지</div>
         </div>
         <div class="metric-box">
           <div class="big-num">5개국</div>
@@ -824,11 +991,11 @@
   </section>
 
   <!-- ══════════════════════════════════════
-       SLIDE 6 — 현재 구현 현황
+       SLIDE 7 — 현재 구현 현황
   ══════════════════════════════════════ -->
-  <section class="slide" id="slide-6">
+  <section class="slide" id="slide-7">
     <div class="slide-label">Implementation</div>
-    <div class="slide-num">06</div>
+    <div class="slide-num">07</div>
     <div class="slide-title-area">
       <div class="slide-heading">현재 구현 현황</div>
       <div class="red-line"></div>
@@ -836,78 +1003,85 @@
     <div class="progress-layout">
       <div id="progress-section">
         <div class="progress-item">
-          <div class="progress-header"><span>AI 이미지 생성</span><span class="progress-pct">100%</span></div>
+          <div class="progress-header"><span>Groq LLM 스크립트 (CoT 추론)</span><span class="progress-pct">100%</span></div>
           <div class="progress-bar-bg"><div class="progress-bar-fill" data-pct="100"></div></div>
         </div>
         <div class="progress-item">
-          <div class="progress-header"><span>Groq 스크립트 생성</span><span class="progress-pct">100%</span></div>
+          <div class="progress-header"><span>AI 이미지 생성 (Higgsfield)</span><span class="progress-pct">100%</span></div>
           <div class="progress-bar-bg"><div class="progress-bar-fill" data-pct="100"></div></div>
         </div>
         <div class="progress-item">
-          <div class="progress-header"><span>프리셋 이미지 11종</span><span class="progress-pct">100%</span></div>
+          <div class="progress-header"><span>에러 프리셋 13종 × 39장</span><span class="progress-pct">100%</span></div>
           <div class="progress-bar-bg"><div class="progress-bar-fill" data-pct="100"></div></div>
         </div>
         <div class="progress-item">
-          <div class="progress-header"><span>관리자 대시보드</span><span class="progress-pct" style="color:#F59E0B">85%</span></div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill partial" data-pct="85"></div></div>
+          <div class="progress-header"><span>관리자 대시보드 + 피드백</span><span class="progress-pct">100%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" data-pct="100"></div></div>
         </div>
         <div class="progress-item">
-          <div class="progress-header"><span>로그 시스템</span><span class="progress-pct" style="color:#F59E0B">70%</span></div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill partial" data-pct="70"></div></div>
+          <div class="progress-header"><span>CSV 데이터 내보내기</span><span class="progress-pct">100%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" data-pct="100"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header"><span>5개국 다국어 지원</span><span class="progress-pct">100%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" data-pct="100"></div></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-header"><span>영상 자동 생성 (Higgsfield)</span><span class="progress-pct" style="color:#F59E0B">계획</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill partial" data-pct="20"></div></div>
         </div>
       </div>
       <!-- SVG MOCKUP -->
       <div>
         <svg class="mockup-svg" viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg">
-          <!-- Browser frame -->
           <rect x="10" y="10" width="460" height="320" rx="12" fill="#0A1A4A" stroke="rgba(174,183,214,0.25)" stroke-width="1.5"/>
-          <!-- Browser bar -->
           <rect x="10" y="10" width="460" height="34" rx="12" fill="#05195E"/>
           <rect x="10" y="32" width="460" height="12" fill="#05195E"/>
           <circle cx="34" cy="27" r="5" fill="#EB0414" opacity="0.7"/>
           <circle cx="52" cy="27" r="5" fill="#F59E0B" opacity="0.7"/>
           <circle cx="70" cy="27" r="5" fill="#24A148" opacity="0.7"/>
           <rect x="100" y="19" width="260" height="16" rx="8" fill="rgba(255,255,255,0.08)"/>
-          <!-- Submit form mockup -->
           <text x="30" y="68" fill="#AEB7D6" font-size="9" font-family="sans-serif" opacity="0.7">신청서 입력 / Submit Form</text>
           <rect x="24" y="76" width="200" height="12" rx="4" fill="rgba(255,255,255,0.07)"/>
           <rect x="24" y="95" width="200" height="12" rx="4" fill="rgba(255,255,255,0.07)"/>
           <rect x="24" y="114" width="200" height="12" rx="4" fill="rgba(255,255,255,0.07)"/>
           <rect x="24" y="133" width="120" height="20" rx="6" fill="#EB0414" opacity="0.8"/>
           <text x="50" y="147" fill="white" font-size="8" font-family="sans-serif">AI 생성 시작</text>
-          <!-- Admin panel mockup -->
           <text x="246" y="68" fill="#AEB7D6" font-size="9" font-family="sans-serif" opacity="0.7">관리자 대시보드</text>
           <rect x="240" y="76" width="100" height="36" rx="6" fill="rgba(36,161,72,0.15)" stroke="rgba(36,161,72,0.3)" stroke-width="1"/>
-          <text x="248" y="94" fill="#24A148" font-size="9" font-family="sans-serif" font-weight="bold">완료 12건</text>
+          <text x="248" y="90" fill="#24A148" font-size="8" font-family="sans-serif" font-weight="bold">완료 12건</text>
+          <text x="248" y="104" fill="#AEB7D6" font-size="7" font-family="sans-serif">CSV 내보내기 &#10003;</text>
           <rect x="352" y="76" width="100" height="36" rx="6" fill="rgba(235,4,20,0.12)" stroke="rgba(235,4,20,0.25)" stroke-width="1"/>
-          <text x="360" y="94" fill="#EB0414" font-size="9" font-family="sans-serif" font-weight="bold">대기 3건</text>
-          <!-- Image thumbnails -->
+          <text x="360" y="90" fill="#EB0414" font-size="8" font-family="sans-serif" font-weight="bold">피드백 8건</text>
+          <text x="360" y="104" fill="#AEB7D6" font-size="7" font-family="sans-serif">분석 완료 &#10003;</text>
           <rect x="240" y="122" width="70" height="50" rx="5" fill="rgba(174,183,214,0.1)" stroke="rgba(174,183,214,0.2)" stroke-width="1"/>
           <rect x="318" y="122" width="70" height="50" rx="5" fill="rgba(174,183,214,0.1)" stroke="rgba(174,183,214,0.2)" stroke-width="1"/>
           <rect x="396" y="122" width="56" height="50" rx="5" fill="rgba(174,183,214,0.1)" stroke="rgba(174,183,214,0.2)" stroke-width="1"/>
           <text x="260" y="152" fill="#AEB7D6" font-size="8" font-family="sans-serif" opacity="0.6">Img 1</text>
           <text x="338" y="152" fill="#AEB7D6" font-size="8" font-family="sans-serif" opacity="0.6">Img 2</text>
           <text x="412" y="152" fill="#AEB7D6" font-size="8" font-family="sans-serif" opacity="0.6">Img 3</text>
-          <!-- Log section -->
-          <rect x="24" y="180" width="428" height="10" rx="3" fill="rgba(255,255,255,0.05)"/>
-          <rect x="24" y="197" width="320" height="10" rx="3" fill="rgba(255,255,255,0.05)"/>
-          <rect x="24" y="214" width="380" height="10" rx="3" fill="rgba(255,255,255,0.05)"/>
-          <rect x="24" y="231" width="280" height="10" rx="3" fill="rgba(255,255,255,0.05)"/>
-          <circle cx="14" cy="185" r="4" fill="#24A148"/>
-          <circle cx="14" cy="202" r="4" fill="#24A148"/>
-          <circle cx="14" cy="219" r="4" fill="#F59E0B"/>
-          <circle cx="14" cy="236" r="4" fill="#AEB7D6" opacity="0.4"/>
+          <rect x="24" y="186" width="428" height="9" rx="3" fill="rgba(255,255,255,0.05)"/>
+          <rect x="24" y="201" width="320" height="9" rx="3" fill="rgba(255,255,255,0.05)"/>
+          <rect x="24" y="216" width="380" height="9" rx="3" fill="rgba(255,255,255,0.05)"/>
+          <rect x="24" y="231" width="260" height="9" rx="3" fill="rgba(255,255,255,0.05)"/>
+          <circle cx="14" cy="190" r="4" fill="#24A148"/>
+          <circle cx="14" cy="205" r="4" fill="#24A148"/>
+          <circle cx="14" cy="220" r="4" fill="#F59E0B"/>
+          <circle cx="14" cy="235" r="4" fill="#AEB7D6" opacity="0.4"/>
+          <text x="24" y="265" fill="#AEB7D6" font-size="8" font-family="sans-serif" opacity="0.6">에러 유형: Paper Jam / UIK Mismatch / Flash Card Error ...</text>
+          <text x="24" y="280" fill="#AEB7D6" font-size="8" font-family="sans-serif" opacity="0.6">언어: KO / EN / FR / ES / AR — 자동 번역 완료</text>
+          <text x="24" y="295" fill="#AEB7D6" font-size="8" font-family="sans-serif" opacity="0.5">미분류 투표지 (Unclassified Ballot) 신규 추가</text>
         </svg>
       </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════
-       SLIDE 7 — 에러 데이터 분석
+       SLIDE 8 — 에러 데이터 분석
   ══════════════════════════════════════ -->
-  <section class="slide" id="slide-7">
+  <section class="slide" id="slide-8">
     <div class="slide-label">Data Analysis</div>
-    <div class="slide-num">07</div>
+    <div class="slide-num">08</div>
     <div class="slide-title-area">
       <div class="slide-heading">어떤 에러가 많이 발생하나?</div>
       <div class="red-line"></div>
@@ -922,7 +1096,7 @@
         <div class="insight-item">
           <div class="insight-num">01</div>
           <div>
-            <div class="insight-text">에러 데이터 → 하드웨어팀 인사이트</div>
+            <div class="insight-text">에러 데이터 &#8594; 하드웨어팀 인사이트</div>
             <div class="insight-sub">발생 빈도 기반 우선순위 파악</div>
           </div>
         </div>
@@ -930,30 +1104,31 @@
           <div class="insight-num">02</div>
           <div>
             <div class="insight-text">개발 방향 전략 수립 가능</div>
-            <div class="insight-sub">Paper Jam 28% → 최우선 개선 대상</div>
+            <div class="insight-sub">Paper Jam 28% &#8594; 최우선 개선 대상</div>
           </div>
         </div>
         <div class="insight-item">
           <div class="insight-num">03</div>
           <div>
             <div class="insight-text">버전 업데이트 자동 반영</div>
-            <div class="insight-sub">신규 에러 추가 즉시 영상 생성 가능</div>
+            <div class="insight-sub">신규 에러 추가 즉시 이미지·스크립트 생성</div>
           </div>
         </div>
         <div class="card" style="margin-top:8px;background:rgba(36,161,72,0.08);border-color:rgba(36,161,72,0.25)">
           <div style="font-size:13px;color:var(--ltblue);margin-bottom:4px">수집 에러 유형</div>
-          <div class="big-num" style="font-size:52px;color:var(--green)">11<span style="font-size:18px;color:var(--ltblue)">종</span></div>
+          <div class="big-num" style="font-size:52px;color:var(--green)">13<span style="font-size:18px;color:var(--ltblue)">종</span></div>
+          <div class="big-label" style="margin-top:2px">39장 프리셋 이미지 사전 생성 완료</div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════
-       SLIDE 8 — 미래 로드맵
+       SLIDE 9 — 미래 로드맵
   ══════════════════════════════════════ -->
-  <section class="slide" id="slide-8">
+  <section class="slide" id="slide-9">
     <div class="slide-label">Roadmap</div>
-    <div class="slide-num">08</div>
+    <div class="slide-num">09</div>
     <div class="slide-title-area">
       <div class="slide-heading">미래 로드맵</div>
       <div class="red-line"></div>
@@ -961,56 +1136,57 @@
     <div class="roadmap-phases">
       <div class="phase-card done">
         <div class="phase-badge done">&#10003; 완료</div>
-        <div class="phase-title">Phase 1</div>
+        <div class="phase-title">Phase 1 — 핵심 엔진</div>
         <ul class="phase-list">
-          <li>기본 파이프라인 구성</li>
-          <li>AI 이미지 생성</li>
-          <li>Groq 스크립트 생성</li>
-          <li>관리자 대시보드 초안</li>
-          <li>5개국 다국어 지원</li>
+          <li>Groq LLM CoT 스크립트 생성</li>
+          <li>AI 이미지 생성 (Higgsfield)</li>
+          <li>에러 유형 13종 × 39장 프리셋</li>
+          <li>관리자 대시보드 + 피드백</li>
+          <li>CSV 데이터 내보내기</li>
+          <li>5개국 다국어 자동 번역</li>
+          <li>미분류 투표지 유형 추가</li>
         </ul>
       </div>
       <div class="phase-card wip">
-        <div class="phase-badge wip">&#8635; 개발중</div>
-        <div class="phase-title">Phase 2</div>
+        <div class="phase-badge wip">&#8635; 계획</div>
+        <div class="phase-title">Phase 2 — 고도화</div>
         <ul class="phase-list">
-          <li>API 연동 고도화</li>
-          <li>제품 변경 자동 반영</li>
-          <li>이미지 자산 저장 / 관리</li>
-          <li>에러 로그 분석 강화</li>
-          <li>대시보드 완성</li>
+          <li>영상 클립 자동 생성</li>
+          <li>클라우드 이미지 자산 관리</li>
+          <li>실시간 에러 로그 분석</li>
+          <li>에러 패턴 데이터 리포트</li>
+          <li>이미지 품질 자동 검수</li>
         </ul>
       </div>
       <div class="phase-card plan">
-        <div class="phase-badge plan">&#9632; 계획</div>
-        <div class="phase-title">Phase 3</div>
+        <div class="phase-badge plan">&#9632; 구상</div>
+        <div class="phase-title">Phase 3 — 확장</div>
         <ul class="phase-list">
+          <li>ACM 등 타 제품군 확장</li>
           <li>영업 자료 자동화</li>
           <li>매뉴얼 자동 업데이트</li>
-          <li>데이터 분석 리포트</li>
-          <li>매출 기여 추적</li>
-          <li>외부 서비스 확장</li>
+          <li>API 서비스 외부 개방</li>
+          <li>글로벌 선거장비 시장 진출</li>
         </ul>
       </div>
     </div>
-    <!-- Timeline bar -->
-    <div style="width:100%;max-width:1100px;margin-top:28px;position:relative">
-      <div style="height:3px;background:linear-gradient(90deg, var(--green) 0%, #F59E0B 50%, rgba(174,183,214,0.25) 100%);border-radius:99px"></div>
+    <div style="width:100%;max-width:1100px;margin-top:24px;position:relative">
+      <div style="height:3px;background:linear-gradient(90deg, var(--green) 0%, var(--green) 38%, #F59E0B 38%, #F59E0B 66%, rgba(174,183,214,0.25) 66%, rgba(174,183,214,0.25) 100%);border-radius:99px"></div>
       <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--ltblue)">
-        <span>2025 Q4</span>
-        <span>2026 Q2</span>
-        <span>2026 Q4</span>
+        <span>2025 Q4 — 2026 Q2</span>
+        <span>2026 Q3 — 2026 Q4</span>
+        <span>2027+</span>
       </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════
-       SLIDE 9 — 기대 효과 & 마무리
+       SLIDE 10 — 기대 효과 & 마무리
   ══════════════════════════════════════ -->
-  <section class="slide" id="slide-9">
-    <div class="slide-label">Impact & Closing</div>
-    <div class="slide-num">09</div>
-    <div class="slide-title-area" style="text-align:center;margin-bottom:28px">
+  <section class="slide" id="slide-10">
+    <div class="slide-label">Impact &amp; Closing</div>
+    <div class="slide-num">10</div>
+    <div class="slide-title-area" style="text-align:center;margin-bottom:24px">
       <div class="slide-heading">기대 효과</div>
       <div class="red-line" style="margin:16px auto 0"></div>
     </div>
@@ -1018,11 +1194,11 @@
       <div class="effect-box">
         <div style="font-size:13px;color:var(--ltblue);margin-bottom:10px;letter-spacing:0.5px">제작 시간 단축</div>
         <div class="big-num">98<span style="font-size:0.45em">%</span></div>
-        <div class="big-label">2h → 60s / 영상 1건</div>
+        <div class="big-label">2h &#8594; 60s / 영상 1건</div>
       </div>
       <div class="effect-box">
         <div style="font-size:13px;color:var(--ltblue);margin-bottom:10px;letter-spacing:0.5px">에러 대응 속도</div>
-        <div class="big-num">3<span style="font-size:0.5em">×</span></div>
+        <div class="big-num">3<span style="font-size:0.5em">&#215;</span></div>
         <div class="big-label">향상</div>
       </div>
       <div class="effect-box">
@@ -1031,14 +1207,13 @@
         <div class="big-label">품질 표준화</div>
       </div>
       <div class="effect-box">
-        <div style="font-size:13px;color:var(--ltblue);margin-bottom:10px;letter-spacing:0.5px">엔지니어 효율</div>
-        <div class="big-num" style="color:var(--green)">&#8593;</div>
-        <div class="big-label">창출 시간 재투자</div>
+        <div style="font-size:13px;color:var(--ltblue);margin-bottom:10px;letter-spacing:0.5px">업계 선도</div>
+        <div class="big-num" style="color:var(--green);font-size:clamp(28px,3.5vw,48px)">최초</div>
+        <div class="big-label">선거장비 AI 트러블슈팅</div>
       </div>
     </div>
 
-    <!-- Doughnut gauges row -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%;max-width:1200px;margin-bottom:32px">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%;max-width:1200px;margin-bottom:28px">
       <div style="position:relative;height:100px">
         <canvas id="gauge-1"></canvas>
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
@@ -1070,6 +1245,7 @@
       <div class="score-badge"><span class="check">&#10003;</span> 기술완성도</div>
       <div class="score-badge"><span class="check">&#10003;</span> 실용성</div>
       <div class="score-badge"><span class="check">&#10003;</span> 확장가능성</div>
+      <div class="score-badge"><span class="check">&#10003;</span> 업계 최초</div>
     </div>
   </section>
 
@@ -1079,7 +1255,7 @@
 // ════════════════════════════════════════
 // NAVIGATION
 // ════════════════════════════════════════
-const TOTAL = 9;
+const TOTAL = 10;
 let current = 0;
 let isAnimating = false;
 
@@ -1088,7 +1264,6 @@ const counter = document.getElementById('counter');
 const dotsEl  = document.getElementById('dots');
 const slides  = document.querySelectorAll('.slide');
 
-// Build dots
 for (let i = 0; i < TOTAL; i++) {
   const d = document.createElement('button');
   d.className = 'dot' + (i === 0 ? ' active' : '');
@@ -1119,7 +1294,6 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
 });
 
-// Touch / swipe
 let touchStartY = 0;
 document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
 document.addEventListener('touchend', e => {
@@ -1129,7 +1303,30 @@ document.addEventListener('touchend', e => {
 
 
 // ════════════════════════════════════════
-// CHART.JS INSTANCES
+// ES&S MAP ANIMATION (slide index 3)
+// ════════════════════════════════════════
+let essAnimationDone = false;
+
+function animateEssMap() {
+  if (essAnimationDone) return;
+  essAnimationDone = true;
+
+  const essCells = Array.from(document.querySelectorAll('.sq.ess'));
+  const counter  = document.getElementById('ess-count');
+  let lit = 0;
+
+  essCells.forEach((cell, i) => {
+    setTimeout(() => {
+      cell.classList.add('lit');
+      lit++;
+      if (counter) counter.textContent = lit;
+    }, 200 + i * 120);
+  });
+}
+
+
+// ════════════════════════════════════════
+// CHART.JS
 // ════════════════════════════════════════
 Chart.defaults.color = '#AEB7D6';
 Chart.defaults.font.family = "'Noto Sans KR', sans-serif";
@@ -1140,8 +1337,8 @@ function initCharts(slideIdx) {
   if (chartsInitialized[slideIdx]) return;
   chartsInitialized[slideIdx] = true;
 
-  // ── SLIDE 2: Horizontal Bar ──────────────
-  if (slideIdx === 1) {
+  // ── SLIDE 3 (idx 2): Horizontal Bar ──
+  if (slideIdx === 2) {
     const ctx = document.getElementById('chart-bar').getContext('2d');
     new Chart(ctx, {
       type: 'bar',
@@ -1151,15 +1348,15 @@ function initCharts(slideIdx) {
           {
             label: '수동 제작 (시간)',
             data: [0.5, 0.3, 0.7, 0.3, 0.2],
-            backgroundColor: 'rgba(174,183,214,0.5)',
-            borderColor: 'rgba(174,183,214,0.85)',
+            backgroundColor: 'rgba(174,183,214,0.45)',
+            borderColor: 'rgba(174,183,214,0.8)',
             borderWidth: 1.5,
             borderRadius: 6,
           },
           {
-            label: 'AI 자동화 (분)',
+            label: 'AI 자동화',
             data: [0.05, 0, 0.05, 0.08, 0.05],
-            backgroundColor: 'rgba(36,161,72,0.7)',
+            backgroundColor: 'rgba(36,161,72,0.75)',
             borderColor: 'rgba(36,161,72,1)',
             borderWidth: 1.5,
             borderRadius: 6,
@@ -1171,37 +1368,27 @@ function initCharts(slideIdx) {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: {
-            position: 'bottom',
-            labels: { padding: 16, font: { size: 12 } }
-          },
+          legend: { position: 'bottom', labels: { padding: 16, font: { size: 12 }, color: '#AEB7D6' } },
           tooltip: {
+            backgroundColor: 'rgba(5,25,94,0.95)',
             callbacks: {
               label: ctx => {
                 const val = ctx.parsed.x;
-                return ctx.datasetIndex === 0
-                  ? `${val}시간`
-                  : val < 0.2 ? '자동 처리' : `${Math.round(val*60)}분`;
+                return ctx.datasetIndex === 0 ? `${val}시간` : val < 0.2 ? '자동 처리' : `${Math.round(val*60)}분`;
               }
             }
           }
         },
         scales: {
-          x: {
-            grid: { color: 'rgba(255,255,255,0.06)' },
-            ticks: { callback: v => v + 'h' }
-          },
-          y: {
-            grid: { color: 'rgba(255,255,255,0.06)' },
-            ticks: { font: { size: 13 } }
-          }
+          x: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { callback: v => v + 'h', color: '#AEB7D6' } },
+          y: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { font: { size: 13 }, color: '#AEB7D6' } }
         }
       }
     });
   }
 
-  // ── SLIDE 4: Radar ──────────────────────
-  if (slideIdx === 3) {
+  // ── SLIDE 5 (idx 4): Radar ──
+  if (slideIdx === 4) {
     const ctx = document.getElementById('chart-radar').getContext('2d');
     new Chart(ctx, {
       type: 'radar',
@@ -1211,7 +1398,7 @@ function initCharts(slideIdx) {
           {
             label: 'PDF 매뉴얼',
             data: [2, 2, 1, 2, 4, 3],
-            backgroundColor: 'rgba(107,114,128,0.15)',
+            backgroundColor: 'rgba(107,114,128,0.12)',
             borderColor: 'rgba(107,114,128,0.7)',
             borderWidth: 1.5,
             pointBackgroundColor: 'rgba(107,114,128,0.7)',
@@ -1220,8 +1407,8 @@ function initCharts(slideIdx) {
           {
             label: '정적 영상',
             data: [1, 1, 2, 2, 2, 2],
-            backgroundColor: 'rgba(174,183,214,0.08)',
-            borderColor: 'rgba(174,183,214,0.6)',
+            backgroundColor: 'rgba(174,183,214,0.06)',
+            borderColor: 'rgba(174,183,214,0.55)',
             borderWidth: 1.5,
             pointBackgroundColor: 'rgba(174,183,214,0.7)',
             pointRadius: 3,
@@ -1230,15 +1417,15 @@ function initCharts(slideIdx) {
             label: 'AI 챗봇',
             data: [4, 4, 3, 4, 3, 4],
             backgroundColor: 'rgba(18,58,158,0.08)',
-            borderColor: 'rgba(18,58,158,0.7)',
+            borderColor: 'rgba(79,158,244,0.6)',
             borderWidth: 1.5,
-            pointBackgroundColor: 'rgba(18,58,158,0.8)',
+            pointBackgroundColor: 'rgba(79,158,244,0.8)',
             pointRadius: 3,
           },
           {
             label: 'MIRU AI',
             data: [5, 5, 5, 5, 4, 5],
-            backgroundColor: 'rgba(235,4,20,0.15)',
+            backgroundColor: 'rgba(235,4,20,0.12)',
             borderColor: 'rgba(235,4,20,1)',
             borderWidth: 2.5,
             pointBackgroundColor: 'rgba(235,4,20,1)',
@@ -1253,14 +1440,9 @@ function initCharts(slideIdx) {
         scales: {
           r: {
             min: 0, max: 5,
-            ticks: {
-              stepSize: 1,
-              font: { size: 10 },
-              backdropColor: 'transparent',
-              color: 'rgba(174,183,214,0.6)'
-            },
-            grid: { color: 'rgba(174,183,214,0.15)' },
-            angleLines: { color: 'rgba(174,183,214,0.15)' },
+            ticks: { stepSize: 1, font: { size: 10 }, backdropColor: 'transparent', color: 'rgba(174,183,214,0.6)' },
+            grid: { color: 'rgba(174,183,214,0.12)' },
+            angleLines: { color: 'rgba(174,183,214,0.12)' },
             pointLabels: { font: { size: 13, weight: '600' }, color: '#AEB7D6' }
           }
         }
@@ -1268,8 +1450,8 @@ function initCharts(slideIdx) {
     });
   }
 
-  // ── SLIDE 7: Doughnut ───────────────────
-  if (slideIdx === 6) {
+  // ── SLIDE 8 (idx 7): Doughnut ──
+  if (slideIdx === 7) {
     const ctx = document.getElementById('chart-doughnut').getContext('2d');
     new Chart(ctx, {
       type: 'doughnut',
@@ -1278,17 +1460,17 @@ function initCharts(slideIdx) {
         datasets: [{
           data: [28, 22, 15, 12, 10, 8, 5],
           backgroundColor: [
-            '#EB0414',               // red — Paper Jam (primary)
-            '#AEB7D6',               // ltblue — UIK Mismatch
-            '#24A148',               // green — Flash Card
-            '#123A9E',               // accent navy — Network
-            'rgba(235,4,20,0.52)',   // light red — ECF NOT FOUND
-            'rgba(174,183,214,0.55)',// light ltblue — Scanner Cover
-            'rgba(36,161,72,0.42)', // light green — Others
+            '#FF4D6D',
+            '#4ECDC4',
+            '#FFE66D',
+            '#4F9EF4',
+            '#F4A261',
+            '#A8DADC',
+            '#6EC6A0',
           ],
-          borderColor: '#020D38',
+          borderColor: '#06102A',
           borderWidth: 3,
-          hoverOffset: 8,
+          hoverOffset: 10,
         }]
       },
       options: {
@@ -1301,7 +1483,7 @@ function initCharts(slideIdx) {
             labels: {
               color: '#FFFFFF',
               font: { size: 11, family: "'GmarketSans','Noto Sans KR',sans-serif" },
-              padding: 12,
+              padding: 10,
               generateLabels: chart => {
                 const data = chart.data;
                 return data.labels.map((label, i) => ({
@@ -1321,22 +1503,20 @@ function initCharts(slideIdx) {
             backgroundColor: 'rgba(5,25,94,0.95)',
             borderColor: 'rgba(174,183,214,0.3)',
             borderWidth: 1,
-            callbacks: {
-              label: ctx => ` ${ctx.label}: ${ctx.parsed}%`
-            }
+            callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` }
           }
         }
       }
     });
   }
 
-  // ── SLIDE 9: Gauge doughnuts ────────────
-  if (slideIdx === 8) {
+  // ── SLIDE 10 (idx 9): Gauge doughnuts ──
+  if (slideIdx === 9) {
     const gaugeData = [
-      { id: 'gauge-1', val: 90, label: '창의성',    color: 'rgba(174,183,214,0.9)' },
-      { id: 'gauge-2', val: 85, label: '기술완성도', color: 'rgba(18,58,158,0.9)' },
-      { id: 'gauge-3', val: 95, label: '실용성',    color: 'rgba(36,161,72,0.85)' },
-      { id: 'gauge-4', val: 88, label: '확장가능성', color: 'rgba(174,183,214,0.6)' },
+      { id: 'gauge-1', val: 92, color: 'rgba(174,183,214,0.9)' },
+      { id: 'gauge-2', val: 88, color: 'rgba(79,158,244,0.9)' },
+      { id: 'gauge-3', val: 96, color: 'rgba(36,161,72,0.9)' },
+      { id: 'gauge-4', val: 90, color: 'rgba(235,4,20,0.85)' },
     ];
     gaugeData.forEach(g => {
       const ctx = document.getElementById(g.id).getContext('2d');
@@ -1351,26 +1531,19 @@ function initCharts(slideIdx) {
           }]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '70%',
-          rotation: -90,
-          circumference: 180,
-          plugins: {
-            legend: { display: false },
-            tooltip: { enabled: false }
-          }
+          responsive: true, maintainAspectRatio: false,
+          cutout: '70%', rotation: -90, circumference: 180,
+          plugins: { legend: { display: false }, tooltip: { enabled: false } }
         }
       });
     });
   }
 }
 
-// ── Progress bars animation ───────────
+// ── Progress bars animation ──
 function animateProgressBars() {
   document.querySelectorAll('.progress-bar-fill').forEach(bar => {
-    const pct = bar.dataset.pct;
-    bar.style.width = pct + '%';
+    bar.style.width = bar.dataset.pct + '%';
   });
 }
 
@@ -1379,10 +1552,10 @@ function animateProgressBars() {
 // ════════════════════════════════════════
 function onSlideEnter(idx) {
   initCharts(idx);
-  if (idx === 5) animateProgressBars();
+  if (idx === 3) animateEssMap();
+  if (idx === 6) animateProgressBars();
 }
 
-// Init slide 0 on load
 window.addEventListener('load', () => {
   onSlideEnter(0);
 });
